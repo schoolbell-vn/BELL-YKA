@@ -156,12 +156,14 @@
         display: flex;
         gap: 10px; /* THAY ĐỔI: Giảm khoảng cách */
     }
+    /* THAY ĐỔI: Style riêng cho các nút nhỏ */
     .button-row .modern-btn {
         flex-grow: 1;
-        height: 48px; /* THAY ĐỔI: Giảm chiều cao */
-        font-size: 0.75em; /* THAY ĐỔI: Thu nhỏ chữ */
-        padding: 0 5px; /* THAY ĐỔI: Giảm padding */
-        letter-spacing: 0.5px; /* THAY ĐỔI: Giảm khoảng cách ký tự */
+        height: 48px;
+        font-size: 0.7em;
+        padding: 0 5px;
+        letter-spacing: 0.5px;
+        white-space: nowrap; /* Đảm bảo chữ không xuống dòng */
     }
     .test-button {
         background: linear-gradient(90deg, #232526 60%, #414345 100%);
@@ -227,6 +229,7 @@
         box-shadow: 0 10px 32px #3498db99, 0 2px 12px #fff4;
     }
     
+
     /* --- TAB NGÀY & NỘI DUNG TAB --- */
     .tab { display: flex; justify-content: space-around; border-bottom: 2px solid #f1c40f; margin: 0 15px 0 15px; position: relative; z-index: 1; }
     .tab button {
@@ -291,7 +294,7 @@
         border-right: 5px solid #f1c40f;
         text-shadow: 0 0 12px #f1c40f, 0 2px 8px #000, 0 0 24px #fff;
         box-shadow: 0 4px 18px 0 #f1c40f33, 0 2px 8px #fff2;
-        padding: 14px 18px; /* THAY ĐỔI: Chỉnh lại padding cho cân đối */
+        padding: 14px 18px; /* THAY ĐỔI: Chỉnh lại padding cho cân đối, bỏ height */
     }
     summary#header-sohoi div:first-child {
         font-size: 1.08em;
@@ -626,17 +629,7 @@
 
   <script>
     // Toàn bộ script giữ nguyên như phiên bản trước
-    if("true"!==sessionStorage.getItem("isLoggedIn"))window.location.href="login.html";
-    let client,serverTime=null;
-    const brokerUrl="wss://366af3ec40124749863257ecd2c62b3e.s1.eu.hivemq.cloud:8884/mqtt";
-    const options={username:"ngoctuyka",password:"Tu12345678@",clientId:"WebAppClient_"+parseInt(1e3*Math.random()),reconnectPeriod:2e3};
-    const ONLINE_STATUS_TOPIC = "esp32/bell/status/online";
-    const DATA_STATUS_TOPIC = "esp32/bell/data/status";
-    const SET_DATA_TOPIC = "esp32/bell/data/set";
-    const GET_DATA_TOPIC = "esp32/bell/data/get";
-    const CONTROL_TOPIC = "esp32/bell/control";
-    const SYS_INFO_TOPIC = "esp32/bell/status/sysinfo";
-    function connectToMqtt(){console.log("Đang kết nối đến MQTT broker...");const e=document.getElementById("status");e.textContent="Đang kết nối...",e.className="status-bar status-connecting",client=mqtt.connect(brokerUrl,options),client.on("connect",()=>{console.log("Đã kết nối thành công đến MQTT broker!"),client.subscribe([DATA_STATUS_TOPIC,ONLINE_STATUS_TOPIC,SYS_INFO_TOPIC],{qos:1},e=>{err?console.error("Lỗi khi đăng ký topic:",err):(console.log("Đăng ký nhận các topic thành công!"),client.publish(GET_DATA_TOPIC,"1",{qos:1}))})}),client.on("message",(e,t)=>{const o=t.toString();if(console.log(`Nhận được tin nhắn từ topic: ${e}`),e===ONLINE_STATUS_TOPIC)"online"===o?(statusDiv.textContent="Thiết bị đang hoạt động",statusDiv.className="status-bar status-connected",document.getElementById("clock-wrapper").style.display="block"):(statusDiv.textContent="Thiết bị ngoại tuyến",statusDiv.className="status-bar status-disconnected",document.getElementById("clock-wrapper").style.display="none",serverTime=null);e===DATA_STATUS_TOPIC&&o&&_load(o);if(e===SYS_INFO_TOPIC)try{const e=JSON.parse(o);document.getElementById("info-ssid").textContent=e.ssid,document.getElementById("info-ip").textContent=e.ip;const t=document.getElementById("info-rtc");e.rtc?(t.textContent="Đã kết nối",t.className="value connected"):(t.textContent="Không tìm thấy",t.className="value disconnected");const n=document.getElementById("info-lcd");e.lcd?(n.textContent="Đã kết nối",n.className="value connected"):(n.textContent="Không tìm thấy",n.className="value disconnected"),document.getElementById("info-modal-overlay").classList.add("visible")}catch(e){console.error("Lỗi parse JSON thông tin hệ thống:",e)}}),client.on("error",e=>console.error("Lỗi kết nối MQTT:",e)),client.on("close",()=>{console.log("Mất kết nối MQTT. Đang thử kết nối lại..."),statusDiv.textContent="Mất kết nối máy chủ",statusDiv.className="status-bar status-disconnected",document.getElementById("clock-wrapper").style.display="none",serverTime=null})}
+    if("true"!==sessionStorage.getItem("isLoggedIn"))window.location.href="login.html";let client,serverTime=null;const brokerUrl="wss://366af3ec40124749863257ecd2c62b3e.s1.eu.hivemq.cloud:8884/mqtt",options={username:"ngoctuyka",password:"Tu12345678@",clientId:"WebAppClient_"+parseInt(1e3*Math.random()),reconnectPeriod:2e3},ONLINE_STATUS_TOPIC="esp32/bell/status/online",DATA_STATUS_TOPIC="esp32/bell/data/status",SET_DATA_TOPIC="esp32/bell/data/set",GET_DATA_TOPIC="esp32/bell/data/get",CONTROL_TOPIC="esp32/bell/control",SYS_INFO_TOPIC="esp32/bell/status/sysinfo";function connectToMqtt(){console.log("Đang kết nối đến MQTT broker...");const e=document.getElementById("status");e.textContent="Đang kết nối...",e.className="status-bar status-connecting",client=mqtt.connect(brokerUrl,options),client.on("connect",()=>{console.log("Đã kết nối thành công đến MQTT broker!"),client.subscribe([DATA_STATUS_TOPIC,ONLINE_STATUS_TOPIC,SYS_INFO_TOPIC],{qos:1},e=>{err?console.error("Lỗi khi đăng ký topic:",err):(console.log("Đăng ký nhận các topic thành công!"),client.publish(GET_DATA_TOPIC,"1",{qos:1}))})}),client.on("message",(e,t)=>{const o=t.toString();if(console.log(`Nhận được tin nhắn từ topic: ${e}`),e===ONLINE_STATUS_TOPIC)"online"===o?(statusDiv.textContent="Thiết bị đang hoạt động",statusDiv.className="status-bar status-connected",document.getElementById("clock-wrapper").style.display="block"):(statusDiv.textContent="Thiết bị ngoại tuyến",statusDiv.className="status-bar status-disconnected",document.getElementById("clock-wrapper").style.display="none",serverTime=null);e===DATA_STATUS_TOPIC&&o&&_load(o);if(e===SYS_INFO_TOPIC)try{const e=JSON.parse(o);document.getElementById("info-ssid").textContent=e.ssid,document.getElementById("info-ip").textContent=e.ip;const t=document.getElementById("info-rtc");e.rtc?(t.textContent="Đã kết nối",t.className="value connected"):(t.textContent="Không tìm thấy",t.className="value disconnected");const n=document.getElementById("info-lcd");e.lcd?(n.textContent="Đã kết nối",n.className="value connected"):(n.textContent="Không tìm thấy",n.className="value disconnected"),document.getElementById("info-modal-overlay").classList.add("visible")}catch(e){console.error("Lỗi parse JSON thông tin hệ thống:",e)}}),client.on("error",e=>console.error("Lỗi kết nối MQTT:",e)),client.on("close",()=>{console.log("Mất kết nối MQTT. Đang thử kết nối lại..."),statusDiv.textContent="Mất kết nối máy chủ",statusDiv.className="status-bar status-disconnected",document.getElementById("clock-wrapper").style.display="none",serverTime=null})}
     function requestSystemInfo(){client&&client.connected?client.publish(CONTROL_TOPIC,"GET_SYS_INFO",{qos:1}):alert("Chưa kết nối đến thiết bị. Vui lòng đợi!")}
     function turnOnLcd(){client&&client.connected?(client.publish(CONTROL_TOPIC,"TURN_ON_LCD",{qos:1}),alert("Đã gửi lệnh bật đèn LCD!")):alert("Chưa kết nối đến thiết bị. Vui lòng đợi!")}
     function closeInfoModal(){document.getElementById("info-modal-overlay").classList.remove("visible")}
