@@ -123,7 +123,7 @@
         padding: 0 15px;
         border: none;
         border-radius: 12px;
-        font-size: 1em; /* Giảm size cho vừa 2 nút */
+        font-size: 0.9em; /* Chỉnh sửa: Giảm cỡ chữ */
         font-weight: 700;
         letter-spacing: 1.2px;
         transition: box-shadow 0.18s, transform 0.13s, filter 0.13s;
@@ -133,6 +133,7 @@
         overflow: hidden;
         z-index: 1;
         text-transform: uppercase;
+        white-space: nowrap; /* Chỉnh sửa: Đảm bảo chữ trên 1 hàng */
     }
     .modern-btn:active {
         transform: scale(0.97);
@@ -147,6 +148,7 @@
         border-right: 5px solid #00e6ff;
         text-shadow: 0 0 12px #00e6ff, 0 2px 8px #000, 0 0 24px #fff;
         box-shadow: 0 4px 18px 0 #00e6ff33, 0 2px 8px #fff2;
+        font-size: 1em; /* Giữ lại size cũ cho nút chính */
     }
     .save-button:hover {
         filter: brightness(1.12);
@@ -266,6 +268,10 @@
     }
     
     /* --- KHU VỰC CÀI ĐẶT (DETAILS) --- */
+    /* Chỉnh sửa: Thêm padding để căn chỉnh */
+    .div1 {
+        padding: 0 15px;
+    }
     details {
         border: 1.5px solid #414345; border-radius: 12px; margin-bottom: 12px;
         background: #232526; box-shadow: 0 2px 8px rgba(52, 152, 219, 0.06);
@@ -588,12 +594,12 @@
       <div class="button-section">
         <button class="modern-btn save-button" onclick="publishUpdate()">Lưu và gửi cập nhật</button>
         <div class="button-row">
-            <button class="modern-btn test-button" onclick="publishTestBell()">Thử Chuông</button>
-            <button class="modern-btn logout-button" onclick="logout()">Đăng xuất</button>
+            <button class="modern-btn info-button" onclick="requestSystemInfo()">TT HỆ THỐNG</button>
+            <button class="modern-btn lcd-button" onclick="turnOnLcd()">BẬT LCD</button>
         </div>
         <div class="button-row">
-            <button class="modern-btn info-button" onclick="requestSystemInfo()">Thông tin hệ thống</button>
-            <button class="modern-btn lcd-button" onclick="turnOnLcd()">Bật đèn LCD</button>
+            <button class="modern-btn test-button" onclick="publishTestBell()">Thử Chuông</button>
+            <button class="modern-btn logout-button" onclick="logout()">Đăng xuất</button>
         </div>
       </div>
 
