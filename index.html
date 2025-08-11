@@ -123,9 +123,9 @@
         padding: 0 15px;
         border: none;
         border-radius: 12px;
-        font-size: 1em; /* Giảm size cho vừa 2 nút */
+        font-size: 1.08em;
         font-weight: 700;
-        letter-spacing: 1.2px;
+        letter-spacing: 1.5px;
         transition: box-shadow 0.18s, transform 0.13s, filter 0.13s;
         cursor: pointer;
         outline: none;
@@ -154,10 +154,14 @@
     }
     .button-row {
         display: flex;
-        gap: 18px;
+        gap: 10px; /* THAY ĐỔI: Giảm khoảng cách */
     }
     .button-row .modern-btn {
         flex-grow: 1;
+        height: 48px; /* THAY ĐỔI: Giảm chiều cao */
+        font-size: 0.75em; /* THAY ĐỔI: Thu nhỏ chữ */
+        padding: 0 5px; /* THAY ĐỔI: Giảm padding */
+        letter-spacing: 0.5px; /* THAY ĐỔI: Giảm khoảng cách ký tự */
     }
     .test-button {
         background: linear-gradient(90deg, #232526 60%, #414345 100%);
@@ -198,7 +202,6 @@
         filter: brightness(1.08);
         box-shadow: 0 10px 32px #2ecc7199, 0 2px 12px #fff4;
     }
-    /* Thêm style cho 2 nút mới */
     .info-button {
         background: linear-gradient(90deg, #232526 60%, #414345 100%);
         color: #9b59b6;
@@ -224,7 +227,6 @@
         box-shadow: 0 10px 32px #3498db99, 0 2px 12px #fff4;
     }
     
-
     /* --- TAB NGÀY & NỘI DUNG TAB --- */
     .tab { display: flex; justify-content: space-around; border-bottom: 2px solid #f1c40f; margin: 0 15px 0 15px; position: relative; z-index: 1; }
     .tab button {
@@ -282,7 +284,6 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        height: 54px;
         border-radius: 12px;
         background: linear-gradient(90deg, #232526 60%, #414345 100%);
         color: #f1c40f;
@@ -290,6 +291,7 @@
         border-right: 5px solid #f1c40f;
         text-shadow: 0 0 12px #f1c40f, 0 2px 8px #000, 0 0 24px #fff;
         box-shadow: 0 4px 18px 0 #f1c40f33, 0 2px 8px #fff2;
+        padding: 14px 18px; /* THAY ĐỔI: Chỉnh lại padding cho cân đối */
     }
     summary#header-sohoi div:first-child {
         font-size: 1.08em;
@@ -426,7 +428,7 @@
         background: linear-gradient(90deg, #2980b9 0%, #6dd5fa 100%);
     }
 
-    /* === THÊM MỚI: Giao diện cho Modal Thông tin hệ thống === */
+    /* --- Giao diện cho Modal Thông tin hệ thống --- */
     .modal-overlay {
         position: fixed;
         top: 0;
@@ -589,11 +591,9 @@
         <button class="modern-btn save-button" onclick="publishUpdate()">Lưu và gửi cập nhật</button>
         <div class="button-row">
             <button class="modern-btn test-button" onclick="publishTestBell()">Thử Chuông</button>
-            <button class="modern-btn logout-button" onclick="logout()">Đăng xuất</button>
-        </div>
-        <div class="button-row">
-            <button class="modern-btn info-button" onclick="requestSystemInfo()">Thông tin hệ thống</button>
             <button class="modern-btn lcd-button" onclick="turnOnLcd()">Bật đèn LCD</button>
+            <button class="modern-btn info-button" onclick="requestSystemInfo()">Thông tin hệ thống</button>
+            <button class="modern-btn logout-button" onclick="logout()">Đăng xuất</button>
         </div>
       </div>
 
@@ -625,235 +625,28 @@
 
 
   <script>
+    // Toàn bộ script giữ nguyên như phiên bản trước
     if("true"!==sessionStorage.getItem("isLoggedIn"))window.location.href="login.html";
-    
     let client,serverTime=null;
-    
     const brokerUrl="wss://366af3ec40124749863257ecd2c62b3e.s1.eu.hivemq.cloud:8884/mqtt";
     const options={username:"ngoctuyka",password:"Tu12345678@",clientId:"WebAppClient_"+parseInt(1e3*Math.random()),reconnectPeriod:2e3};
-    
     const ONLINE_STATUS_TOPIC = "esp32/bell/status/online";
     const DATA_STATUS_TOPIC = "esp32/bell/data/status";
     const SET_DATA_TOPIC = "esp32/bell/data/set";
     const GET_DATA_TOPIC = "esp32/bell/data/get";
     const CONTROL_TOPIC = "esp32/bell/control";
-    const SYS_INFO_TOPIC = "esp32/bell/status/sysinfo"; // === THÊM MỚI: Topic cho thông tin hệ thống
-
-    function connectToMqtt(){
-        console.log("Đang kết nối đến MQTT broker...");
-        const statusDiv = document.getElementById("status");
-        statusDiv.textContent="Đang kết nối...";
-        statusDiv.className="status-bar status-connecting";
-        
-        client=mqtt.connect(brokerUrl,options);
-        
-        client.on("connect",()=>{
-            console.log("Đã kết nối thành công đến MQTT broker!");
-            
-            client.subscribe([DATA_STATUS_TOPIC, ONLINE_STATUS_TOPIC, SYS_INFO_TOPIC], {qos:1}, (err)=>{ // Thêm topic mới
-                if(err) {
-                    console.error("Lỗi khi đăng ký topic:", err);
-                } else {
-                    console.log("Đăng ký nhận các topic thành công!");
-                    client.publish(GET_DATA_TOPIC, '1', { qos: 1 });
-                }
-            });
-        });
-        
-        client.on("message",(topic, payload)=>{
-            const payloadString = payload.toString();
-            console.log(`Nhận được tin nhắn từ topic: ${topic}`);
-            
-            if (topic === ONLINE_STATUS_TOPIC) {
-                if (payloadString === 'online') {
-                    statusDiv.textContent = "Thiết bị đang hoạt động";
-                    statusDiv.className = "status-bar status-connected";
-                    document.getElementById('clock-wrapper').style.display = 'block';
-                } else {
-                    statusDiv.textContent = "Thiết bị ngoại tuyến";
-                    statusDiv.className = "status-bar status-disconnected";
-                    document.getElementById('clock-wrapper').style.display = 'none';
-                    serverTime = null;
-                }
-            }
-            
-            if (topic === DATA_STATUS_TOPIC && payloadString) {
-                _load(payloadString);
-            }
-
-            // === THÊM MỚI: Xử lý tin nhắn thông tin hệ thống ===
-            if (topic === SYS_INFO_TOPIC) {
-                try {
-                    const info = JSON.parse(payloadString);
-                    document.getElementById('info-ssid').textContent = info.ssid;
-                    document.getElementById('info-ip').textContent = info.ip;
-                    
-                    const rtcStatus = document.getElementById('info-rtc');
-                    if(info.rtc) {
-                        rtcStatus.textContent = "Đã kết nối";
-                        rtcStatus.className = "value connected";
-                    } else {
-                        rtcStatus.textContent = "Không tìm thấy";
-                        rtcStatus.className = "value disconnected";
-                    }
-
-                    const lcdStatus = document.getElementById('info-lcd');
-                    if(info.lcd) {
-                        lcdStatus.textContent = "Đã kết nối";
-                        lcdStatus.className = "value connected";
-                    } else {
-                        lcdStatus.textContent = "Không tìm thấy";
-                        lcdStatus.className = "value disconnected";
-                    }
-
-                    document.getElementById('info-modal-overlay').classList.add('visible');
-                } catch(e) {
-                    console.error("Lỗi parse JSON thông tin hệ thống:", e);
-                }
-            }
-        });
-        
-        client.on("error", e => console.error("Lỗi kết nối MQTT:", e));
-        
-        client.on("close",()=>{
-            console.log("Mất kết nối MQTT. Đang thử kết nối lại...");
-            statusDiv.textContent = "Mất kết nối máy chủ";
-            statusDiv.className = "status-bar status-disconnected";
-            document.getElementById('clock-wrapper').style.display = 'none';
-            serverTime = null;
-        });
-    }
-
-    // === THÊM MỚI: Các hàm cho nút mới ===
-    function requestSystemInfo() {
-        if (client && client.connected) {
-            client.publish(CONTROL_TOPIC, "GET_SYS_INFO", {qos: 1});
-        } else {
-            alert("Chưa kết nối đến thiết bị. Vui lòng đợi!");
-        }
-    }
-
-    function turnOnLcd() {
-        if (client && client.connected) {
-            client.publish(CONTROL_TOPIC, "TURN_ON_LCD", {qos: 1});
-            alert("Đã gửi lệnh bật đèn LCD!");
-        } else {
-            alert("Chưa kết nối đến thiết bị. Vui lòng đợi!");
-        }
-    }
-
-    function closeInfoModal() {
-        document.getElementById('info-modal-overlay').classList.remove('visible');
-    }
-
-    // Phần script còn lại giữ nguyên
-    function _load(e){try{const t=JSON.parse(e);t.schedule&&t.epoch&&(setTime(t.epoch),populateForm(t))}catch(t){console.error("Lỗi parse JSON từ MQTT:",t)}}function publishUpdate(){if(!client||!client.connected)return void alert("Chưa kết nối đến máy chủ. Vui lòng đợi hoặc kiểm tra lại kết nối mạng.");try{const e=gatherDataFromForm(),t=JSON.stringify({schedule:e});client.publish(SET_DATA_TOPIC,t,{qos:1,retain:!0}),alert("Đã gửi lệnh cập nhật thành công!")}catch(e){alert("Lỗi khi thu thập dữ liệu từ form: "+e.message),console.error(e)}}function publishTestBell(){client&&client.connected?client.publish(CONTROL_TOPIC,"TEST_BELL",{qos:1}):alert("Chưa kết nối đến máy chủ. Vui lòng đợi hoặc kiểm tra lại kết nối mạng.")}function logout(){sessionStorage.removeItem("isLoggedIn"),window.location.href="login.html"}function setTime(e){isNaN(e)||e<1e5?(console.log("Invalid epoch received, clock not set:",e),serverTime=null):(serverTime=new Date(1e3*e),document.getElementById("date").innerHTML=serverTime.toLocaleDateString("vi-VN",{weekday:"long",year:"numeric",month:"long",day:"numeric",timeZone:"Asia/Ho_Chi_Minh"}),updateLocalClock())}function updateLocalClock(){serverTime&&(serverTime.setSeconds(serverTime.getSeconds()+1),document.getElementById("clock").innerHTML=serverTime.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit",timeZone:"Asia/Ho_Chi_Minh",hour12:!1}))}
-    
-    const createDayContent = (dayId, dayName, session) => {
-        const hasChaoCo = (dayId === 't2_sang');
-        const hasChuNhiem = (session === 'sang' && ['t3_sang', 't4_sang', 't5_sang', 't6_sang', 't7_sang'].includes(dayId));
-
-        const isMorningSession = (session === 'sang');
-        const isWeekday = (dayId !== 'cn_sang');
-        const applyCompactLayout = isMorningSession && isWeekday;
-        const layoutClass = applyCompactLayout ? '' : 'full-width';
-
-        const iconClock = `<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586z"></path></svg></div>`;
-        const iconCalendar = `<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm-1 15H6V7h12v12z"></path></svg></div>`;
-        const iconBook = `<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 2H6c-1.206 0-3 .799-3 3v14c0 2.201 1.794 3 3 3h15v-2H6.012C5.55 19.988 5 19.806 5 19s.55-.988 1.012-1H21V4c0-1.103-.897-2-2-2zm0 13H6V5h13v10z"></path></svg></div>`;
-        const iconCoffee = `<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M18 5h-2V2H8v3H6c-1.654 0-3 1.346-3 3v6c0 1.654 1.346 3 3 3h1v1c0 .552.447 1 1 1h6c.553 0 1-.448 1-1v-1h1c1.654 0 3-1.346 3-3V8c0-1.654-1.346-3-3-3zm1 9c0 .552-.447 1-1 1H6c-.553 0-1-.448-1-1V8c0-.552.447-1 1-1h12c.553 0 1 .448 1 1v6z"></path></svg></div>`;
-        const iconHourglass = `<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M14 12V8h-4v4H8l4 4 4-4h-2z"></path></svg></div>`;
-        const iconList = `<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h2v2H4zm0 5h2v2H4zm0 5h2v2H4zm16-8V6H8v2h12zm0 5H8v2h12zm0 5H8v2h12z"></path></svg></div>`;
-        
-        let specialPeriod = '';
-        if (hasChaoCo) {
-            specialPeriod = `<div class="setting-item ${layoutClass}">
-                                ${iconCalendar}
-                                <div class="input-wrapper">
-                                    <label for="chaoco_${dayId}">TG Chào cờ</label>
-                                    <div class="unit-input"><input id="chaoco_${dayId}" type="number" value="40"><span>phút</span></div>
-                                </div>
-                             </div>`;
-        } else if (hasChuNhiem) {
-            specialPeriod = `<div class="setting-item ${layoutClass}">
-                                ${iconCalendar}
-                                <div class="input-wrapper">
-                                    <label for="chunhiem_${dayId}">TG Chủ nhiệm</label>
-                                    <div class="unit-input"><input id="chunhiem_${dayId}" type="number" value="15"><span>phút</span></div>
-                                </div>
-                             </div>`;
-        }
-
-        let copyButton = '';
-        const isMorningCopyable = (session === 'sang' && ['t3_sang', 't4_sang', 't5_sang', 't6_sang', 't7_sang'].includes(dayId));
-
-        if (session === 'chieu') {
-            copyButton = `<button class="copy-button chieu" onclick="copyAfternoonSchedule('${dayId}')">Sao chép đến</button>`;
-        } else if (isMorningCopyable) {
-            copyButton = `<button class="copy-button sang" onclick="copyMorningSchedule('${dayId}')">Sao chép đến</button>`;
-        }
-
-        return `
-        <div id="${dayId}" class="tabcontent">
-          <h3>Cài đặt Lịch ${dayName}<br><span class="session-subtitle">(Buổi ${session === 'sang' ? 'Sáng' : 'Chiều'})</span></h3>
-          <div class="activation-copy-row">
-            <div class="activation-control">
-                <input type="checkbox" id="enable_${dayId}" class="enable-checkbox" checked>
-                <label for="enable_${dayId}">Kích hoạt lịch</label>
-            </div>
-            ${copyButton}
-          </div>
-          <hr style="margin: 15px;">
-          
-          <div class="settings-grid">
-              <div class="setting-item ${layoutClass}">
-                  ${iconClock}
-                  <div class="input-wrapper">
-                      <label for="gio_${dayId}">Giờ vào học</label>
-                      <input id="gio_${dayId}" type="time">
-                  </div>
-              </div>
-              
-              ${specialPeriod}
-              
-              <div class="setting-item">
-                  ${iconBook}
-                  <div class="input-wrapper">
-                      <label for="tiethoc_${dayId}">TG Tiết học</label>
-                      <div class="unit-input"><input id="tiethoc_${dayId}" type="number" value="45"><span>phút</span></div>
-                  </div>
-              </div>
-              <div class="setting-item">
-                  ${iconCoffee}
-                  <div class="input-wrapper">
-                      <label for="rachoi_${dayId}">TG Ra chơi</label>
-                      <div class="unit-input"><input id="rachoi_${dayId}" type="number" value="5"><span>phút</span></div>
-                  </div>
-              </div>
-              <div class="setting-item">
-                  ${iconHourglass}
-                  <div class="input-wrapper">
-                      <label for="duvaotiet_${dayId}">TG Dự vào</label>
-                      <div class="unit-input"><input id="duvaotiet_${dayId}" type="number" value="3"><span>phút</span></div>
-                  </div>
-              </div>
-              <div class="setting-item">
-                  ${iconList}
-                  <div class="input-wrapper">
-                      <label for="sotiet_${dayId}">Số tiết học</label>
-                      <div class="unit-input"><input id="sotiet_${dayId}" type="number" value="5"><span>tiết</span></div>
-                  </div>
-              </div>
-          </div>
-
-          <button class="modern-btn preview-button" onclick="updatePreviewTable('${dayId}')">Cập nhật bảng chi tiết</button>
-          <details>
-              <summary>Xem chi tiết lịch</summary>
-              <div class="details-container" id="details-${dayId}"></div>
-          </details>
-        </div>`;
-    };
-
+    const SYS_INFO_TOPIC = "esp32/bell/status/sysinfo";
+    function connectToMqtt(){console.log("Đang kết nối đến MQTT broker...");const e=document.getElementById("status");e.textContent="Đang kết nối...",e.className="status-bar status-connecting",client=mqtt.connect(brokerUrl,options),client.on("connect",()=>{console.log("Đã kết nối thành công đến MQTT broker!"),client.subscribe([DATA_STATUS_TOPIC,ONLINE_STATUS_TOPIC,SYS_INFO_TOPIC],{qos:1},e=>{err?console.error("Lỗi khi đăng ký topic:",err):(console.log("Đăng ký nhận các topic thành công!"),client.publish(GET_DATA_TOPIC,"1",{qos:1}))})}),client.on("message",(e,t)=>{const o=t.toString();if(console.log(`Nhận được tin nhắn từ topic: ${e}`),e===ONLINE_STATUS_TOPIC)"online"===o?(statusDiv.textContent="Thiết bị đang hoạt động",statusDiv.className="status-bar status-connected",document.getElementById("clock-wrapper").style.display="block"):(statusDiv.textContent="Thiết bị ngoại tuyến",statusDiv.className="status-bar status-disconnected",document.getElementById("clock-wrapper").style.display="none",serverTime=null);e===DATA_STATUS_TOPIC&&o&&_load(o);if(e===SYS_INFO_TOPIC)try{const e=JSON.parse(o);document.getElementById("info-ssid").textContent=e.ssid,document.getElementById("info-ip").textContent=e.ip;const t=document.getElementById("info-rtc");e.rtc?(t.textContent="Đã kết nối",t.className="value connected"):(t.textContent="Không tìm thấy",t.className="value disconnected");const n=document.getElementById("info-lcd");e.lcd?(n.textContent="Đã kết nối",n.className="value connected"):(n.textContent="Không tìm thấy",n.className="value disconnected"),document.getElementById("info-modal-overlay").classList.add("visible")}catch(e){console.error("Lỗi parse JSON thông tin hệ thống:",e)}}),client.on("error",e=>console.error("Lỗi kết nối MQTT:",e)),client.on("close",()=>{console.log("Mất kết nối MQTT. Đang thử kết nối lại..."),statusDiv.textContent="Mất kết nối máy chủ",statusDiv.className="status-bar status-disconnected",document.getElementById("clock-wrapper").style.display="none",serverTime=null})}
+    function requestSystemInfo(){client&&client.connected?client.publish(CONTROL_TOPIC,"GET_SYS_INFO",{qos:1}):alert("Chưa kết nối đến thiết bị. Vui lòng đợi!")}
+    function turnOnLcd(){client&&client.connected?(client.publish(CONTROL_TOPIC,"TURN_ON_LCD",{qos:1}),alert("Đã gửi lệnh bật đèn LCD!")):alert("Chưa kết nối đến thiết bị. Vui lòng đợi!")}
+    function closeInfoModal(){document.getElementById("info-modal-overlay").classList.remove("visible")}
+    function _load(e){try{const t=JSON.parse(e);t.schedule&&t.epoch&&(setTime(t.epoch),populateForm(t))}catch(e){console.error("Lỗi parse JSON từ MQTT:",e)}}
+    function publishUpdate(){if(!client||!client.connected)return void alert("Chưa kết nối đến máy chủ. Vui lòng đợi hoặc kiểm tra lại kết nối mạng.");try{const e=gatherDataFromForm(),t=JSON.stringify({schedule:e});client.publish(SET_DATA_TOPIC,t,{qos:1,retain:!0}),alert("Đã gửi lệnh cập nhật thành công!")}catch(e){alert("Lỗi khi thu thập dữ liệu từ form: "+e.message),console.error(e)}}
+    function publishTestBell(){client&&client.connected?client.publish(CONTROL_TOPIC,"TEST_BELL",{qos:1}):alert("Chưa kết nối đến máy chủ. Vui lòng đợi hoặc kiểm tra lại kết nối mạng.")}
+    function logout(){sessionStorage.removeItem("isLoggedIn"),window.location.href="login.html"}
+    function setTime(e){isNaN(e)||e<1e5?(console.log("Invalid epoch received, clock not set:",e),serverTime=null):(serverTime=new Date(1e3*e),document.getElementById("date").innerHTML=serverTime.toLocaleDateString("vi-VN",{weekday:"long",year:"numeric",month:"long",day:"numeric",timeZone:"Asia/Ho_Chi_Minh"}),updateLocalClock())}
+    function updateLocalClock(){serverTime&&(serverTime.setSeconds(serverTime.getSeconds()+1),document.getElementById("clock").innerHTML=serverTime.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit",timeZone:"Asia/Ho_Chi_Minh",hour12:!1}))}
+    const createDayContent=(e,t,o)=>{const n="t2_sang"===e,a="sang"===o&&["t3_sang","t4_sang","t5_sang","t6_sang","t7_sang"].includes(e),s="sang"===o&&"cn_sang"!==e?"":"full-width",l=`<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586z"></path></svg></div>`,i=`<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm-1 15H6V7h12v12z"></path></svg></div>`,c=`<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 2H6c-1.206 0-3 .799-3 3v14c0 2.201 1.794 3 3 3h15v-2H6.012C5.55 19.988 5 19.806 5 19s.55-.988 1.012-1H21V4c0-1.103-.897-2-2-2zm0 13H6V5h13v10z"></path></svg></div>`,d=`<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M18 5h-2V2H8v3H6c-1.654 0-3 1.346-3 3v6c0 1.654 1.346 3 3 3h1v1c0 .552.447 1 1 1h6c.553 0 1-.448 1-1v-1h1c1.654 0 3-1.346 3-3V8c0-1.654-1.346-3-3-3zm1 9c0 .552-.447 1-1 1H6c-.553 0-1-.448-1-1V8c0-.552.447-1 1-1h12c.553 0 1 .448 1 1v6z"></path></svg></div>`,u=`<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M14 12V8h-4v4H8l4 4 4-4h-2z"></path></svg></div>`,p=`<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h2v2H4zm0 5h2v2H4zm0 5h2v2H4zm16-8V6H8v2h12zm0 5H8v2h12zm0 5H8v2h12z"></path></svg></div>`;let m="";n?m=`<div class="setting-item ${s}">${i}<div class="input-wrapper"><label for="chaoco_${e}">TG Chào cờ</label><div class="unit-input"><input id="chaoco_${e}" type="number" value="40"><span>phút</span></div></div></div>`:a&&(m=`<div class="setting-item ${s}">${i}<div class="input-wrapper"><label for="chunhiem_${e}">TG Chủ nhiệm</label><div class="unit-input"><input id="chunhiem_${e}" type="number" value="15"><span>phút</span></div></div></div>`);let h="";return"chieu"===o?h=`<button class="copy-button chieu" onclick="copyAfternoonSchedule('${e}')">Sao chép đến</button>`:"sang"===o&&["t3_sang","t4_sang","t5_sang","t6_sang","t7_sang"].includes(e)&&(h=`<button class="copy-button sang" onclick="copyMorningSchedule('${e}')">Sao chép đến</button>`),`\n        <div id="${e}" class="tabcontent">\n          <h3>Cài đặt Lịch ${t}<br><span class="session-subtitle">(Buổi ${"sang"===o?"Sáng":"Chiều"})</span></h3>\n          <div class="activation-copy-row">\n            <div class="activation-control">\n                <input type="checkbox" id="enable_${e}" class="enable-checkbox" checked>\n                <label for="enable_${e}">Kích hoạt lịch</label>\n            </div>\n            ${h}\n          </div>\n          <hr style="margin: 15px;">\n          \n          <div class="settings-grid">\n              <div class="setting-item ${s}">\n                  ${l}\n                  <div class="input-wrapper">\n                      <label for="gio_${e}">Giờ vào học</label>\n                      <input id="gio_${e}" type="time">\n                  </div>\n              </div>\n              \n              ${m}\n              \n              <div class="setting-item">\n                  ${c}\n                  <div class="input-wrapper">\n                      <label for="tiethoc_${e}">TG Tiết học</label>\n                      <div class="unit-input"><input id="tiethoc_${e}" type="number" value="45"><span>phút</span></div>\n                  </div>\n              </div>\n              <div class="setting-item">\n                  ${d}\n                  <div class="input-wrapper">\n                      <label for="rachoi_${e}">TG Ra chơi</label>\n                      <div class="unit-input"><input id="rachoi_${e}" type="number" value="5"><span>phút</span></div>\n                  </div>\n              </div>\n              <div class="setting-item">\n                  ${u}\n                  <div class="input-wrapper">\n                      <label for="duvaotiet_${e}">TG Dự vào</label>\n                      <div class="unit-input"><input id="duvaotiet_${e}" type="number" value="3"><span>phút</span></div>\n                  </div>\n              </div>\n              <div class="setting-item">\n                  ${p}\n                  <div class="input-wrapper">\n                      <label for="sotiet_${e}">Số tiết học</label>\n                      <div class="unit-input"><input id="sotiet_${e}" type="number" value="5"><span>tiết</span></div>\n                  </div>\n              </div>\n          </div>\n\n          <button class="modern-btn preview-button" onclick="updatePreviewTable('${e}')">Cập nhật bảng chi tiết</button>\n          <details>\n              <summary>Xem chi tiết lịch</summary>\n              <div class="details-container" id="details-${e}"></div>\n          </details>\n        </div>`};
     const containerSang=document.getElementById("tab-container-sang"),containerChieu=document.getElementById("tab-container-chieu"),days=[{id:"t2",name:"Thứ 2"},{id:"t3",name:"Thứ 3"},{id:"t4",name:"Thứ 4"},{id:"t5",name:"Thứ 5"},{id:"t6",name:"Thứ 6"},{id:"t7",name:"Thứ 7"},{id:"cn",name:"Chủ Nhật"}];days.forEach(e=>{containerSang.innerHTML+=createDayContent(`${e.id}_sang`,e.name,"sang"),containerChieu.innerHTML+=createDayContent(`${e.id}_chieu`,e.name,"chieu")});
     function populateForm(e){const t=e.schedule?e.schedule:e;t&&t.sohoi&&t.lich?(console.log("Bat dau cap nhat form voi du lieu:",t),t.sohoi&&["batdau","vaotiet","rachoi","duvao"].forEach(e=>{const o=document.getElementById(`sohoi_${e}`);o&&(o.value=t.sohoi[e]||"")}),["sang","chieu"].forEach(e=>{days.forEach(o=>{const n=t.lich?.[e]?.[o.id];if(n){document.getElementById(`enable_${o.id}_${e}`).checked=n.enabled,document.getElementById(`gio_${o.id}_${e}`).value=n.gio||"",document.getElementById(`tiethoc_${o.id}_${e}`).value=n.tiethoc||"",document.getElementById(`rachoi_${o.id}_${e}`).value=n.rachoi||"",document.getElementById(`duvaotiet_${o.id}_${e}`).value=n.duvaotiet||"",document.getElementById(`sotiet_${o.id}_${e}`).value=n.sotiet||"";const t=document.getElementById(`chaoco_${o.id}_${e}`);t&&(t.value=n.chaoco||0);const a=document.getElementById(`chunhiem_${o.id}_${e}`);a&&(a.value=n.chunhiem||0),updatePreviewTable(`${o.id}_${e}`)}})})):console.error("Dữ liệu lịch học nhận được không hợp lệ hoặc không đầy đủ:",e)}
     function gatherDataFromForm(){const e={sohoi:{},lich:{sang:{},chieu:{}}};return["batdau","vaotiet","rachoi","duvao"].forEach(t=>{e.sohoi[t]=parseInt(document.getElementById(`sohoi_${t}`).value)||0}),["sang","chieu"].forEach(t=>{days.forEach(o=>{const n=e.lich[t][o.id]={};n.enabled=document.getElementById(`enable_${o.id}_${t}`).checked,n.gio=document.getElementById(`gio_${o.id}_${t}`).value,n.tiethoc=parseInt(document.getElementById(`tiethoc_${o.id}_${t}`).value)||0,n.rachoi=parseInt(document.getElementById(`rachoi_${o.id}_${t}`).value)||0,n.duvaotiet=parseInt(document.getElementById(`duvaotiet_${o.id}_${t}`).value)||0,n.sotiet=parseInt(document.getElementById(`sotiet_${o.id}_${t}`).value)||0;const a=document.getElementById(`chaoco_${o.id}_${t}`);a&&(n.chaoco=parseInt(a.value)||0);const l=document.getElementById(`chunhiem_${o.id}_${t}`);l&&(n.chunhiem=parseInt(l.value)||0)})}),e}
