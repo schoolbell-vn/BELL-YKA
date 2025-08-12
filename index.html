@@ -123,9 +123,9 @@
         padding: 0 15px;
         border: none;
         border-radius: 12px;
-        font-size: 1.08em;
+        font-size: 0.9em; /* Chỉnh sửa: Giảm cỡ chữ */
         font-weight: 700;
-        letter-spacing: 1.5px;
+        letter-spacing: 1.2px;
         transition: box-shadow 0.18s, transform 0.13s, filter 0.13s;
         cursor: pointer;
         outline: none;
@@ -133,6 +133,7 @@
         overflow: hidden;
         z-index: 1;
         text-transform: uppercase;
+        white-space: nowrap; /* Chỉnh sửa: Đảm bảo chữ trên 1 hàng */
     }
     .modern-btn:active {
         transform: scale(0.97);
@@ -147,6 +148,7 @@
         border-right: 5px solid #00e6ff;
         text-shadow: 0 0 12px #00e6ff, 0 2px 8px #000, 0 0 24px #fff;
         box-shadow: 0 4px 18px 0 #00e6ff33, 0 2px 8px #fff2;
+        font-size: 1em; /* Giữ lại size cũ cho nút chính */
     }
     .save-button:hover {
         filter: brightness(1.12);
@@ -198,6 +200,7 @@
         filter: brightness(1.08);
         box-shadow: 0 10px 32px #2ecc7199, 0 2px 12px #fff4;
     }
+    /* Thêm style cho 2 nút mới */
     .info-button {
         background: linear-gradient(90deg, #232526 60%, #414345 100%);
         color: #9b59b6;
@@ -265,6 +268,10 @@
     }
     
     /* --- KHU VỰC CÀI ĐẶT (DETAILS) --- */
+    /* Chỉnh sửa: Thêm padding để căn chỉnh */
+    .div1 {
+        padding: 0 15px;
+    }
     details {
         border: 1.5px solid #414345; border-radius: 12px; margin-bottom: 12px;
         background: #232526; box-shadow: 0 2px 8px rgba(52, 152, 219, 0.06);
@@ -587,12 +594,12 @@
       <div class="button-section">
         <button class="modern-btn save-button" onclick="publishUpdate()">Lưu và gửi cập nhật</button>
         <div class="button-row">
-            <button class="modern-btn test-button" onclick="publishTestBell()">Thử Chuông</button>
-            <button class="modern-btn logout-button" onclick="logout()">Đăng xuất</button>
+            <button class="modern-btn info-button" onclick="requestSystemInfo()">TT HỆ THỐNG</button>
+            <button class="modern-btn lcd-button" onclick="turnOnLcd()">BẬT LCD</button>
         </div>
         <div class="button-row">
-            <button class="modern-btn info-button" onclick="requestSystemInfo()">Thông tin hệ thống</button>
-            <button class="modern-btn lcd-button" onclick="turnOnLcd()">Bật đèn LCD</button>
+            <button class="modern-btn test-button" onclick="publishTestBell()">Thử Chuông</button>
+            <button class="modern-btn logout-button" onclick="logout()">Đăng xuất</button>
         </div>
       </div>
 
@@ -618,7 +625,7 @@
               <span class="label">Màn hình LCD:</span>
               <span class="value" id="info-lcd">Đang tải...</span>
           </div>
-          <div class="info-item">
+        <div class="info-item">
               <span class="label">Bộ nhớ Flash (CT):</span>
               <span class="value" id="info-flash">Đang tải...</span>
           </div>
@@ -644,7 +651,7 @@
     const SET_DATA_TOPIC = "esp32/bell/data/set";
     const GET_DATA_TOPIC = "esp32/bell/data/get";
     const CONTROL_TOPIC = "esp32/bell/control";
-    const SYS_INFO_TOPIC = "esp32/bell/status/sysinfo";
+    const SYS_INFO_TOPIC = "esp32/bell/status/sysinfo"; // === THÊM MỚI: Topic cho thông tin hệ thống
 
     function connectToMqtt(){
         console.log("Đang kết nối đến MQTT broker...");
@@ -657,7 +664,7 @@
         client.on("connect",()=>{
             console.log("Đã kết nối thành công đến MQTT broker!");
             
-            client.subscribe([DATA_STATUS_TOPIC, ONLINE_STATUS_TOPIC, SYS_INFO_TOPIC], {qos:1}, (err)=>{
+            client.subscribe([DATA_STATUS_TOPIC, ONLINE_STATUS_TOPIC, SYS_INFO_TOPIC], {qos:1}, (err)=>{ // Thêm topic mới
                 if(err) {
                     console.error("Lỗi khi đăng ký topic:", err);
                 } else {
@@ -669,6 +676,7 @@
         
         client.on("message",(topic, payload)=>{
             const payloadString = payload.toString();
+            console.log(`Nhận được tin nhắn từ topic: ${topic}`);
             
             if (topic === ONLINE_STATUS_TOPIC) {
                 if (payloadString === 'online') {
@@ -687,6 +695,7 @@
                 _load(payloadString);
             }
 
+            // === THÊM MỚI: Xử lý tin nhắn thông tin hệ thống ===
             if (topic === SYS_INFO_TOPIC) {
                 try {
                     const info = JSON.parse(payloadString);
@@ -694,16 +703,22 @@
                     document.getElementById('info-ip').textContent = info.ip;
                     
                     const rtcStatus = document.getElementById('info-rtc');
-                    rtcStatus.textContent = info.rtc ? "Đã kết nối" : "Không tìm thấy";
-                    rtcStatus.className = info.rtc ? "value connected" : "value disconnected";
+                    if(info.rtc) {
+                        rtcStatus.textContent = "Đã kết nối";
+                        rtcStatus.className = "value connected";
+                    } else {
+                        rtcStatus.textContent = "Không tìm thấy";
+                        rtcStatus.className = "value disconnected";
+                    }
 
                     const lcdStatus = document.getElementById('info-lcd');
-                    lcdStatus.textContent = info.lcd ? "Đã kết nối" : "Không tìm thấy";
-                    lcdStatus.className = info.lcd ? "value connected" : "value disconnected";
-                    
-                    // === THÊM MỚI: Cập nhật thông tin bộ nhớ ===
-                    document.getElementById('info-flash').textContent = info.flash_usage + " %";
-                    document.getElementById('info-ram').textContent = info.ram_usage + " %";
+                    if(info.lcd) {
+                        lcdStatus.textContent = "Đã kết nối";
+                        lcdStatus.className = "value connected";
+                    } else {
+                        lcdStatus.textContent = "Không tìm thấy";
+                        lcdStatus.className = "value disconnected";
+                    }
 
                     document.getElementById('info-modal-overlay').classList.add('visible');
                 } catch(e) {
@@ -716,7 +731,6 @@
         
         client.on("close",()=>{
             console.log("Mất kết nối MQTT. Đang thử kết nối lại...");
-            const statusDiv = document.getElementById("status");
             statusDiv.textContent = "Mất kết nối máy chủ";
             statusDiv.className = "status-bar status-disconnected";
             document.getElementById('clock-wrapper').style.display = 'none';
@@ -724,15 +738,30 @@
         });
     }
 
-    function requestSystemInfo() { if (client && client.connected) { client.publish(CONTROL_TOPIC, "GET_SYS_INFO", {qos: 1}); } else { alert("Chưa kết nối đến thiết bị. Vui lòng đợi!"); } }
-    function turnOnLcd() { if (client && client.connected) { client.publish(CONTROL_TOPIC, "TURN_ON_LCD", {qos: 1}); alert("Đã gửi lệnh bật đèn LCD!"); } else { alert("Chưa kết nối đến thiết bị. Vui lòng đợi!"); } }
-    function closeInfoModal() { document.getElementById('info-modal-overlay').classList.remove('visible'); }
-    function _load(e){try{const t=JSON.parse(e);t.schedule&&t.epoch&&(setTime(t.epoch),populateForm(t))}catch(e){console.error("Lỗi parse JSON từ MQTT:",e)}}
-    function publishUpdate(){if(!client||!client.connected)return void alert("Chưa kết nối đến máy chủ. Vui lòng đợi hoặc kiểm tra lại kết nối mạng.");try{const e=gatherDataFromForm(),t=JSON.stringify({schedule:e});client.publish(SET_DATA_TOPIC,t,{qos:1,retain:!0}),alert("Đã gửi lệnh cập nhật thành công!")}catch(e){alert("Lỗi khi thu thập dữ liệu từ form: "+e.message),console.error(e)}}
-    function publishTestBell(){client&&client.connected?client.publish(CONTROL_TOPIC,"TEST_BELL",{qos:1}):alert("Chưa kết nối đến máy chủ. Vui lòng đợi hoặc kiểm tra lại kết nối mạng.")}
-    function logout(){sessionStorage.removeItem("isLoggedIn"),window.location.href="login.html"}
-    function setTime(e){isNaN(e)||e<1e5?(console.log("Invalid epoch received, clock not set:",e),serverTime=null):(serverTime=new Date(1e3*e),document.getElementById("date").innerHTML=serverTime.toLocaleDateString("vi-VN",{weekday:"long",year:"numeric",month:"long",day:"numeric",timeZone:"Asia/Ho_Chi_Minh"}),updateLocalClock())}
-    function updateLocalClock(){serverTime&&(serverTime.setSeconds(serverTime.getSeconds()+1),document.getElementById("clock").innerHTML=serverTime.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit",timeZone:"Asia/Ho_Chi_Minh",hour12:!1}))}
+    // === THÊM MỚI: Các hàm cho nút mới ===
+    function requestSystemInfo() {
+        if (client && client.connected) {
+            client.publish(CONTROL_TOPIC, "GET_SYS_INFO", {qos: 1});
+        } else {
+            alert("Chưa kết nối đến thiết bị. Vui lòng đợi!");
+        }
+    }
+
+    function turnOnLcd() {
+        if (client && client.connected) {
+            client.publish(CONTROL_TOPIC, "TURN_ON_LCD", {qos: 1});
+            alert("Đã gửi lệnh bật đèn LCD!");
+        } else {
+            alert("Chưa kết nối đến thiết bị. Vui lòng đợi!");
+        }
+    }
+
+    function closeInfoModal() {
+        document.getElementById('info-modal-overlay').classList.remove('visible');
+    }
+
+    // Phần script còn lại giữ nguyên
+    function _load(e){try{const t=JSON.parse(e);t.schedule&&t.epoch&&(setTime(t.epoch),populateForm(t))}catch(t){console.error("Lỗi parse JSON từ MQTT:",t)}}function publishUpdate(){if(!client||!client.connected)return void alert("Chưa kết nối đến máy chủ. Vui lòng đợi hoặc kiểm tra lại kết nối mạng.");try{const e=gatherDataFromForm(),t=JSON.stringify({schedule:e});client.publish(SET_DATA_TOPIC,t,{qos:1,retain:!0}),alert("Đã gửi lệnh cập nhật thành công!")}catch(e){alert("Lỗi khi thu thập dữ liệu từ form: "+e.message),console.error(e)}}function publishTestBell(){client&&client.connected?client.publish(CONTROL_TOPIC,"TEST_BELL",{qos:1}):alert("Chưa kết nối đến máy chủ. Vui lòng đợi hoặc kiểm tra lại kết nối mạng.")}function logout(){sessionStorage.removeItem("isLoggedIn"),window.location.href="login.html"}function setTime(e){isNaN(e)||e<1e5?(console.log("Invalid epoch received, clock not set:",e),serverTime=null):(serverTime=new Date(1e3*e),document.getElementById("date").innerHTML=serverTime.toLocaleDateString("vi-VN",{weekday:"long",year:"numeric",month:"long",day:"numeric",timeZone:"Asia/Ho_Chi_Minh"}),updateLocalClock())}function updateLocalClock(){serverTime&&(serverTime.setSeconds(serverTime.getSeconds()+1),document.getElementById("clock").innerHTML=serverTime.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit",timeZone:"Asia/Ho_Chi_Minh",hour12:!1}))}
     
     const createDayContent = (dayId, dayName, session) => {
         const hasChaoCo = (dayId === 't2_sang');
