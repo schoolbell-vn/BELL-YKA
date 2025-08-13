@@ -198,7 +198,6 @@
         filter: brightness(1.08);
         box-shadow: 0 10px 32px #2ecc7199, 0 2px 12px #fff4;
     }
-    /* Thêm style cho 2 nút mới */
     .info-button {
         background: linear-gradient(90deg, #232526 60%, #414345 100%);
         color: #9b59b6;
@@ -426,7 +425,7 @@
         background: linear-gradient(90deg, #2980b9 0%, #6dd5fa 100%);
     }
 
-    /* === THÊM MỚI: Giao diện cho Modal Thông tin hệ thống === */
+    /* === Giao diện cho Modal Thông tin hệ thống === */
     .modal-overlay {
         position: fixed;
         top: 0;
@@ -452,7 +451,7 @@
         border-radius: 15px;
         border: 2px solid #f1c40f;
         width: 90%;
-        max-width: 380px; /* Tăng chiều rộng để chứa thêm thông tin */
+        max-width: 380px;
         box-shadow: 0 5px 25px rgba(0,0,0,0.4);
         transform: scale(0.9);
         transition: transform 0.3s;
@@ -503,6 +502,89 @@
         font-weight: bold;
         cursor: pointer;
     }
+
+    /* === BỔ SUNG: Giao diện cho Quản lý Vệ tinh === */
+    summary#header-manager {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 54px;
+        border-radius: 12px;
+        background: linear-gradient(90deg, #232526 60%, #414345 100%);
+        color: #9b59b6; /* Màu tím */
+        border-left: 5px solid #9b59b6;
+        border-right: 5px solid #9b59b6;
+        text-shadow: 0 0 12px #9b59b6, 0 2px 8px #000, 0 0 24px #fff;
+        box-shadow: 0 4px 18px 0 #9b59b633, 0 2px 8px #fff2;
+        font-size: 1.08em;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+    }
+    .manager-section h5 {
+        text-align: center;
+        color: #f1c40f;
+        text-transform: uppercase;
+        margin: 10px 0 8px 0;
+        letter-spacing: 1px;
+    }
+    .device-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-height: 200px;
+        overflow-y: auto;
+        padding: 5px;
+        background: #2c3e50;
+        border-radius: 8px;
+    }
+    .device-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        background: #34495e;
+        border-radius: 6px;
+        border-left: 4px solid #f1c40f;
+    }
+    .device-info {
+        display: flex;
+        flex-direction: column;
+    }
+    .device-name {
+        font-weight: bold;
+        font-size: 1em;
+        color: #ecf0f1;
+    }
+    .device-details {
+        font-size: 0.8em;
+        color: #bdc3c7;
+    }
+    .device-action-btn {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 6px;
+        color: #fff;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s;
+        flex-shrink: 0;
+    }
+    .device-action-btn:hover {
+        filter: brightness(1.1);
+        transform: scale(1.05);
+    }
+    .add-btn {
+        background-color: #27ae60;
+    }
+    .remove-btn {
+        background-color: #c0392b;
+    }
+    .list-placeholder {
+        text-align: center;
+        padding: 20px;
+        color: #7f8c8d;
+    }
+
   </style>
 </head>
 <body>
@@ -585,6 +667,28 @@
               </div>
           </details>
       </div>
+
+      <div class="div1">
+        <details>
+          <summary id="header-manager">QUẢN LÝ THIẾT BỊ VỆ TINH</summary>
+          <div class="details-content manager-section">
+            
+            <h5>CÁC THIẾT BỊ ĐANG QUẢN LÝ</h5>
+            <div id="managed-devices-list" class="device-list">
+              <p class="list-placeholder">Chưa có thiết bị nào được quản lý.</p>
+            </div>
+
+            <hr style="margin: 20px 0;">
+
+            <h5>CÁC THIẾT BỊ ĐÃ PHÁT HIỆN</h5>
+            <div id="discovered-devices-list" class="device-list">
+              <p class="list-placeholder">Đang chờ tín hiệu từ các thiết bị...</p>
+            </div>
+
+          </div>
+        </details>
+      </div>
+
       <div class="divider-yellow"></div>
 
       <div class="button-section">
@@ -656,6 +760,10 @@
     const GET_DATA_TOPIC = "esp32/bell/data/get";
     const CONTROL_TOPIC = "esp32/bell/control";
     const SYS_INFO_TOPIC = "esp32/bell/status/sysinfo";
+    // === BỔ SUNG: TOPIC CHO QUẢN LÝ VỆ TINH ===
+    const MANAGE_ADD_TOPIC = "esp32/bell/manage/add";
+    const MANAGE_REMOVE_TOPIC = "esp32/bell/manage/remove";
+    const MANAGE_STATUS_TOPIC = "esp32/bell/manage/status";
 
     function connectToMqtt(){
         console.log("Đang kết nối đến MQTT broker...");
@@ -668,7 +776,9 @@
         client.on("connect",()=>{
             console.log("Đã kết nối thành công đến MQTT broker!");
             
-            client.subscribe([DATA_STATUS_TOPIC, ONLINE_STATUS_TOPIC, SYS_INFO_TOPIC], {qos:1}, (err)=>{
+            // === BỔ SUNG: ĐĂNG KÝ THÊM TOPIC QUẢN LÝ ===
+            const topicsToSubscribe = [DATA_STATUS_TOPIC, ONLINE_STATUS_TOPIC, SYS_INFO_TOPIC, MANAGE_STATUS_TOPIC];
+            client.subscribe(topicsToSubscribe, {qos:1}, (err)=>{
                 if(err) {
                     console.error("Lỗi khi đăng ký topic:", err);
                 } else {
@@ -680,7 +790,7 @@
         
         client.on("message",(topic, payload)=>{
             const payloadString = payload.toString();
-            console.log(`Nhận được tin nhắn từ topic: ${topic}`);
+            // console.log(`Nhận được tin nhắn từ topic: ${topic}`);
             
             if (topic === ONLINE_STATUS_TOPIC) {
                 if (payloadString === 'online') {
@@ -700,6 +810,8 @@
             }
 
             if (topic === SYS_INFO_TOPIC) {
+                // Tạm thời ẩn đi để tránh rối khi debug
+                // console.log("Received SYS_INFO: ", payloadString);
                 try {
                     const info = JSON.parse(payloadString);
                     document.getElementById('info-ssid').textContent = info.ssid;
@@ -730,32 +842,24 @@
                         document.getElementById('info-ram').textContent = info.ram_usage + " %";
                     }
 
-                    if (info.satellites && Array.isArray(info.satellites)) {
-                        const sat1_info = info.satellites.find(s => s.name === "VeTinh-1");
-                        const sat2_info = info.satellites.find(s => s.name === "VeTinh-2");
-
-                        const sat1_elem = document.getElementById('info-sat-1');
-                        if (sat1_info) {
-                            sat1_elem.textContent = sat1_info.status === 'online' ? "Đang hoạt động" : "Ngoại tuyến";
-                            sat1_elem.className = sat1_info.status === 'online' ? "value connected" : "value disconnected";
-                        } else {
-                            sat1_elem.textContent = "Không có dữ liệu";
-                            sat1_elem.className = "value";
-                        }
-
-                        const sat2_elem = document.getElementById('info-sat-2');
-                        if (sat2_info) {
-                            sat2_elem.textContent = sat2_info.status === 'online' ? "Đang hoạt động" : "Ngoại tuyến";
-                            sat2_elem.className = sat2_info.status === 'online' ? "value connected" : "value disconnected";
-                        } else {
-                            sat2_elem.textContent = "Không có dữ liệu";
-                            sat2_elem.className = "value";
-                        }
-                    }
+                    // Tạm thời vô hiệu hoá phần hiển thị vệ tinh cũ
+                    document.getElementById('info-sat-1').parentElement.style.display = 'none';
+                    document.getElementById('info-sat-2').parentElement.style.display = 'none';
 
                     document.getElementById('info-modal-overlay').classList.add('visible');
                 } catch(e) {
                     console.error("Lỗi parse JSON thông tin hệ thống:", e);
+                }
+            }
+            
+            // === BỔ SUNG: XỬ LÝ TIN NHẮN CHỨA DANH SÁCH VỆ TINH ===
+            if (topic === MANAGE_STATUS_TOPIC) {
+                console.log("Received MANAGE_STATUS: ", payloadString);
+                try {
+                    const data = JSON.parse(payloadString);
+                    renderDeviceLists(data.managed || [], data.discovered || []);
+                } catch(e) {
+                    console.error("Lỗi parse JSON quản lý vệ tinh:", e);
                 }
             }
         });
@@ -790,6 +894,68 @@
 
     function closeInfoModal() {
         document.getElementById('info-modal-overlay').classList.remove('visible');
+    }
+
+    // === BỔ SUNG: CÁC HÀM MỚI CHO QUẢN LÝ VỆ TINH ===
+    function addSatellite(deviceName) {
+        if (client && client.connected) {
+            console.log(`Sending ADD command for: ${deviceName}`);
+            client.publish(MANAGE_ADD_TOPIC, deviceName, { qos: 1 });
+        } else {
+            alert("Chưa kết nối đến máy chủ!");
+        }
+    }
+
+    function removeSatellite(deviceName) {
+        if (confirm(`Bạn có chắc muốn ngừng quản lý thiết bị "${deviceName}" không?`)) {
+            if (client && client.connected) {
+                console.log(`Sending REMOVE command for: ${deviceName}`);
+                client.publish(MANAGE_REMOVE_TOPIC, deviceName, { qos: 1 });
+            } else {
+                alert("Chưa kết nối đến máy chủ!");
+            }
+        }
+    }
+
+    function renderDeviceLists(managed, discovered) {
+        const managedListDiv = document.getElementById('managed-devices-list');
+        const discoveredListDiv = document.getElementById('discovered-devices-list');
+
+        managedListDiv.innerHTML = '';
+        if (managed.length === 0) {
+            managedListDiv.innerHTML = '<p class="list-placeholder">Chưa có thiết bị nào được quản lý.</p>';
+        } else {
+            managed.forEach(dev => {
+                const item = document.createElement('div');
+                item.className = 'device-item';
+                item.innerHTML = `
+                    <div class="device-info">
+                        <span class="device-name">${dev.name}</span>
+                        <span class="device-details">Trạng thái: ${dev.online ? 'Online' : 'Offline'}</span>
+                    </div>
+                    <button class="device-action-btn remove-btn" data-device-name="${dev.name}">Xoá</button>
+                `;
+                managedListDiv.appendChild(item);
+            });
+        }
+
+        discoveredListDiv.innerHTML = '';
+        if (discovered.length === 0) {
+            discoveredListDiv.innerHTML = '<p class="list-placeholder">Không phát hiện thiết bị mới nào.</p>';
+        } else {
+            discovered.forEach(dev => {
+                const item = document.createElement('div');
+                item.className = 'device-item';
+                item.innerHTML = `
+                    <div class="device-info">
+                        <span class="device-name">${dev.name}</span>
+                        <span class="device-details">IP: ${dev.ip}</span>
+                    </div>
+                    <button class="device-action-btn add-btn" data-device-name="${dev.name}">Thêm</button>
+                `;
+                discoveredListDiv.appendChild(item);
+            });
+        }
     }
 
     // Phần script còn lại giữ nguyên
@@ -913,6 +1079,21 @@
     window.onload = function() { 
         connectToMqtt();
         setInterval(updateLocalClock, 1000);
+        
+        // === BỔ SUNG: GÁN SỰ KIỆN CLICK CHO CÁC DANH SÁCH VỆ TINH ===
+        document.getElementById('managed-devices-list').addEventListener('click', function(e) {
+            if (e.target && e.target.classList.contains('remove-btn')) {
+                const deviceName = e.target.getAttribute('data-device-name');
+                removeSatellite(deviceName);
+            }
+        });
+
+        document.getElementById('discovered-devices-list').addEventListener('click', function(e) {
+            if (e.target && e.target.classList.contains('add-btn')) {
+                const deviceName = e.target.getAttribute('data-device-name');
+                addSatellite(deviceName);
+            }
+        });
     };
   </script>
 </body>
