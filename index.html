@@ -639,6 +639,7 @@
     </div>
     <button class="close-modal-btn" onclick="closeInfoModal()">Đóng</button>
 </div>
+  </div>
 
 
   <script>
@@ -698,69 +699,66 @@
                 _load(payloadString);
             }
 
-            // === CẬP NHẬT: Xử lý tin nhắn thông tin hệ thống (bao gồm vệ tinh) ===
-           // === CẬP NHẬT: Xử lý tin nhắn thông tin hệ thống (bao gồm vệ tinh, flash, ram) ===
-if (topic === SYS_INFO_TOPIC) {
-    try {
-        const info = JSON.parse(payloadString);
-        document.getElementById('info-ssid').textContent = info.ssid;
-        document.getElementById('info-ip').textContent = info.ip;
-        
-        const rtcStatus = document.getElementById('info-rtc');
-        if(info.rtc) {
-            rtcStatus.textContent = "Đã kết nối";
-            rtcStatus.className = "value connected";
-        } else {
-            rtcStatus.textContent = "Không tìm thấy";
-            rtcStatus.className = "value disconnected";
-        }
+            if (topic === SYS_INFO_TOPIC) {
+                try {
+                    const info = JSON.parse(payloadString);
+                    document.getElementById('info-ssid').textContent = info.ssid;
+                    document.getElementById('info-ip').textContent = info.ip;
+                    
+                    const rtcStatus = document.getElementById('info-rtc');
+                    if(info.rtc) {
+                        rtcStatus.textContent = "Đã kết nối";
+                        rtcStatus.className = "value connected";
+                    } else {
+                        rtcStatus.textContent = "Không tìm thấy";
+                        rtcStatus.className = "value disconnected";
+                    }
 
-        const lcdStatus = document.getElementById('info-lcd');
-        if(info.lcd) {
-            lcdStatus.textContent = "Đã kết nối";
-            lcdStatus.className = "value connected";
-        } else {
-            lcdStatus.textContent = "Không tìm thấy";
-            lcdStatus.className = "value disconnected";
-        }
+                    const lcdStatus = document.getElementById('info-lcd');
+                    if(info.lcd) {
+                        lcdStatus.textContent = "Đã kết nối";
+                        lcdStatus.className = "value connected";
+                    } else {
+                        lcdStatus.textContent = "Không tìm thấy";
+                        lcdStatus.className = "value disconnected";
+                    }
 
-        // --- Bổ sung xử lý cho Flash và RAM ---
-        if (info.flash_usage) {
-            document.getElementById('info-flash').textContent = info.flash_usage + " %";
-        }
-        if (info.ram_usage) {
-            document.getElementById('info-ram').textContent = info.ram_usage + " %";
-        }
+                    if (info.flash_usage) {
+                        document.getElementById('info-flash').textContent = info.flash_usage + " %";
+                    }
+                    if (info.ram_usage) {
+                        document.getElementById('info-ram').textContent = info.ram_usage + " %";
+                    }
 
-        // --- Xử lý cho vệ tinh ---
-        if (info.satellites && Array.isArray(info.satellites)) {
-            const sat1_info = info.satellites.find(s => s.name === "VeTinh-1");
-            const sat2_info = info.satellites.find(s => s.name === "VeTinh-2");
+                    if (info.satellites && Array.isArray(info.satellites)) {
+                        const sat1_info = info.satellites.find(s => s.name === "VeTinh-1");
+                        const sat2_info = info.satellites.find(s => s.name === "VeTinh-2");
 
-            const sat1_elem = document.getElementById('info-sat-1');
-            if (sat1_info) {
-                sat1_elem.textContent = sat1_info.status === 'online' ? "Đang hoạt động" : "Ngoại tuyến";
-                sat1_elem.className = sat1_info.status === 'online' ? "value connected" : "value disconnected";
-            } else {
-                sat1_elem.textContent = "Không có dữ liệu";
-                sat1_elem.className = "value";
+                        const sat1_elem = document.getElementById('info-sat-1');
+                        if (sat1_info) {
+                            sat1_elem.textContent = sat1_info.status === 'online' ? "Đang hoạt động" : "Ngoại tuyến";
+                            sat1_elem.className = sat1_info.status === 'online' ? "value connected" : "value disconnected";
+                        } else {
+                            sat1_elem.textContent = "Không có dữ liệu";
+                            sat1_elem.className = "value";
+                        }
+
+                        const sat2_elem = document.getElementById('info-sat-2');
+                        if (sat2_info) {
+                            sat2_elem.textContent = sat2_info.status === 'online' ? "Đang hoạt động" : "Ngoại tuyến";
+                            sat2_elem.className = sat2_info.status === 'online' ? "value connected" : "value disconnected";
+                        } else {
+                            sat2_elem.textContent = "Không có dữ liệu";
+                            sat2_elem.className = "value";
+                        }
+                    }
+
+                    document.getElementById('info-modal-overlay').classList.add('visible');
+                } catch(e) {
+                    console.error("Lỗi parse JSON thông tin hệ thống:", e);
+                }
             }
-
-            const sat2_elem = document.getElementById('info-sat-2');
-            if (sat2_info) {
-                sat2_elem.textContent = sat2_info.status === 'online' ? "Đang hoạt động" : "Ngoại tuyến";
-                sat2_elem.className = sat2_info.status === 'online' ? "value connected" : "value disconnected";
-            } else {
-                sat2_elem.textContent = "Không có dữ liệu";
-                sat2_elem.className = "value";
-            }
-        }
-
-        document.getElementById('info-modal-overlay').classList.add('visible');
-    } catch(e) {
-        console.error("Lỗi parse JSON thông tin hệ thống:", e);
-    }
-}
+        });
         
         client.on("error", e => console.error("Lỗi kết nối MQTT:", e));
         
@@ -919,4 +917,3 @@ if (topic === SYS_INFO_TOPIC) {
   </script>
 </body>
 </html>
-
