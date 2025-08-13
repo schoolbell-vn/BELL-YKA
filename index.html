@@ -603,35 +603,42 @@
   </div>
 
   <div class="modal-overlay" id="info-modal-overlay">
-      <div class="info-modal">
-          <h4>Thông tin hệ thống</h4>
-          <div class="info-item">
-              <span class="label">Máy chủ (WiFi):</span>
-              <span class="value" id="info-ssid">Đang tải...</span>
-          </div>
-          <div class="info-item">
-              <span class="label">Máy chủ (IP):</span>
-              <span class="value" id="info-ip">Đang tải...</span>
-          </div>
-          <div class="info-item">
-              <span class="label">Module Đồng hồ (RTC):</span>
-              <span class="value" id="info-rtc">Đang tải...</span>
-          </div>
-          <div class="info-item">
-              <span class="label">Màn hình LCD:</span>
-              <span class="value" id="info-lcd">Đang tải...</span>
-          </div>
-          <div class="info-item">
-              <span class="label" style="color:#f1c40f; font-weight: bold;">Vệ tinh 1 (VeTinh-1):</span>
-              <span class="value" id="info-sat-1">Đang tải...</span>
-          </div>
-          <div class="info-item">
-              <span class="label" style="color:#f1c40f; font-weight: bold;">Vệ tinh 2 (VeTinh-2):</span>
-              <span class="value" id="info-sat-2">Đang tải...</span>
-          </div>
-          <button class="close-modal-btn" onclick="closeInfoModal()">Đóng</button>
-      </div>
-  </div>
+    <div class="info-modal">
+    <h4>Thông tin hệ thống</h4>
+    <div class="info-item">
+        <span class="label">Máy chủ (WiFi):</span>
+        <span class="value" id="info-ssid">Đang tải...</span>
+    </div>
+    <div class="info-item">
+        <span class="label">Máy chủ (IP):</span>
+        <span class="value" id="info-ip">Đang tải...</span>
+    </div>
+    <div class="info-item">
+        <span class="label">Module Đồng hồ (RTC):</span>
+        <span class="value" id="info-rtc">Đang tải...</span>
+    </div>
+    <div class="info-item">
+        <span class="label">Màn hình LCD:</span>
+        <span class="value" id="info-lcd">Đang tải...</span>
+    </div>
+    <div class="info-item">
+        <span class="label">Sử dụng Flash (ROM):</span>
+        <span class="value" id="info-flash">Đang tải...</span>
+    </div>
+    <div class="info-item">
+        <span class="label">Sử dụng bộ nhớ (RAM):</span>
+        <span class="value" id="info-ram">Đang tải...</span>
+    </div>
+    <div class="info-item">
+        <span class="label" style="color:#f1c40f; font-weight: bold;">Vệ tinh 1 (VeTinh-1):</span>
+        <span class="value" id="info-sat-1">Đang tải...</span>
+    </div>
+    <div class="info-item">
+        <span class="label" style="color:#f1c40f; font-weight: bold;">Vệ tinh 2 (VeTinh-2):</span>
+        <span class="value" id="info-sat-2">Đang tải...</span>
+    </div>
+    <button class="close-modal-btn" onclick="closeInfoModal()">Đóng</button>
+</div>
 
 
   <script>
@@ -692,60 +699,68 @@
             }
 
             // === CẬP NHẬT: Xử lý tin nhắn thông tin hệ thống (bao gồm vệ tinh) ===
-            if (topic === SYS_INFO_TOPIC) {
-                try {
-                    const info = JSON.parse(payloadString);
-                    document.getElementById('info-ssid').textContent = info.ssid;
-                    document.getElementById('info-ip').textContent = info.ip;
-                    
-                    const rtcStatus = document.getElementById('info-rtc');
-                    if(info.rtc) {
-                        rtcStatus.textContent = "Đã kết nối";
-                        rtcStatus.className = "value connected";
-                    } else {
-                        rtcStatus.textContent = "Không tìm thấy";
-                        rtcStatus.className = "value disconnected";
-                    }
+           // === CẬP NHẬT: Xử lý tin nhắn thông tin hệ thống (bao gồm vệ tinh, flash, ram) ===
+if (topic === SYS_INFO_TOPIC) {
+    try {
+        const info = JSON.parse(payloadString);
+        document.getElementById('info-ssid').textContent = info.ssid;
+        document.getElementById('info-ip').textContent = info.ip;
+        
+        const rtcStatus = document.getElementById('info-rtc');
+        if(info.rtc) {
+            rtcStatus.textContent = "Đã kết nối";
+            rtcStatus.className = "value connected";
+        } else {
+            rtcStatus.textContent = "Không tìm thấy";
+            rtcStatus.className = "value disconnected";
+        }
 
-                    const lcdStatus = document.getElementById('info-lcd');
-                    if(info.lcd) {
-                        lcdStatus.textContent = "Đã kết nối";
-                        lcdStatus.className = "value connected";
-                    } else {
-                        lcdStatus.textContent = "Không tìm thấy";
-                        lcdStatus.className = "value disconnected";
-                    }
+        const lcdStatus = document.getElementById('info-lcd');
+        if(info.lcd) {
+            lcdStatus.textContent = "Đã kết nối";
+            lcdStatus.className = "value connected";
+        } else {
+            lcdStatus.textContent = "Không tìm thấy";
+            lcdStatus.className = "value disconnected";
+        }
 
-                    // --- Bổ sung xử lý cho vệ tinh ---
-                    if (info.satellites && Array.isArray(info.satellites)) {
-                        const sat1_info = info.satellites.find(s => s.name === "VeTinh-1");
-                        const sat2_info = info.satellites.find(s => s.name === "VeTinh-2");
+        // --- Bổ sung xử lý cho Flash và RAM ---
+        if (info.flash_usage) {
+            document.getElementById('info-flash').textContent = info.flash_usage + " %";
+        }
+        if (info.ram_usage) {
+            document.getElementById('info-ram').textContent = info.ram_usage + " %";
+        }
 
-                        const sat1_elem = document.getElementById('info-sat-1');
-                        if (sat1_info) {
-                            sat1_elem.textContent = sat1_info.status === 'online' ? "Đang hoạt động" : "Ngoại tuyến";
-                            sat1_elem.className = sat1_info.status === 'online' ? "value connected" : "value disconnected";
-                        } else {
-                            sat1_elem.textContent = "Không có dữ liệu";
-                            sat1_elem.className = "value";
-                        }
+        // --- Xử lý cho vệ tinh ---
+        if (info.satellites && Array.isArray(info.satellites)) {
+            const sat1_info = info.satellites.find(s => s.name === "VeTinh-1");
+            const sat2_info = info.satellites.find(s => s.name === "VeTinh-2");
 
-                        const sat2_elem = document.getElementById('info-sat-2');
-                        if (sat2_info) {
-                            sat2_elem.textContent = sat2_info.status === 'online' ? "Đang hoạt động" : "Ngoại tuyến";
-                            sat2_elem.className = sat2_info.status === 'online' ? "value connected" : "value disconnected";
-                        } else {
-                            sat2_elem.textContent = "Không có dữ liệu";
-                            sat2_elem.className = "value";
-                        }
-                    }
-
-                    document.getElementById('info-modal-overlay').classList.add('visible');
-                } catch(e) {
-                    console.error("Lỗi parse JSON thông tin hệ thống:", e);
-                }
+            const sat1_elem = document.getElementById('info-sat-1');
+            if (sat1_info) {
+                sat1_elem.textContent = sat1_info.status === 'online' ? "Đang hoạt động" : "Ngoại tuyến";
+                sat1_elem.className = sat1_info.status === 'online' ? "value connected" : "value disconnected";
+            } else {
+                sat1_elem.textContent = "Không có dữ liệu";
+                sat1_elem.className = "value";
             }
-        });
+
+            const sat2_elem = document.getElementById('info-sat-2');
+            if (sat2_info) {
+                sat2_elem.textContent = sat2_info.status === 'online' ? "Đang hoạt động" : "Ngoại tuyến";
+                sat2_elem.className = sat2_info.status === 'online' ? "value connected" : "value disconnected";
+            } else {
+                sat2_elem.textContent = "Không có dữ liệu";
+                sat2_elem.className = "value";
+            }
+        }
+
+        document.getElementById('info-modal-overlay').classList.add('visible');
+    } catch(e) {
+        console.error("Lỗi parse JSON thông tin hệ thống:", e);
+    }
+}
         
         client.on("error", e => console.error("Lỗi kết nối MQTT:", e));
         
@@ -904,3 +919,4 @@
   </script>
 </body>
 </html>
+
