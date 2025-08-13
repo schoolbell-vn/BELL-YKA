@@ -123,7 +123,7 @@
         padding: 0 15px;
         border: none;
         border-radius: 12px;
-        font-size: 1em; /* Giảm size cho vừa 2 nút */
+        font-size: 1em;
         font-weight: 700;
         letter-spacing: 1.2px;
         transition: box-shadow 0.18s, transform 0.13s, filter 0.13s;
@@ -210,20 +210,7 @@
         filter: brightness(1.08);
         box-shadow: 0 10px 32px #9b59b699, 0 2px 12px #fff4;
     }
-    .lcd-button {
-        background: linear-gradient(90deg, #232526 60%, #414345 100%);
-        color: #3498db;
-        border-left: 5px solid #3498db;
-        border-right: 5px solid #3498db;
-        text-shadow: 0 0 12px #3498db, 0 2px 8px #000, 0 0 24px #fff;
-        box-shadow: 0 4px 18px 0 #3498db33, 0 2px 8px #fff2;
-    }
-    .lcd-button:hover {
-        filter: brightness(1.08);
-        box-shadow: 0 10px 32px #3498db99, 0 2px 12px #fff4;
-    }
     
-
     /* --- TAB NGÀY & NỘI DUNG TAB --- */
     .tab { display: flex; justify-content: space-around; border-bottom: 2px solid #f1c40f; margin: 0 15px 0 15px; position: relative; z-index: 1; }
     .tab button {
@@ -699,7 +686,6 @@
         </div>
         <div class="button-row">
             <button class="modern-btn info-button" onclick="requestSystemInfo()">Thông tin hệ thống</button>
-            <button class="modern-btn lcd-button" onclick="turnOnLcd()">Bật đèn LCD</button>
         </div>
       </div>
 
@@ -732,14 +718,6 @@
     <div class="info-item">
         <span class="label">Sử dụng bộ nhớ (RAM):</span>
         <span class="value" id="info-ram">Đang tải...</span>
-    </div>
-    <div class="info-item">
-        <span class="label" style="color:#f1c40f; font-weight: bold;">Vệ tinh 1 (VeTinh-1):</span>
-        <span class="value" id="info-sat-1">Đang tải...</span>
-    </div>
-    <div class="info-item">
-        <span class="label" style="color:#f1c40f; font-weight: bold;">Vệ tinh 2 (VeTinh-2):</span>
-        <span class="value" id="info-sat-2">Đang tải...</span>
     </div>
     <button class="close-modal-btn" onclick="closeInfoModal()">Đóng</button>
 </div>
@@ -790,7 +768,6 @@
         
         client.on("message",(topic, payload)=>{
             const payloadString = payload.toString();
-            // console.log(`Nhận được tin nhắn từ topic: ${topic}`);
             
             if (topic === ONLINE_STATUS_TOPIC) {
                 if (payloadString === 'online') {
@@ -810,8 +787,6 @@
             }
 
             if (topic === SYS_INFO_TOPIC) {
-                // Tạm thời ẩn đi để tránh rối khi debug
-                // console.log("Received SYS_INFO: ", payloadString);
                 try {
                     const info = JSON.parse(payloadString);
                     document.getElementById('info-ssid').textContent = info.ssid;
@@ -842,17 +817,12 @@
                         document.getElementById('info-ram').textContent = info.ram_usage + " %";
                     }
 
-                    // Tạm thời vô hiệu hoá phần hiển thị vệ tinh cũ
-                    document.getElementById('info-sat-1').parentElement.style.display = 'none';
-                    document.getElementById('info-sat-2').parentElement.style.display = 'none';
-
                     document.getElementById('info-modal-overlay').classList.add('visible');
                 } catch(e) {
                     console.error("Lỗi parse JSON thông tin hệ thống:", e);
                 }
             }
             
-            // === BỔ SUNG: XỬ LÝ TIN NHẮN CHỨA DANH SÁCH VỆ TINH ===
             if (topic === MANAGE_STATUS_TOPIC) {
                 console.log("Received MANAGE_STATUS: ", payloadString);
                 try {
@@ -883,20 +853,10 @@
         }
     }
 
-    function turnOnLcd() {
-        if (client && client.connected) {
-            client.publish(CONTROL_TOPIC, "TURN_ON_LCD", {qos: 1});
-            alert("Đã gửi lệnh bật đèn LCD!");
-        } else {
-            alert("Chưa kết nối đến thiết bị. Vui lòng đợi!");
-        }
-    }
-
     function closeInfoModal() {
         document.getElementById('info-modal-overlay').classList.remove('visible');
     }
 
-    // === BỔ SUNG: CÁC HÀM MỚI CHO QUẢN LÝ VỆ TINH ===
     function addSatellite(deviceName) {
         if (client && client.connected) {
             console.log(`Sending ADD command for: ${deviceName}`);
@@ -958,7 +918,6 @@
         }
     }
 
-    // Phần script còn lại giữ nguyên
     function _load(e){try{const t=JSON.parse(e);t.schedule&&t.epoch&&(setTime(t.epoch),populateForm(t))}catch(t){console.error("Lỗi parse JSON từ MQTT:",t)}}function publishUpdate(){if(!client||!client.connected)return void alert("Chưa kết nối đến máy chủ. Vui lòng đợi hoặc kiểm tra lại kết nối mạng.");try{const e=gatherDataFromForm(),t=JSON.stringify({schedule:e});client.publish(SET_DATA_TOPIC,t,{qos:1,retain:!0}),alert("Đã gửi lệnh cập nhật thành công!")}catch(e){alert("Lỗi khi thu thập dữ liệu từ form: "+e.message),console.error(e)}}function publishTestBell(){client&&client.connected?client.publish(CONTROL_TOPIC,"TEST_BELL",{qos:1}):alert("Chưa kết nối đến máy chủ. Vui lòng đợi hoặc kiểm tra lại kết nối mạng.")}function logout(){sessionStorage.removeItem("isLoggedIn"),window.location.href="login.html"}function setTime(e){isNaN(e)||e<1e5?(console.log("Invalid epoch received, clock not set:",e),serverTime=null):(serverTime=new Date(1e3*e),document.getElementById("date").innerHTML=serverTime.toLocaleDateString("vi-VN",{weekday:"long",year:"numeric",month:"long",day:"numeric",timeZone:"Asia/Ho_Chi_Minh"}),updateLocalClock())}function updateLocalClock(){serverTime&&(serverTime.setSeconds(serverTime.getSeconds()+1),document.getElementById("clock").innerHTML=serverTime.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit",timeZone:"Asia/Ho_Chi_Minh",hour12:!1}))}
     
     const createDayContent = (dayId, dayName, session) => {
@@ -1080,7 +1039,6 @@
         connectToMqtt();
         setInterval(updateLocalClock, 1000);
         
-        // === BỔ SUNG: GÁN SỰ KIỆN CLICK CHO CÁC DANH SÁCH VỆ TINH ===
         document.getElementById('managed-devices-list').addEventListener('click', function(e) {
             if (e.target && e.target.classList.contains('remove-btn')) {
                 const deviceName = e.target.getAttribute('data-device-name');
