@@ -580,6 +580,8 @@
         font-size: 0.8em;
         color: #bdc3c7;
     }
+    .device-details .connected { color: #2ecc71; font-weight: bold; }
+    .device-details .disconnected { color: #e74c3c; font-weight: bold; }
     .device-action-btn {
         padding: 6px 12px;
         border: none;
@@ -777,7 +779,7 @@
     // === TOPIC CHO QUẢN LÝ VỆ TINH ===
     const MANAGE_ADD_TOPIC = "esp32/bell/manage/add";
     const MANAGE_REMOVE_TOPIC = "esp32/bell/manage/remove";
-    const MANAGE_STATUS_TOPIC = "esp32/bell/manage/status";
+    const MANAGE_STATUS_TOPIC = "esp32/bell/manage/status"; // Topic để nhận danh sách vệ tinh từ Master
     // === TOPIC CHO PHẢN HỒI LỆNH ===
     const COMMAND_ACK_TOPIC = "esp32/bell/command/ack";
 
@@ -989,7 +991,7 @@
                 item.innerHTML = `
                     <div class="device-info">
                         <span class="device-name">${dev.name}</span>
-                        <span class="device-details">IP: ${dev.ip}</span>
+                        <span class="device-details">IP: ${dev.ip || 'N/A'}</span>
                     </div>
                     <button class="device-action-btn add-btn" data-device-name="${dev.name}">Thêm</button>
                 `;
