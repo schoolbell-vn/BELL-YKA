@@ -34,6 +34,40 @@
         box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
     }
 
+    /* === KHU VỰC THÔNG BÁO PHẢN HỒI === */
+    #notification-area {
+        position: fixed;
+        top: 15px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 200;
+        width: 90%;
+        max-width: 360px;
+    }
+    .notification {
+        padding: 12px 18px;
+        border-radius: 8px;
+        color: #fff;
+        font-weight: bold;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: opacity 0.3s, transform 0.3s;
+        margin-bottom: 10px;
+    }
+    .notification.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    .notification.success {
+        background: linear-gradient(90deg, #27ae60, #2ecc71);
+    }
+    .notification.error {
+        background: linear-gradient(90deg, #c0392b, #e74c3c);
+    }
+
+
     /* --- TIÊU ĐỀ & MÀU SẮC NỔI BẬT --- */
     h2 {
         font-size: 1.7em;
@@ -490,7 +524,7 @@
         cursor: pointer;
     }
 
-    /* === BỔ SUNG: Giao diện cho Quản lý Vệ tinh === */
+    /* === Giao diện cho Quản lý Vệ tinh === */
     summary#header-manager {
         display: flex;
         align-items: center;
@@ -575,6 +609,8 @@
   </style>
 </head>
 <body>
+  <div id="notification-area"></div>
+
   <div id="main">
     <div id="content">
       <div style="text-align: center; padding: 15px 0 5px 0;">
@@ -656,7 +692,7 @@
       </div>
 
       <div class="div1">
-        <details>
+        <details open>
           <summary id="header-manager">QUẢN LÝ THIẾT BỊ VỆ TINH</summary>
           <div class="details-content manager-section">
             
@@ -685,7 +721,7 @@
             <button class="modern-btn logout-button" onclick="logout()">Đăng xuất</button>
         </div>
         <div class="button-row">
-            <button class="modern-btn info-button" onclick="requestSystemInfo()">Thông tin hệ thống</button>
+            <button class="modern-btn info-button" onclick="requestSystemInfo()" style="width: 100%;">Thông tin hệ thống</button>
         </div>
       </div>
 
@@ -738,10 +774,12 @@
     const GET_DATA_TOPIC = "esp32/bell/data/get";
     const CONTROL_TOPIC = "esp32/bell/control";
     const SYS_INFO_TOPIC = "esp32/bell/status/sysinfo";
-    // === BỔ SUNG: TOPIC CHO QUẢN LÝ VỆ TINH ===
+    // === TOPIC CHO QUẢN LÝ VỆ TINH ===
     const MANAGE_ADD_TOPIC = "esp32/bell/manage/add";
     const MANAGE_REMOVE_TOPIC = "esp32/bell/manage/remove";
     const MANAGE_STATUS_TOPIC = "esp32/bell/manage/status";
+    // === TOPIC CHO PHẢN HỒI LỆNH ===
+    const COMMAND_ACK_TOPIC = "esp32/bell/command/ack";
 
     function connectToMqtt(){
         console.log("Đang kết nối đến MQTT broker...");
@@ -754,8 +792,7 @@
         client.on("connect",()=>{
             console.log("Đã kết nối thành công đến MQTT broker!");
             
-            // === BỔ SUNG: ĐĂNG KÝ THÊM TOPIC QUẢN LÝ ===
-            const topicsToSubscribe = [DATA_STATUS_TOPIC, ONLINE_STATUS_TOPIC, SYS_INFO_TOPIC, MANAGE_STATUS_TOPIC];
+            const topicsToSubscribe = [DATA_STATUS_TOPIC, ONLINE_STATUS_TOPIC, SYS_INFO_TOPIC, MANAGE_STATUS_TOPIC, COMMAND_ACK_TOPIC];
             client.subscribe(topicsToSubscribe, {qos:1}, (err)=>{
                 if(err) {
                     console.error("Lỗi khi đăng ký topic:", err);
@@ -824,12 +861,33 @@
             }
             
             if (topic === MANAGE_STATUS_TOPIC) {
-                console.log("Received MANAGE_STATUS: ", payloadString);
                 try {
                     const data = JSON.parse(payloadString);
                     renderDeviceLists(data.managed || [], data.discovered || []);
                 } catch(e) {
                     console.error("Lỗi parse JSON quản lý vệ tinh:", e);
+                }
+            }
+
+            if (topic === COMMAND_ACK_TOPIC) {
+                try {
+                    const ack = JSON.parse(payloadString);
+                    let message = '';
+                    if (ack.command === 'SET_DATA') {
+                        message = `[${ack.name}] đã nhận và lưu lịch mới.`;
+                    } else if (ack.command === 'TEST_BELL') {
+                        message = `Thử chuông tại [${ack.name}] thành công.`;
+                    } else if (ack.command === 'MANAGE_ADD') {
+                        message = `Đã thêm [${ack.payload}] vào danh sách quản lý.`;
+                    } else if (ack.command === 'MANAGE_REMOVE') {
+                        message = `Đã xoá [${ack.payload}] khỏi danh sách quản lý.`;
+                    }
+                    
+                    if (message) {
+                        showNotification(message, ack.status || 'success');
+                    }
+                } catch (e) {
+                    console.error("Lỗi parse JSON phản hồi lệnh:", e);
                 }
             }
         });
@@ -845,11 +903,30 @@
         });
     }
 
+    function showNotification(message, type = 'success') {
+        const area = document.getElementById('notification-area');
+        const notif = document.createElement('div');
+        notif.className = `notification ${type}`;
+        notif.textContent = message;
+        area.appendChild(notif);
+        
+        setTimeout(() => { notif.classList.add('show'); }, 10);
+
+        setTimeout(() => {
+            notif.classList.remove('show');
+            setTimeout(() => {
+                if(area.contains(notif)) {
+                    area.removeChild(notif);
+                }
+            }, 300);
+        }, 4000);
+    }
+
     function requestSystemInfo() {
         if (client && client.connected) {
             client.publish(CONTROL_TOPIC, "GET_SYS_INFO", {qos: 1});
         } else {
-            alert("Chưa kết nối đến thiết bị. Vui lòng đợi!");
+            showNotification("Chưa kết nối đến máy chủ!", 'error');
         }
     }
 
@@ -862,7 +939,7 @@
             console.log(`Sending ADD command for: ${deviceName}`);
             client.publish(MANAGE_ADD_TOPIC, deviceName, { qos: 1 });
         } else {
-            alert("Chưa kết nối đến máy chủ!");
+            showNotification("Chưa kết nối đến máy chủ!", 'error');
         }
     }
 
@@ -872,7 +949,7 @@
                 console.log(`Sending REMOVE command for: ${deviceName}`);
                 client.publish(MANAGE_REMOVE_TOPIC, deviceName, { qos: 1 });
             } else {
-                alert("Chưa kết nối đến máy chủ!");
+                showNotification("Chưa kết nối đến máy chủ!", 'error');
             }
         }
     }
@@ -888,10 +965,13 @@
             managed.forEach(dev => {
                 const item = document.createElement('div');
                 item.className = 'device-item';
+                let statusClass = dev.online ? 'connected' : 'disconnected';
+                let statusText = dev.online ? 'Online' : 'Offline';
+                
                 item.innerHTML = `
                     <div class="device-info">
                         <span class="device-name">${dev.name}</span>
-                        <span class="device-details">Trạng thái: ${dev.online ? 'Online' : 'Offline'}</span>
+                        <span class="device-details">Trạng thái: <strong class="${statusClass}">${statusText}</strong></span>
                     </div>
                     <button class="device-action-btn remove-btn" data-device-name="${dev.name}">Xoá</button>
                 `;
@@ -918,7 +998,33 @@
         }
     }
 
-    function _load(e){try{const t=JSON.parse(e);t.schedule&&t.epoch&&(setTime(t.epoch),populateForm(t))}catch(t){console.error("Lỗi parse JSON từ MQTT:",t)}}function publishUpdate(){if(!client||!client.connected)return void alert("Chưa kết nối đến máy chủ. Vui lòng đợi hoặc kiểm tra lại kết nối mạng.");try{const e=gatherDataFromForm(),t=JSON.stringify({schedule:e});client.publish(SET_DATA_TOPIC,t,{qos:1,retain:!0}),alert("Đã gửi lệnh cập nhật thành công!")}catch(e){alert("Lỗi khi thu thập dữ liệu từ form: "+e.message),console.error(e)}}function publishTestBell(){client&&client.connected?client.publish(CONTROL_TOPIC,"TEST_BELL",{qos:1}):alert("Chưa kết nối đến máy chủ. Vui lòng đợi hoặc kiểm tra lại kết nối mạng.")}function logout(){sessionStorage.removeItem("isLoggedIn"),window.location.href="login.html"}function setTime(e){isNaN(e)||e<1e5?(console.log("Invalid epoch received, clock not set:",e),serverTime=null):(serverTime=new Date(1e3*e),document.getElementById("date").innerHTML=serverTime.toLocaleDateString("vi-VN",{weekday:"long",year:"numeric",month:"long",day:"numeric",timeZone:"Asia/Ho_Chi_Minh"}),updateLocalClock())}function updateLocalClock(){serverTime&&(serverTime.setSeconds(serverTime.getSeconds()+1),document.getElementById("clock").innerHTML=serverTime.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit",timeZone:"Asia/Ho_Chi_Minh",hour12:!1}))}
+    function _load(e){try{const t=JSON.parse(e);t.schedule&&t.epoch&&(setTime(t.epoch),populateForm(t))}catch(t){console.error("Lỗi parse JSON từ MQTT:",t)}}
+    
+    function publishUpdate(){
+        if(!client||!client.connected) return showNotification("Chưa kết nối máy chủ!", 'error');
+        try {
+            const e=gatherDataFromForm();
+            const t=JSON.stringify({schedule:e});
+            client.publish(SET_DATA_TOPIC,t,{qos:1,retain:!0});
+            showNotification("Đã gửi lệnh cập nhật lịch...");
+        } catch(e) {
+            showNotification("Lỗi: " + e.message, 'error');
+            console.error(e)
+        }
+    }
+    
+    function publishTestBell(){
+        if(client&&client.connected) {
+            client.publish(CONTROL_TOPIC,"TEST_BELL",{qos:1});
+            showNotification("Đã gửi lệnh thử chuông...");
+        } else {
+            showNotification("Chưa kết nối máy chủ!", 'error');
+        }
+    }
+
+    function logout(){sessionStorage.removeItem("isLoggedIn"),window.location.href="login.html"}
+    function setTime(e){isNaN(e)||e<1e5?(console.log("Invalid epoch received, clock not set:",e),serverTime=null):(serverTime=new Date(1e3*e),document.getElementById("date").innerHTML=serverTime.toLocaleDateString("vi-VN",{weekday:"long",year:"numeric",month:"long",day:"numeric",timeZone:"Asia/Ho_Chi_Minh"}),updateLocalClock())}
+    function updateLocalClock(){serverTime&&(serverTime.setSeconds(serverTime.getSeconds()+1),document.getElementById("clock").innerHTML=serverTime.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit",timeZone:"Asia/Ho_Chi_Minh",hour12:!1}))}
     
     const createDayContent = (dayId, dayName, session) => {
         const hasChaoCo = (dayId === 't2_sang');
