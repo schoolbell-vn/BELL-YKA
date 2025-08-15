@@ -243,7 +243,6 @@
         filter: brightness(1.08);
         box-shadow: 0 10px 32px #9b59b699, 0 2px 12px #fff4;
     }
-    /* === NÚT RESET WIFI MỚI === */
     .reset-wifi-button {
         background: linear-gradient(90deg, #4e1a14 0%, #8d2d23 100%);
         color: #fdd8d8;
@@ -560,7 +559,7 @@
     }
 
 
-    /* === Giao diện cho Quản lý Vệ tinh === */
+    /* === Giao diện cho Quản lý Vệ tinh (NÂNG CẤP) === */
     summary#header-manager {
         display: flex;
         align-items: center;
@@ -587,38 +586,60 @@
     .device-list {
         display: flex;
         flex-direction: column;
-        gap: 10px;
-        max-height: 200px;
+        gap: 12px; /* Tăng khoảng cách */
+        max-height: 250px;
         overflow-y: auto;
         padding: 5px;
         background: #2c3e50;
         border-radius: 8px;
     }
     .device-item {
-        display: grid;
-        grid-template-columns: 1fr auto auto;
-        gap: 8px;
-        align-items: center;
-        padding: 10px;
-        background: #34495e;
-        border-radius: 6px;
-        border-left: 4px solid #f1c40f;
-    }
-    .device-info {
         display: flex;
-        flex-direction: column;
+        flex-direction: column; /* Chuyển sang layout cột */
+        padding: 12px;
+        background: #34495e;
+        border-radius: 8px;
+        border-left: 5px solid #f1c40f;
+        gap: 10px; /* Khoảng cách giữa các phần tử bên trong */
+    }
+    .device-item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
     .device-name {
         font-weight: bold;
-        font-size: 1em;
+        font-size: 1.1em;
         color: #ecf0f1;
     }
-    .device-details {
-        font-size: 0.8em;
+    .device-status {
+        font-size: 0.9em;
+        font-weight: bold;
+    }
+    .device-status.connected { color: #2ecc71; }
+    .device-status.disconnected { color: #e74c3c; }
+    
+    .device-info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        font-size: 0.85em;
         color: #bdc3c7;
     }
-    .device-details .connected { color: #2ecc71; font-weight: bold; }
-    .device-details .disconnected { color: #e74c3c; font-weight: bold; }
+    .device-info-grid span {
+        background-color: #2c3e50;
+        padding: 5px 8px;
+        border-radius: 4px;
+    }
+    .device-info-grid .label {
+        font-weight: bold;
+        color: #ecf0f1;
+    }
+    
+    .device-actions {
+        display: flex;
+        gap: 10px;
+    }
     .device-action-btn {
         padding: 6px 12px;
         border: none;
@@ -629,6 +650,7 @@
         transition: all 0.2s;
         flex-shrink: 0;
         font-size: 0.8em;
+        flex-grow: 1; /* Cho các nút bằng nhau */
     }
     .device-action-btn:hover {
         filter: brightness(1.1);
@@ -636,6 +658,8 @@
     }
     .add-btn { background-color: #27ae60; }
     .remove-btn { background-color: #c0392b; }
+    .cancel-btn { background-color: #7f8c8d; }
+
     .list-placeholder {
         text-align: center;
         padding: 20px;
@@ -753,7 +777,7 @@
       <div class="button-section">
         <button class="modern-btn save-button" onclick="publishUpdate()">Lưu và gửi cập nhật</button>
         <div class="button-row">
-            <button class="modern-btn test-button" onclick="publishTestBell()">Thử Chuông</button>
+            <button class="modern-btn test-button" onclick="publishTestBell()">Thử Chuông Chung</button>
             <button class="modern-btn logout-button" onclick="logout()">Đăng xuất</button>
         </div>
         <div class="button-row">
@@ -831,6 +855,7 @@
     const MANAGE_REMOVE_TOPIC = "esp32/bell/manage/remove";
     const MANAGE_STATUS_TOPIC = "esp32/bell/manage/status";
     const COMMAND_ACK_TOPIC = "esp32/bell/command/ack";
+    const ADMIN_PASSWORD_FOR_SAVE = "YenKhanhA@2025"; // Mật khẩu cứng cho chức năng lưu
 
     function connectToMqtt(){
         console.log("Đang kết nối đến MQTT broker...");
@@ -1032,6 +1057,7 @@
         }
     }
 
+    // === HÀM RENDER GIAO DIỆN VỆ TINH ĐƯỢC NÂNG CẤP ===
     function renderDeviceLists(managed, discovered) {
         const managedListDiv = document.getElementById('managed-devices-list');
         managedListDiv.innerHTML = '';
@@ -1041,16 +1067,27 @@
             managed.forEach(dev => {
                 const item = document.createElement('div');
                 item.className = 'device-item';
-                let statusClass = dev.online ? 'connected' : 'disconnected';
-                let statusText = dev.online ? 'Online' : 'Offline';
                 
+                const statusClass = dev.online ? 'connected' : 'disconnected';
+                const statusText = dev.online ? 'Online' : 'Offline';
+                const rssiText = dev.rssi ? `${dev.rssi} dBm` : 'N/A';
+                const uptimeText = dev.uptime || 'N/A';
+                const ipText = dev.ip || 'N/A';
+
                 item.innerHTML = `
-                    <div class="device-info">
+                    <div class="device-item-header">
                         <span class="device-name">${dev.name}</span>
-                        <span class="device-details">Trạng thái: <strong class="${statusClass}">${statusText}</strong></span>
+                        <span class="device-status ${statusClass}">${statusText}</span>
                     </div>
-                    <button class="device-action-btn remove-btn" onclick="openPasswordModal('${dev.name}')">Reset WiFi</button>
-                    <button class="device-action-btn" style="background-color: #7f8c8d;" onclick="removeSatellite('${dev.name}')">Hủy</button>
+                    <div class="device-info-grid">
+                        <span><span class="label">IP:</span> ${ipText}</span>
+                        <span><span class="label">Sóng WiFi:</span> ${rssiText}</span>
+                        <span style="grid-column: 1 / -1;"><span class="label">Uptime:</span> ${uptimeText}</span>
+                    </div>
+                    <div class="device-actions">
+                        <button class="device-action-btn remove-btn" onclick="openPasswordModal('${dev.name}')">Reset WiFi</button>
+                        <button class="device-action-btn cancel-btn" onclick="removeSatellite('${dev.name}')">Hủy</button>
+                    </div>
                 `;
                 managedListDiv.appendChild(item);
             });
@@ -1064,11 +1101,14 @@
             discovered.forEach(dev => {
                 const item = document.createElement('div');
                 item.className = 'device-item';
-                item.style.gridTemplateColumns = "1fr auto";
+                item.style.flexDirection = 'row';
+                item.style.justifyContent = 'space-between';
                 item.innerHTML = `
                     <div class="device-info">
                         <span class="device-name">${dev.name}</span>
-                        <span class="device-details">IP: ${dev.ip || 'N/A'}</span>
+                        <div class="device-info-grid" style="grid-template-columns: 1fr; font-size: 0.8em;">
+                           <span><span class="label">IP:</span> ${dev.ip || 'N/A'}</span>
+                        </div>
                     </div>
                     <button class="device-action-btn add-btn" onclick="addSatellite('${dev.name}')">Thêm</button>
                 `;
@@ -1079,12 +1119,17 @@
 
     function _load(e){try{const t=JSON.parse(e);t.schedule&&t.epoch&&(setTime(t.epoch),populateForm(t))}catch(t){console.error("Lỗi parse JSON từ MQTT:",t)}}
     
+    // === HÀM GỬI LỊCH ĐƯỢC NÂNG CẤP ĐỂ GỬI KÈM MẬT KHẨU ===
     function publishUpdate(){
         if(!client||!client.connected) return showNotification("Chưa kết nối máy chủ!", 'error');
         try {
-            const e=gatherDataFromForm();
-            const t=JSON.stringify({schedule:e}); // Gửi lịch không cần mật khẩu
-            client.publish(SET_DATA_TOPIC,t,{qos:1,retain:!0});
+            const scheduleData = gatherDataFromForm();
+            const payload = {
+                schedule: scheduleData,
+                admin_pass: ADMIN_PASSWORD_FOR_SAVE 
+            };
+            const payloadString = JSON.stringify(payload);
+            client.publish(SET_DATA_TOPIC, payloadString, {qos:1, retain:true});
             showNotification("Đã gửi lệnh cập nhật lịch...");
         } catch(e) {
             showNotification("Lỗi: " + e.message, 'error');
@@ -1094,8 +1139,10 @@
     
     function publishTestBell(){
         if(client&&client.connected) {
-            client.publish(CONTROL_TOPIC,"TEST_BELL",{qos:1});
-            showNotification("Đã gửi lệnh thử chuông...");
+            // Gửi lệnh dưới dạng JSON để nhất quán
+            const payload = { command: "TEST_BELL" };
+            client.publish(CONTROL_TOPIC, JSON.stringify(payload), {qos:1});
+            showNotification("Đã gửi lệnh thử chuông chung...");
         } else {
             showNotification("Chưa kết nối máy chủ!", 'error');
         }
@@ -1120,11 +1167,10 @@
         connectToMqtt();
         setInterval(updateLocalClock, 1000);
         
-        // Bắt sự kiện nhấn Enter trong ô mật khẩu
         document.getElementById('admin-password-input').addEventListener('keyup', function(event) {
             if (event.key === "Enter") {
                 event.preventDefault();
-                document.querySelector('.modal-confirm-btn').click();
+                document.querySelector('#password-modal-overlay .modal-confirm-btn').click();
             }
         });
     };
