@@ -67,7 +67,6 @@
         background: linear-gradient(90deg, #c0392b, #e74c3c);
     }
 
-
     /* --- TIÊU ĐỀ & MÀU SẮC NỔI BẬT --- */
     h2 {
         font-size: 1.7em;
@@ -244,17 +243,18 @@
         filter: brightness(1.08);
         box-shadow: 0 10px 32px #9b59b699, 0 2px 12px #fff4;
     }
-    .wifi-reset-button {
-        background: linear-gradient(90deg, #232526 60%, #414345 100%);
-        color: #3498db;
-        border-left: 5px solid #3498db;
-        border-right: 5px solid #3498db;
-        text-shadow: 0 0 12px #3498db, 0 2px 8px #000, 0 0 24px #fff;
-        box-shadow: 0 4px 18px 0 #3498db33, 0 2px 8px #fff2;
+    /* === NÚT RESET WIFI MỚI === */
+    .reset-wifi-button {
+        background: linear-gradient(90deg, #4e1a14 0%, #8d2d23 100%);
+        color: #fdd8d8;
+        border-left: 5px solid #e74c3c;
+        border-right: 5px solid #e74c3c;
+        text-shadow: 0 0 12px #e74c3c, 0 2px 8px #000, 0 0 24px #fff;
+        box-shadow: 0 4px 18px 0 #e74c3c33, 0 2px 8px #fff2;
     }
-    .wifi-reset-button:hover {
-        filter: brightness(1.08);
-        box-shadow: 0 10px 32px #3498db99, 0 2px 12px #fff4;
+    .reset-wifi-button:hover {
+        filter: brightness(1.15);
+        box-shadow: 0 10px 32px #e74c3c99, 0 2px 12px #fff4;
     }
     
     /* --- TAB NGÀY & NỘI DUNG TAB --- */
@@ -458,7 +458,7 @@
         background: linear-gradient(90deg, #2980b9 0%, #6dd5fa 100%);
     }
 
-    /* === Giao diện cho Modal Chung === */
+    /* === Giao diện cho Modal === */
     .modal-overlay {
         position: fixed;
         top: 0;
@@ -500,86 +500,65 @@
         font-size: 1.3em;
         text-transform: uppercase;
     }
-    .modal-button {
-        margin-top: 20px;
-        padding: 10px;
-        width: 100%;
-        background: #f1c40f;
-        color: #232526;
-        border: none;
-        border-radius: 8px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: filter 0.2s;
-    }
-    .modal-button:hover {
-        filter: brightness(1.1);
-    }
-    /* === Giao diện cho Modal Mật khẩu === */
-    #password-modal-title {
-      font-size: 1.1em;
-      text-transform: none;
-    }
-    #password-modal-device-name {
-      font-weight: bold;
-      color: #fff;
-    }
-    #password-modal-input {
-      width: 100%;
-      padding: 12px;
-      margin-top: 15px;
-      border-radius: 8px;
-      border: 2px solid #4a627a;
-      background-color: #2c3e50;
-      color: #ecf0f1;
-      font-size: 1.1em;
-      text-align: center;
-    }
-    #password-modal-error {
-        color: #e74c3c;
-        font-weight: bold;
-        text-align: center;
-        margin-top: 10px;
-        height: 1.2em;
-    }
-    .password-modal-buttons {
-        display: flex;
-        gap: 15px;
-        margin-top: 10px;
-    }
-    .password-modal-buttons .modal-button {
-        margin-top: 0;
-    }
-    #password-modal-cancel-btn {
-        background: #7f8c8d;
-        color: #fff;
-    }
-
-    /* --- Giao diện cho Modal Thông tin hệ thống --- */
-    .info-item {
+    .modal-content .info-item {
         display: flex;
         justify-content: space-between;
         padding: 10px 0;
         border-bottom: 1px solid #4a627a;
         font-size: 1em;
     }
-    .info-item:last-child {
+    .modal-content .info-item:last-child {
         border-bottom: none;
     }
-    .info-item .label {
+    .modal-content .info-item .label {
         color: #bdc3c7;
         padding-right: 10px;
     }
-    .info-item .value {
+    .modal-content .info-item .value {
         font-weight: bold;
         text-align: right;
     }
-    .info-item .value.connected {
-        color: #2ecc71;
+    .modal-content .info-item .value.connected { color: #2ecc71; }
+    .modal-content .info-item .value.disconnected { color: #e74c3c; }
+    
+    .modal-content .modal-input {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        border: 2px solid #7f8c8d;
+        background-color: #2c3e50;
+        color: #ecf0f1;
+        font-size: 1em;
+        margin-bottom: 15px;
     }
-    .info-item .value.disconnected {
-        color: #e74c3c;
+    .modal-content .modal-input:focus {
+        outline: none;
+        border-color: #f1c40f;
     }
+    .modal-buttons {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+    }
+    .modal-buttons button {
+        flex-grow: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 1em;
+        transition: all 0.2s;
+    }
+    .modal-confirm-btn {
+        background: #f1c40f;
+        color: #232526;
+    }
+    .modal-cancel-btn {
+        background: #7f8c8d;
+        color: #fff;
+    }
+
 
     /* === Giao diện cho Quản lý Vệ tinh === */
     summary#header-manager {
@@ -616,18 +595,18 @@
         border-radius: 8px;
     }
     .device-item {
-        display: flex;
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        gap: 8px;
         align-items: center;
         padding: 10px;
         background: #34495e;
         border-radius: 6px;
         border-left: 4px solid #f1c40f;
-        gap: 8px;
     }
     .device-info {
         display: flex;
         flex-direction: column;
-        flex-grow: 1; /* Cho phép phần info co giãn */
     }
     .device-name {
         font-weight: bold;
@@ -640,11 +619,6 @@
     }
     .device-details .connected { color: #2ecc71; font-weight: bold; }
     .device-details .disconnected { color: #e74c3c; font-weight: bold; }
-    .device-actions {
-        display: flex;
-        gap: 8px;
-        flex-shrink: 0; /* Ngăn co lại */
-    }
     .device-action-btn {
         padding: 6px 12px;
         border: none;
@@ -654,6 +628,7 @@
         cursor: pointer;
         transition: all 0.2s;
         flex-shrink: 0;
+        font-size: 0.8em;
     }
     .device-action-btn:hover {
         filter: brightness(1.1);
@@ -661,8 +636,6 @@
     }
     .add-btn { background-color: #27ae60; }
     .remove-btn { background-color: #c0392b; }
-    .wifi-btn { background-color: #2980b9; }
-
     .list-placeholder {
         text-align: center;
         padding: 20px;
@@ -713,11 +686,11 @@
       <div id="tab-container-chieu"></div>
       <div class="divider-yellow"></div>
       
-      <div class="div1" style="padding: 0 15px;">
+      <div class="div1">
           <details>
               <summary id="header-sohoi">
                   <div>CÀI ĐẶT SỐ HỒI CHUÔNG</div>
-                  <span style="font-size: 0.8em; font-weight: normal; color: #ccc; margin-top: 2px;">(Áp dụng chung)</span>
+                  <span style="font-size: 0.8em; font-weight: normal; color: #ccc; margin-top: 2px;">(SÁNG - CHIỀU)</span>
               </summary>
               <div class="details-content">
                   <div class="settings-grid">
@@ -754,9 +727,9 @@
           </details>
       </div>
 
-      <div class="div1" style="padding: 0 15px;">
+      <div class="div1">
         <details open>
-          <summary id="header-manager">QUẢN LÝ THIẾT BỊ</summary>
+          <summary id="header-manager">QUẢN LÝ THIẾT BỊ VỆ TINH</summary>
           <div class="details-content manager-section">
             
             <h5>CÁC THIẾT BỊ ĐANG QUẢN LÝ</h5>
@@ -778,20 +751,21 @@
       <div class="divider-yellow"></div>
 
       <div class="button-section">
-        <button class="modern-btn save-button" onclick="publishUpdate()">Lưu và Gửi Lịch Mới</button>
+        <button class="modern-btn save-button" onclick="publishUpdate()">Lưu và gửi cập nhật</button>
         <div class="button-row">
-            <button class="modern-btn test-button" onclick="publishTestBell()">Thử Chuông Chung</button>
+            <button class="modern-btn test-button" onclick="publishTestBell()">Thử Chuông</button>
             <button class="modern-btn logout-button" onclick="logout()">Đăng xuất</button>
         </div>
         <div class="button-row">
-            <button class="modern-btn info-button" onclick="requestSystemInfo()">Thông tin Máy Chủ</button>
-            <button class="modern-btn wifi-reset-button" onclick="requestWifiReset('ESP32-MayChu')">Cài đặt WiFi Máy Chủ</button>
+            <button class="modern-btn info-button" onclick="requestSystemInfo()">Thông tin hệ thống</button>
+            <button class="modern-btn reset-wifi-button" onclick="openPasswordModal('ESP32-MayChu')">Reset WiFi Máy Chủ</button>
         </div>
       </div>
 
     </div>
   </div>
 
+  <!-- Modal Thông tin hệ thống -->
   <div class="modal-overlay" id="info-modal-overlay">
     <div class="modal-content">
         <h4>Thông tin hệ thống</h4>
@@ -819,35 +793,34 @@
             <span class="label">Sử dụng bộ nhớ (RAM):</span>
             <span class="value" id="info-ram">Đang tải...</span>
         </div>
-        <button class="modal-button" onclick="closeInfoModal()">Đóng</button>
-    </div>
-  </div>
-
-  <div class="modal-overlay" id="password-modal-overlay">
-    <div class="modal-content">
-        <h4 id="password-modal-title">Xác thực Quản trị viên</h4>
-        <p style="text-align: center; margin: -10px 0 15px 0;">Yêu cầu mật khẩu để reset WiFi cho thiết bị<br><span id="password-modal-device-name"></span></p>
-        <input type="password" id="password-modal-input" placeholder="Nhập mật khẩu quản trị...">
-        <div id="password-modal-error"></div>
-        <div class="password-modal-buttons">
-            <button class="modal-button" id="password-modal-cancel-btn">Hủy</button>
-            <button class="modal-button" id="password-modal-confirm-btn">Xác nhận</button>
+        <div class="modal-buttons">
+            <button class="modal-cancel-btn" onclick="closeInfoModal()">Đóng</button>
         </div>
     </div>
   </div>
 
+  <!-- Modal Nhập Mật khẩu -->
+  <div class="modal-overlay" id="password-modal-overlay">
+      <div class="modal-content">
+          <h4 id="password-modal-title">Xác thực quyền Quản trị</h4>
+          <p style="text-align: center; margin-top: -10px; margin-bottom: 20px; color: #bdc3c7;">Vui lòng nhập mật khẩu để tiếp tục.</p>
+          <input type="password" id="admin-password-input" class="modal-input" placeholder="Mật khẩu quản trị...">
+          <div class="modal-buttons">
+              <button class="modal-cancel-btn" onclick="closePasswordModal()">Hủy</button>
+              <button class="modal-confirm-btn" onclick="confirmWifiReset()">Xác nhận</button>
+          </div>
+      </div>
+  </div>
+
 
   <script>
-    // === PHẦN SCRIPT GIỮ NGUYÊN NHƯ TRƯỚC ===
     if("true"!==sessionStorage.getItem("isLoggedIn"))window.location.href="login.html";
     
-    let client,serverTime=null;
-    const MASTER_DEVICE_NAME = 'ESP32-MayChu';
-    let targetDeviceForReset = null; // Biến lưu tên thiết bị cần reset
+    let client, serverTime = null, deviceToReset = null;
     
-    // ... (Toàn bộ các hằng số TOPIC giữ nguyên) ...
     const brokerUrl="wss://366af3ec40124749863257ecd2c62b3e.s1.eu.hivemq.cloud:8884/mqtt";
     const options={username:"ngoctuyka",password:"Tu12345678@",clientId:"WebAppClient_"+parseInt(1e3*Math.random()),reconnectPeriod:2e3,protocolVersion: 4};
+    
     const ONLINE_STATUS_TOPIC = "esp32/bell/status/online";
     const DATA_STATUS_TOPIC = "esp32/bell/data/status";
     const SET_DATA_TOPIC = "esp32/bell/data/set";
@@ -859,193 +832,302 @@
     const MANAGE_STATUS_TOPIC = "esp32/bell/manage/status";
     const COMMAND_ACK_TOPIC = "esp32/bell/command/ack";
 
-    // ... (Hàm connectToMqtt và các hàm xử lý MQTT message giữ nguyên, chỉ bổ sung case cho RESET_WIFI_ACK)
     function connectToMqtt(){
         console.log("Đang kết nối đến MQTT broker...");
-        document.getElementById("status").textContent="Đang kết nối...";
-        document.getElementById("status").className="status-bar status-connecting";
+        const statusDiv = document.getElementById("status");
+        statusDiv.textContent="Đang kết nối...";
+        statusDiv.className="status-bar status-connecting";
+        
         client=mqtt.connect(brokerUrl,options);
+        
         client.on("connect",()=>{
             console.log("Đã kết nối thành công đến MQTT broker!");
             const topicsToSubscribe = [DATA_STATUS_TOPIC, ONLINE_STATUS_TOPIC, SYS_INFO_TOPIC, MANAGE_STATUS_TOPIC, COMMAND_ACK_TOPIC];
-            client.subscribe(topicsToSubscribe,{qos:1},e=>{e?console.error("Lỗi khi đăng ký topic:",e):(console.log("Đăng ký nhận các topic thành công!"),client.publish(GET_DATA_TOPIC,"1",{qos:1}))})
-        });
-        client.on("message",(topic,payload)=>{
-            const payloadString=payload.toString();
-            if(topic===ONLINE_STATUS_TOPIC){
-                if(payloadString==="online"){
-                    document.getElementById("status").textContent="Thiết bị đang hoạt động";
-                    document.getElementById("status").className="status-bar status-connected";
-                    document.getElementById("clock-wrapper").style.display="block";
+            client.subscribe(topicsToSubscribe, {qos:1}, (err)=>{
+                if(err) {
+                    console.error("Lỗi khi đăng ký topic:", err);
                 } else {
-                    document.getElementById("status").textContent="Thiết bị ngoại tuyến";
-                    document.getElementById("status").className="status-bar status-disconnected";
-                    document.getElementById("clock-wrapper").style.display="none";
-                    serverTime=null;
+                    console.log("Đăng ký nhận các topic thành công!");
+                    client.publish(GET_DATA_TOPIC, '1', { qos: 1 });
+                }
+            });
+        });
+        
+        client.on("message",(topic, payload)=>{
+            const payloadString = payload.toString();
+            
+            if (topic === ONLINE_STATUS_TOPIC) {
+                if (payloadString === 'online') {
+                    statusDiv.textContent = "Thiết bị đang hoạt động";
+                    statusDiv.className = "status-bar status-connected";
+                    document.getElementById('clock-wrapper').style.display = 'block';
+                } else {
+                    statusDiv.textContent = "Thiết bị ngoại tuyến";
+                    statusDiv.className = "status-bar status-disconnected";
+                    document.getElementById('clock-wrapper').style.display = 'none';
+                    serverTime = null;
                 }
             }
-            if(topic===DATA_STATUS_TOPIC&&payloadString){_load(payloadString)}
-            if(topic===SYS_INFO_TOPIC){try{const e=JSON.parse(payloadString);document.getElementById("info-ssid").textContent=e.ssid;document.getElementById("info-ip").textContent=e.ip;const t=document.getElementById("info-rtc");e.rtc?(t.textContent="Đã kết nối",t.className="value connected"):(t.textContent="Không tìm thấy",t.className="value disconnected");const o=document.getElementById("info-lcd");e.lcd?(o.textContent="Đã kết nối",o.className="value connected"):(o.textContent="Không tìm thấy",o.className="value disconnected");e.flash_usage&&(document.getElementById("info-flash").textContent=e.flash_usage+" %");e.ram_usage&&(document.getElementById("info-ram").textContent=e.ram_usage+" %");document.getElementById("info-modal-overlay").classList.add("visible")}catch(e){console.error("Lỗi parse JSON thông tin hệ thống:",e)}}
-            if(topic===MANAGE_STATUS_TOPIC){try{const e=JSON.parse(payloadString);renderDeviceLists(e.managed||[],e.discovered||[])}catch(e){console.error("Lỗi parse JSON quản lý vệ tinh:",e)}}
-            if(topic===COMMAND_ACK_TOPIC){try{const e=JSON.parse(payloadString);let t="";"SET_DATA"===e.command?t=`[${e.name}] đã nhận và lưu lịch mới.`:"TEST_BELL"===e.command?t=`Thử chuông tại [${e.name}] thành công.`:"MANAGE_ADD"===e.command?t=`Đã thêm [${e.payload}] vào danh sách quản lý.`:"MANAGE_REMOVE"===e.command?t=`Đã xoá [${e.payload}] khỏi danh sách quản lý.`:"RESET_WIFI"===e.command&&("success"===e.status?t=`[${e.name}] đã nhận lệnh và đang khởi động lại...`:t=`[${e.name}] báo lỗi: ${e.message||"Không rõ"}`);t&&showNotification(t,e.status||"success")}catch(e){console.error("Lỗi parse JSON phản hồi lệnh:",e)}}
+            
+            if (topic === DATA_STATUS_TOPIC && payloadString) {
+                _load(payloadString);
+            }
+
+            if (topic === SYS_INFO_TOPIC) {
+                try {
+                    const info = JSON.parse(payloadString);
+                    document.getElementById('info-ssid').textContent = info.ssid;
+                    document.getElementById('info-ip').textContent = info.ip;
+                    
+                    const rtcStatus = document.getElementById('info-rtc');
+                    if(info.rtc) {
+                        rtcStatus.textContent = "Đã kết nối";
+                        rtcStatus.className = "value connected";
+                    } else {
+                        rtcStatus.textContent = "Không tìm thấy";
+                        rtcStatus.className = "value disconnected";
+                    }
+
+                    const lcdStatus = document.getElementById('info-lcd');
+                    if(info.lcd) {
+                        lcdStatus.textContent = "Đã kết nối";
+                        lcdStatus.className = "value connected";
+                    } else {
+                        lcdStatus.textContent = "Không tìm thấy";
+                        lcdStatus.className = "value disconnected";
+                    }
+
+                    if (info.flash_usage) {
+                        document.getElementById('info-flash').textContent = info.flash_usage + " %";
+                    }
+                    if (info.ram_usage) {
+                        document.getElementById('info-ram').textContent = info.ram_usage + " %";
+                    }
+
+                    document.getElementById('info-modal-overlay').classList.add('visible');
+                } catch(e) {
+                    console.error("Lỗi parse JSON thông tin hệ thống:", e);
+                }
+            }
+            
+            if (topic === MANAGE_STATUS_TOPIC) {
+                try {
+                    const data = JSON.parse(payloadString);
+                    renderDeviceLists(data.managed || [], data.discovered || []);
+                } catch(e) {
+                    console.error("Lỗi parse JSON quản lý vệ tinh:", e);
+                }
+            }
+
+            if (topic === COMMAND_ACK_TOPIC) {
+                try {
+                    const ack = JSON.parse(payloadString);
+                    const message = `[${ack.name}] ${ack.message}`;
+                    showNotification(message, ack.status || 'success');
+                } catch (e) {
+                    console.error("Lỗi parse JSON phản hồi lệnh:", e);
+                }
+            }
         });
-        client.on("error",e=>console.error("Lỗi kết nối MQTT:",e));
-        client.on("close",()=>{console.log("Mất kết nối MQTT. Đang thử kết nối lại...");document.getElementById("status").textContent="Mất kết nối máy chủ";document.getElementById("status").className="status-bar status-disconnected";document.getElementById("clock-wrapper").style.display="none";serverTime=null})
-    }
-    
-    // === CÁC HÀM JAVASCRIPT MỚI VÀ ĐƯỢC CẬP NHẬT ===
-
-    function showNotification(message,type="success"){const e=document.getElementById("notification-area"),t=document.createElement("div");t.className=`notification ${type}`,t.textContent=message,e.appendChild(t),setTimeout(()=>{t.classList.add("show")},10),setTimeout(()=>{t.classList.remove("show"),setTimeout(()=>{e.contains(t)&&e.removeChild(t)},300)},5e3)}
-    function sendCommand(e){client&&client.connected?client.publish(CONTROL_TOPIC,JSON.stringify(e),{qos:1}):showNotification("Chưa kết nối đến máy chủ!","error")}
-    function requestSystemInfo(){sendCommand({command:"GET_SYS_INFO"})}
-    function closeInfoModal(){document.getElementById("info-modal-overlay").classList.remove("visible")}
-    
-    /**
-     * Hàm mới: Yêu cầu reset WiFi, sẽ mở hộp thoại nhập mật khẩu
-     * @param {string} deviceName Tên của thiết bị cần reset
-     */
-    function requestWifiReset(deviceName) {
-        targetDeviceForReset = deviceName;
-        const modal = document.getElementById('password-modal-overlay');
-        document.getElementById('password-modal-device-name').textContent = `[${deviceName}]`;
-        document.getElementById('password-modal-input').value = '';
-        document.getElementById('password-modal-error').textContent = '';
-        modal.classList.add('visible');
-        document.getElementById('password-modal-input').focus();
+        
+        client.on("error", e => console.error("Lỗi kết nối MQTT:", e));
+        
+        client.on("close",()=>{
+            console.log("Mất kết nối MQTT. Đang thử kết nối lại...");
+            statusDiv.textContent = "Mất kết nối máy chủ";
+            statusDiv.className = "status-bar status-disconnected";
+            document.getElementById('clock-wrapper').style.display = 'none';
+            serverTime = null;
+        });
     }
 
-    /**
-     * Hàm mới: Xử lý khi xác nhận mật khẩu và gửi lệnh
-     */
-    function confirmPasswordAndReset() {
-        const passwordInput = document.getElementById('password-modal-input');
-        const password = passwordInput.value;
-        const errorDiv = document.getElementById('password-modal-error');
+    function showNotification(message, type = 'success') {
+        const area = document.getElementById('notification-area');
+        const notif = document.createElement('div');
+        notif.className = `notification ${type}`;
+        notif.textContent = message;
+        area.appendChild(notif);
+        
+        setTimeout(() => { notif.classList.add('show'); }, 10);
 
+        setTimeout(() => {
+            notif.classList.remove('show');
+            setTimeout(() => {
+                if(area.contains(notif)) {
+                    area.removeChild(notif);
+                }
+            }, 300);
+        }, 4000);
+    }
+
+    function requestSystemInfo() {
+        if (client && client.connected) {
+            client.publish(CONTROL_TOPIC, "GET_SYS_INFO", {qos: 1});
+        } else {
+            showNotification("Chưa kết nối đến máy chủ!", 'error');
+        }
+    }
+
+    function closeInfoModal() {
+        document.getElementById('info-modal-overlay').classList.remove('visible');
+    }
+    
+    function openPasswordModal(deviceName) {
+        deviceToReset = deviceName;
+        document.getElementById('password-modal-title').textContent = `Reset WiFi cho ${deviceName}`;
+        document.getElementById('password-modal-overlay').classList.add('visible');
+        document.getElementById('admin-password-input').focus();
+    }
+
+    function closePasswordModal() {
+        document.getElementById('password-modal-overlay').classList.remove('visible');
+        document.getElementById('admin-password-input').value = '';
+        deviceToReset = null;
+    }
+
+    function confirmWifiReset() {
+        const password = document.getElementById('admin-password-input').value;
         if (!password) {
-            errorDiv.textContent = 'Mật khẩu không được để trống!';
+            showNotification('Vui lòng nhập mật khẩu!', 'error');
             return;
         }
-        errorDiv.textContent = '';
-        showNotification(`Đã gửi lệnh reset WiFi đến [${targetDeviceForReset}]...`, 'success');
-        sendCommand({ command: "RESET_WIFI", target: targetDeviceForReset, admin_pass: password });
-        hidePasswordModal();
+        if (!deviceToReset) {
+            console.error("Lỗi: Không có thiết bị nào được chọn để reset.");
+            closePasswordModal();
+            return;
+        }
+
+        const payload = {
+            command: "RESET_WIFI",
+            target: deviceToReset,
+            admin_pass: password
+        };
+
+        if (client && client.connected) {
+            client.publish(CONTROL_TOPIC, JSON.stringify(payload), { qos: 1 });
+            showNotification(`Đã gửi lệnh Reset WiFi đến ${deviceToReset}...`);
+        } else {
+            showNotification("Chưa kết nối đến máy chủ!", 'error');
+        }
+
+        closePasswordModal();
     }
 
-    function hidePasswordModal() {
-        document.getElementById('password-modal-overlay').classList.remove('visible');
+
+    function addSatellite(deviceName) {
+        if (client && client.connected) {
+            client.publish(MANAGE_ADD_TOPIC, deviceName, { qos: 1 });
+        } else {
+            showNotification("Chưa kết nối đến máy chủ!", 'error');
+        }
     }
 
-    function addSatellite(e){client&&client.connected?(console.log(`Sending ADD command for: ${e}`),client.publish(MANAGE_ADD_TOPIC,e,{qos:1})):showNotification("Chưa kết nối đến máy chủ!","error")}
-    function removeSatellite(e){confirm(`Bạn có chắc muốn ngừng quản lý thiết bị "${e}" không?`)&&(client&&client.connected?(console.log(`Sending REMOVE command for: ${e}`),client.publish(MANAGE_REMOVE_TOPIC,e,{qos:1})):showNotification("Chưa kết nối đến máy chủ!","error"))}
-    function renderDeviceLists(e,t){const o=document.getElementById("managed-devices-list"),n=document.getElementById("discovered-devices-list");o.innerHTML="",0===e.length?o.innerHTML='<p class="list-placeholder">Chưa có thiết bị nào được quản lý.</p>':e.forEach(e=>{const t=document.createElement("div");t.className="device-item";let n=e.online?"connected":"disconnected",a=e.online?"Online":"Offline";t.innerHTML=`
+    function removeSatellite(deviceName) {
+        if (confirm(`Bạn có chắc muốn ngừng quản lý thiết bị "${deviceName}" không?`)) {
+            if (client && client.connected) {
+                client.publish(MANAGE_REMOVE_TOPIC, deviceName, { qos: 1 });
+            } else {
+                showNotification("Chưa kết nối đến máy chủ!", 'error');
+            }
+        }
+    }
+
+    function renderDeviceLists(managed, discovered) {
+        const managedListDiv = document.getElementById('managed-devices-list');
+        managedListDiv.innerHTML = '';
+        if (managed.length === 0) {
+            managedListDiv.innerHTML = '<p class="list-placeholder">Chưa có thiết bị nào được quản lý.</p>';
+        } else {
+            managed.forEach(dev => {
+                const item = document.createElement('div');
+                item.className = 'device-item';
+                let statusClass = dev.online ? 'connected' : 'disconnected';
+                let statusText = dev.online ? 'Online' : 'Offline';
+                
+                item.innerHTML = `
                     <div class="device-info">
-                        <span class="device-name">${e.name}</span>
-                        <span class="device-details">Trạng thái: <strong class="${n}">${a}</strong></span>
+                        <span class="device-name">${dev.name}</span>
+                        <span class="device-details">Trạng thái: <strong class="${statusClass}">${statusText}</strong></span>
                     </div>
-                    <div class="device-actions">
-                        <button class="device-action-btn wifi-btn" data-device-name="${e.name}" title="Cài đặt WiFi">WiFi</button>
-                        <button class="device-action-btn remove-btn" data-device-name="${e.name}" title="Xóa">Xóa</button>
-                    </div>
-                `,o.appendChild(t)}),n.innerHTML="",0===t.length?n.innerHTML='<p class="list-placeholder">Không phát hiện thiết bị mới nào.</p>':t.forEach(e=>{const t=document.createElement("div");t.className="device-item",t.innerHTML=`
+                    <button class="device-action-btn remove-btn" onclick="openPasswordModal('${dev.name}')">Reset WiFi</button>
+                    <button class="device-action-btn" style="background-color: #7f8c8d;" onclick="removeSatellite('${dev.name}')">Hủy</button>
+                `;
+                managedListDiv.appendChild(item);
+            });
+        }
+
+        const discoveredListDiv = document.getElementById('discovered-devices-list');
+        discoveredListDiv.innerHTML = '';
+        if (discovered.length === 0) {
+            discoveredListDiv.innerHTML = '<p class="list-placeholder">Không phát hiện thiết bị mới nào.</p>';
+        } else {
+            discovered.forEach(dev => {
+                const item = document.createElement('div');
+                item.className = 'device-item';
+                item.style.gridTemplateColumns = "1fr auto";
+                item.innerHTML = `
                     <div class="device-info">
-                        <span class="device-name">${e.name}</span>
-                        <span class="device-details">IP: ${e.ip||"N/A"}</span>
+                        <span class="device-name">${dev.name}</span>
+                        <span class="device-details">IP: ${dev.ip || 'N/A'}</span>
                     </div>
-                    <div class="device-actions">
-                        <button class="device-action-btn add-btn" data-device-name="${e.name}">Thêm</button>
-                    </div>
-                `,n.appendChild(t)})}
+                    <button class="device-action-btn add-btn" onclick="addSatellite('${dev.name}')">Thêm</button>
+                `;
+                discoveredListDiv.appendChild(item);
+            });
+        }
+    }
+
+    function _load(e){try{const t=JSON.parse(e);t.schedule&&t.epoch&&(setTime(t.epoch),populateForm(t))}catch(t){console.error("Lỗi parse JSON từ MQTT:",t)}}
     
-    function _load(e){try{const t=JSON.parse(e);t.schedule&&t.epoch&&(setTime(t.epoch),populateForm(t))}catch(e){console.error("Lỗi parse JSON từ MQTT:",e)}}
-    function publishUpdate(){if(!client||!client.connected)return showNotification("Chưa kết nối máy chủ!","error");try{const e=gatherDataFromForm(),t=JSON.stringify({schedule:e});client.publish(SET_DATA_TOPIC,t,{qos:1,retain:!0}),showNotification("Đã gửi lệnh cập nhật lịch...")}catch(e){showNotification("Lỗi: "+e.message,"error"),console.error(e)}}
-    function publishTestBell(){if(!client||!client.connected)return showNotification("Chưa kết nối đến máy chủ!","error");showNotification("Đã gửi lệnh thử chuông đến các thiết bị..."),sendCommand({command:"TEST_BELL"})}
+    function publishUpdate(){
+        if(!client||!client.connected) return showNotification("Chưa kết nối máy chủ!", 'error');
+        try {
+            const e=gatherDataFromForm();
+            const t=JSON.stringify({schedule:e}); // Gửi lịch không cần mật khẩu
+            client.publish(SET_DATA_TOPIC,t,{qos:1,retain:!0});
+            showNotification("Đã gửi lệnh cập nhật lịch...");
+        } catch(e) {
+            showNotification("Lỗi: " + e.message, 'error');
+            console.error(e)
+        }
+    }
+    
+    function publishTestBell(){
+        if(client&&client.connected) {
+            client.publish(CONTROL_TOPIC,"TEST_BELL",{qos:1});
+            showNotification("Đã gửi lệnh thử chuông...");
+        } else {
+            showNotification("Chưa kết nối máy chủ!", 'error');
+        }
+    }
+
     function logout(){sessionStorage.removeItem("isLoggedIn"),window.location.href="login.html"}
     function setTime(e){isNaN(e)||e<1e5?(console.log("Invalid epoch received, clock not set:",e),serverTime=null):(serverTime=new Date(1e3*e),document.getElementById("date").innerHTML=serverTime.toLocaleDateString("vi-VN",{weekday:"long",year:"numeric",month:"long",day:"numeric",timeZone:"Asia/Ho_Chi_Minh"}),updateLocalClock())}
     function updateLocalClock(){serverTime&&(serverTime.setSeconds(serverTime.getSeconds()+1),document.getElementById("clock").innerHTML=serverTime.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit",timeZone:"Asia/Ho_Chi_Minh",hour12:!1}))}
-    const createDayContent=(e,t,o)=>{const n="t2_sang"===e,a="sang"===o&&["t3_sang","t4_sang","t5_sang","t6_sang","t7_sang"].includes(e),s="sang"===o,l="cn_sang"!==e,c=s&&l?"":"full-width",i='<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586z"></path></svg></div>',d='<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm-1 15H6V7h12v12z"></path></svg></div>',r='<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 2H6c-1.206 0-3 .799-3 3v14c0 2.201 1.794 3 3 3h15v-2H6.012C5.55 19.988 5 19.806 5 19s.55-.988 1.012-1H21V4c0-1.103-.897-2-2-2zm0 13H6V5h13v10z"></path></svg></div>',m='<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M18 5h-2V2H8v3H6c-1.654 0-3 1.346-3 3v6c0 1.654 1.346 3 3 3h1v1c0 .552.447 1 1 1h6c.553 0 1-.448 1-1v-1h1c1.654 0 3-1.346 3-3V8c0-1.654-1.346-3-3-3zm1 9c0 .552-.447 1-1 1H6c-.553 0-1-.448-1-1V8c0-.552.447-1 1-1h12c.553 0 1 .448 1 1v6z"></path></svg></div>',u='<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M14 12V8h-4v4H8l4 4 4-4h-2z"></path></svg></div>',p='<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h2v2H4zm0 5h2v2H4zm0 5h2v2H4zm16-8V6H8v2h12zm0 5H8v2h12zm0 5H8v2h12z"></path></svg></div>';let g="";n?g=`<div class="setting-item ${c}">
-                                ${d}
-                                <div class="input-wrapper">
-                                    <label for="chaoco_${e}">TG Chào cờ</label>
-                                    <div class="unit-input"><input id="chaoco_${e}" type="number" value="40"><span>phút</span></div>
-                                </div>
-                             </div>`:a&&(g=`<div class="setting-item ${c}">
-                                ${d}
-                                <div class="input-wrapper">
-                                    <label for="chunhiem_${e}">TG Chủ nhiệm</label>
-                                    <div class="unit-input"><input id="chunhiem_${e}" type="number" value="15"><span>phút</span></div>
-                                </div>
-                             </div>`);let h="";return"chieu"===o?h=`<button class="copy-button chieu" onclick="copyAfternoonSchedule('${e}')">Sao chép đến</button>`:s&&["t3_sang","t4_sang","t5_sang","t6_sang","t7_sang"].includes(e)&&(h=`<button class="copy-button sang" onclick="copyMorningSchedule('${e}')">Sao chép đến</button>`),`
-        <div id="${e}" class="tabcontent">
-          <h3>Cài đặt Lịch ${t}<br><span class="session-subtitle">(Buổi ${"sang"===o?"Sáng":"Chiều"})</span></h3>
-          <div class="activation-copy-row">
-            <div class="activation-control">
-                <input type="checkbox" id="enable_${e}" class="enable-checkbox" checked>
-                <label for="enable_${e}">Kích hoạt lịch</label>
-            </div>
-            ${h}
-          </div>
-          <hr style="margin: 15px;">
-          
-          <div class="settings-grid">
-              <div class="setting-item ${c}">
-                  ${i}
-                  <div class="input-wrapper">
-                      <label for="gio_${e}">Giờ vào học</label>
-                      <input id="gio_${e}" type="time">
-                  </div>
-              </div>
-              
-              ${g}
-              
-              <div class="setting-item">
-                  ${r}
-                  <div class="input-wrapper">
-                      <label for="tiethoc_${e}">TG Tiết học</label>
-                      <div class="unit-input"><input id="tiethoc_${e}" type="number" value="45"><span>phút</span></div>
-                  </div>
-              </div>
-              <div class="setting-item">
-                  ${m}
-                  <div class="input-wrapper">
-                      <label for="rachoi_${e}">TG Ra chơi</label>
-                      <div class="unit-input"><input id="rachoi_${e}" type="number" value="5"><span>phút</span></div>
-                  </div>
-              </div>
-              <div class="setting-item">
-                  ${u}
-                  <div class="input-wrapper">
-                      <label for="duvaotiet_${e}">TG Dự vào</label>
-                      <div class="unit-input"><input id="duvaotiet_${e}" type="number" value="3"><span>phút</span></div>
-                  </div>
-              </div>
-              <div class="setting-item">
-                  ${p}
-                  <div class="input-wrapper">
-                      <label for="sotiet_${e}">Số tiết học</label>
-                      <div class="unit-input"><input id="sotiet_${e}" type="number" value="5"><span>tiết</span></div>
-                  </div>
-              </div>
-          </div>
-
-          <button class="modern-btn preview-button" onclick="updatePreviewTable('${e}')">Cập nhật bảng chi tiết</button>
-          <details>
-              <summary>Xem chi tiết lịch</summary>
-              <div class="details-container" id="details-${e}"></div>
-          </details>
-        </div>`};
+    
+    const createDayContent=(e,t,o)=>{const n="t2_sang"===e,a="sang"===o&&["t3_sang","t4_sang","t5_sang","t6_sang","t7_sang"].includes(e),s="sang"===o&&"cn_sang"!==e,i=s?"":"full-width",d=`<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586z"></path></svg></div>`,r=`<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm-1 15H6V7h12v12z"></path></svg></div>`,l=`<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 2H6c-1.206 0-3 .799-3 3v14c0 2.201 1.794 3 3 3h15v-2H6.012C5.55 19.988 5 19.806 5 19s.55-.988 1.012-1H21V4c0-1.103-.897-2-2-2zm0 13H6V5h13v10z"></path></svg></div>`,c=`<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M18 5h-2V2H8v3H6c-1.654 0-3 1.346-3 3v6c0 1.654 1.346 3 3 3h1v1c0 .552.447 1 1 1h6c.553 0 1-.448 1-1v-1h1c1.654 0 3-1.346 3-3V8c0-1.654-1.346-3-3-3zm1 9c0 .552-.447 1-1 1H6c-.553 0-1-.448-1-1V8c0-.552.447-1 1-1h12c.553 0 1 .448 1 1v6z"></path></svg></div>`,m=`<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M14 12V8h-4v4H8l4 4 4-4h-2z"></path></svg></div>`,p=`<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h2v2H4zm0 5h2v2H4zm0 5h2v2H4zm16-8V6H8v2h12zm0 5H8v2h12zm0 5H8v2h12z"></path></svg></div>`;let u="";n?u=`<div class="setting-item ${i}">${r}<div class="input-wrapper"><label for="chaoco_${e}">TG Chào cờ</label><div class="unit-input"><input id="chaoco_${e}" type="number" value="40"><span>phút</span></div></div></div>`:a&&(u=`<div class="setting-item ${i}">${r}<div class="input-wrapper"><label for="chunhiem_${e}">TG Chủ nhiệm</label><div class="unit-input"><input id="chunhiem_${e}" type="number" value="15"><span>phút</span></div></div></div>`);let g="";const h="sang"===o&&["t3_sang","t4_sang","t5_sang","t6_sang","t7_sang"].includes(e);return"chieu"===o?g=`<button class="copy-button chieu" onclick="copyAfternoonSchedule('${e}')">Sao chép đến</button>`:h&&(g=`<button class="copy-button sang" onclick="copyMorningSchedule('${e}')">Sao chép đến</button>`),`\n        <div id="${e}" class="tabcontent">\n          <h3>Cài đặt Lịch ${t}<br><span class="session-subtitle">(Buổi ${"sang"===o?"Sáng":"Chiều"})</span></h3>\n          <div class="activation-copy-row">\n            <div class="activation-control">\n                <input type="checkbox" id="enable_${e}" class="enable-checkbox" checked>\n                <label for="enable_${e}">Kích hoạt lịch</label>\n            </div>\n            ${g}\n          </div>\n          <hr style="margin: 15px;">\n          \n          <div class="settings-grid">\n              <div class="setting-item ${i}">${d}<div class="input-wrapper"><label for="gio_${e}">Giờ vào học</label><input id="gio_${e}" type="time"></div></div>\n              \n              ${u}\n              \n              <div class="setting-item">${l}<div class="input-wrapper"><label for="tiethoc_${e}">TG Tiết học</label><div class="unit-input"><input id="tiethoc_${e}" type="number" value="45"><span>phút</span></div></div></div>\n              <div class="setting-item">${c}<div class="input-wrapper"><label for="rachoi_${e}">TG Ra chơi</label><div class="unit-input"><input id="rachoi_${e}" type="number" value="5"><span>phút</span></div></div></div>\n              <div class="setting-item">${m}<div class="input-wrapper"><label for="duvaotiet_${e}">TG Dự vào</label><div class="unit-input"><input id="duvaotiet_${e}" type="number" value="3"><span>phút</span></div></div></div>\n              <div class="setting-item">${p}<div class="input-wrapper"><label for="sotiet_${e}">Số tiết học</label><div class="unit-input"><input id="sotiet_${e}" type="number" value="5"><span>tiết</span></div></div></div>\n          </div>\n\n          <button class="modern-btn preview-button" onclick="updatePreviewTable('${e}')">Cập nhật bảng chi tiết</button>\n          <details>\n              <summary>Xem chi tiết lịch</summary>\n              <div class="details-container" id="details-${e}"></div>\n          </details>\n        </div>`};
     const containerSang=document.getElementById("tab-container-sang"),containerChieu=document.getElementById("tab-container-chieu"),days=[{id:"t2",name:"Thứ 2"},{id:"t3",name:"Thứ 3"},{id:"t4",name:"Thứ 4"},{id:"t5",name:"Thứ 5"},{id:"t6",name:"Thứ 6"},{id:"t7",name:"Thứ 7"},{id:"cn",name:"Chủ Nhật"}];days.forEach(e=>{containerSang.innerHTML+=createDayContent(`${e.id}_sang`,e.name,"sang"),containerChieu.innerHTML+=createDayContent(`${e.id}_chieu`,e.name,"chieu")});
     function populateForm(e){const t=e.schedule?e.schedule:e;t&&t.sohoi&&t.lich?(console.log("Bat dau cap nhat form voi du lieu:",t),t.sohoi&&["batdau","vaotiet","rachoi","duvao"].forEach(e=>{const o=document.getElementById(`sohoi_${e}`);o&&(o.value=t.sohoi[e]||"")}),["sang","chieu"].forEach(e=>{days.forEach(o=>{const n=t.lich?.[e]?.[o.id];if(n){document.getElementById(`enable_${o.id}_${e}`).checked=n.enabled,document.getElementById(`gio_${o.id}_${e}`).value=n.gio||"",document.getElementById(`tiethoc_${o.id}_${e}`).value=n.tiethoc||"",document.getElementById(`rachoi_${o.id}_${e}`).value=n.rachoi||"",document.getElementById(`duvaotiet_${o.id}_${e}`).value=n.duvaotiet||"",document.getElementById(`sotiet_${o.id}_${e}`).value=n.sotiet||"";const t=document.getElementById(`chaoco_${o.id}_${e}`);t&&(t.value=n.chaoco||0);const a=document.getElementById(`chunhiem_${o.id}_${e}`);a&&(a.value=n.chunhiem||0),updatePreviewTable(`${o.id}_${e}`)}})})):console.error("Dữ liệu lịch học nhận được không hợp lệ hoặc không đầy đủ:",e)}
     function gatherDataFromForm(){const e={sohoi:{},lich:{sang:{},chieu:{}}};return["batdau","vaotiet","rachoi","duvao"].forEach(t=>{e.sohoi[t]=parseInt(document.getElementById(`sohoi_${t}`).value)||0}),["sang","chieu"].forEach(t=>{days.forEach(o=>{const n=e.lich[t][o.id]={};n.enabled=document.getElementById(`enable_${o.id}_${t}`).checked,n.gio=document.getElementById(`gio_${o.id}_${t}`).value,n.tiethoc=parseInt(document.getElementById(`tiethoc_${o.id}_${t}`).value)||0,n.rachoi=parseInt(document.getElementById(`rachoi_${o.id}_${t}`).value)||0,n.duvaotiet=parseInt(document.getElementById(`duvaotiet_${o.id}_${t}`).value)||0,n.sotiet=parseInt(document.getElementById(`sotiet_${o.id}_${t}`).value)||0;const a=document.getElementById(`chaoco_${o.id}_${t}`);a&&(n.chaoco=parseInt(a.value)||0);const l=document.getElementById(`chunhiem_${o.id}_${t}`);l&&(n.chunhiem=parseInt(l.value)||0)})}),e}
-    function openDay(e,t,o){const n=e.currentTarget,a=document.getElementById(t);if(n.classList.contains("active"))return a.style.display="none",void n.classList.remove("active");let s;const l=document.getElementsByClassName("tabcontent");for(s=0;s<l.length;s++)l[s].style.display="none";const c=document.getElementsByClassName("tablinks-sang");for(s=0;s<c.length;s++)c[s].className=c[s].className.replace(" active","");const i=document.getElementsByClassName("tablinks-chieu");for(s=0;s<i.length;s++)i[s].className=i[s].className.replace(" active","");a.style.display="block",n.className+=" active"}
-    function timeToMinute(e){if(!e)return 0;const[t,o]=e.split(":").map(Number);return 60*t+o}
-    function minuteToTime(e){const t=Math.floor(e/60).toString().padStart(2,"0"),o=(e%60).toString().padStart(2,"0");return`${t}:${o}`}
-    function calculateSchedule(e){const t=e=>parseInt(document.getElementById(e)?.value)||0,o=e=>timeToMinute(document.getElementById(e).value),n=o(`gio_${e}`),a=t(`tiethoc_${e}`),s=t(`rachoi_${e}`),l=t(`duvaotiet_${e}`),c=t(`sotiet_${e}`),i=t(`chaoco_${e}`),d=t(`chunhiem_${e}`);let r=[],m=n;if(i>0)r.push({time:m,description:"Dự vào"}),m+=l,r.push({time:m,description:"Chào cờ"}),m+=i,r.push({time:m,description:"Vào tiết 1"});else if(d>0)r.push({time:m,description:"Bắt đầu SH"}),l>0&&r.push({time:m+d,description:"Dự vào tiết 1"}),m=m+d+l,r.push({time:m,description:"Vào tiết 1"});else r.push({time:m,description:"Vào tiết 1"});for(let e=1;e<=c;e++){let t=m+a;e<c?(s>0&&r.push({time:t,description:`Ra chơi tiết ${e}`}),m=(t+=s)+l,l>0&&r.push({time:t,description:`Dự vào tiết ${e+1}`}),r.push({time:m,description:`Vào tiết ${e+1}`])):s>0&&r.push({time:t,description:"Ra về"})}const u=Array.from(new Map(r.map(e=>[e.time,e])).values());return u.map(e=>({...e,time:minuteToTime(e.time)})).sort((e,t)=>timeToMinute(e.time)-timeToMinute(t.time))}
+    function openDay(e,t,o){const n=e.currentTarget,a=document.getElementById(t);if(n.classList.contains("active"))return a.style.display="none",void n.classList.remove("active");let s;const i=document.getElementsByClassName("tabcontent");for(s=0;s<i.length;s++)i[s].style.display="none";const d=document.getElementsByClassName("tablinks-sang");for(s=0;s<d.length;s++)d[s].className=d[s].className.replace(" active","");const r=document.getElementsByClassName("tablinks-chieu");for(s=0;s<r.length;s++)r[s].className=r[s].className.replace(" active","");a.style.display="block",n.className+=" active"}
+    function timeToMinute(e){if(!e)return 0;const[t,o]=e.split(":").map(Number);return 60*t+o}function minuteToTime(e){const t=Math.floor(e/60).toString().padStart(2,"0"),o=(e%60).toString().padStart(2,"0");return`${t}:${o}`}
+    function calculateSchedule(e){const t=e=>parseInt(document.getElementById(e)?.value)||0,o=e=>timeToMinute(document.getElementById(e).value),n=o(`gio_${e}`),a=t(`tiethoc_${e}`),l=t(`rachoi_${e}`),c=t(`duvaotiet_${e}`),s=t(`sotiet_${e}`),i=t(`chaoco_${e}`),d=t(`chunhiem_${e}`);let r=[],u=n;if(i>0)r.push({time:u,description:"Dự vào"}),u+=c,r.push({time:u,description:"Chào cờ"}),u+=i,r.push({time:u,description:"Vào tiết 1"});else if(d>0)r.push({time:u,description:"Bắt đầu SH"}),c>0&&r.push({time:u+d,description:"Dự vào tiết 1"}),u=u+d+c,r.push({time:u,description:"Vào tiết 1"});else r.push({time:u,description:"Vào tiết 1"});for(let e=1;e<=s;e++){let t=u+a;e<s?(l>0&&r.push({time:t,description:`Ra chơi tiết ${e}`}),u=(t+=l)+c,c>0&&r.push({time:t,description:`Dự vào tiết ${e+1}`}),r.push({time:u,description:`Vào tiết ${e+1}`}))  :l>0&&r.push({time:t,description:"Ra về"})}const m=Array.from(new Map(r.map(e=>[e.time,e])).values());return m.map(e=>({...e,time:minuteToTime(e.time)})).sort((e,t)=>timeToMinute(e.time)-timeToMinute(t.time))}
     function updatePreviewTable(e){const t=document.getElementById(`enable_${e}`).checked,o=document.getElementById("details-"+e);if(!o)return;if(!t)return void(o.innerHTML="<p style='text-align:center; padding: 10px;'>Lịch này đang tắt.</p>");const n=calculateSchedule(e);let a="<table><thead><tr><th>STT</th><th>Thời gian</th><th>Nội dung</th></tr></thead><tbody>";n.forEach((e,t)=>{a+=`<tr><td>${t+1}</td><td>${e.time}</td><td>${e.description}</td></tr>`}),a+="</tbody></table>",o.innerHTML=a}
     function copyAfternoonSchedule(e){const t=document.querySelector(`.tablinks-chieu[onclick*="'${e}'"]`).innerText;if(!confirm(`Bạn có chắc muốn sao chép lịch của ${t} (chiều) đến tất cả các ngày còn lại của buổi chiều không?`))return;const o={enabled:document.getElementById(`enable_${e}`).checked,gio:document.getElementById(`gio_${e}`).value,tiethoc:document.getElementById(`tiethoc_${e}`).value,rachoi:document.getElementById(`rachoi_${e}`).value,duvaotiet:document.getElementById(`duvaotiet_${e}`).value,sotiet:document.getElementById(`sotiet_${e}`).value},n=e.replace("_chieu","");days.filter(e=>e.id!==n).forEach(e=>{const t=`${e.id}_chieu`;document.getElementById(`enable_${t}`).checked=o.enabled,document.getElementById(`gio_${t}`).value=o.gio,document.getElementById(`tiethoc_${t}`).value=o.tiethoc,document.getElementById(`rachoi_${t}`).value=o.rachoi,document.getElementById(`duvaotiet_${t}`).value=o.duvaotiet,document.getElementById(`sotiet_${t}`).value=o.sotiet,updatePreviewTable(t)}),showNotification('Sao chép thành công! Hãy nhấn "Lưu và gửi cập nhật" để áp dụng.',"success")}
     function copyMorningSchedule(e){const t=document.querySelector(`.tablinks-sang[onclick*="'${e}'"]`).innerText;if(!confirm(`Bạn có chắc muốn sao chép lịch của ${t} (sáng) đến các ngày còn lại (T3-T7) không?`))return;const o={enabled:document.getElementById(`enable_${e}`).checked,gio:document.getElementById(`gio_${e}`).value,chunhiem:document.getElementById(`chunhiem_${e}`).value,tiethoc:document.getElementById(`tiethoc_${e}`).value,rachoi:document.getElementById(`rachoi_${e}`).value,duvaotiet:document.getElementById(`duvaotiet_${e}`).value,sotiet:document.getElementById(`sotiet_${e}`).value},n=e.replace("_sang",""),a=["t3","t4","t5","t6","t7"].filter(e=>e!==n);a.forEach(e=>{const t=`${e}_sang`;document.getElementById(`enable_${t}`).checked=o.enabled,document.getElementById(`gio_${t}`).value=o.gio,document.getElementById(`chunhiem_${t}`).value=o.chunhiem,document.getElementById(`tiethoc_${t}`).value=o.tiethoc,document.getElementById(`rachoi_${t}`).value=o.rachoi,document.getElementById(`duvaotiet_${t}`).value=o.duvaotiet,document.getElementById(`sotiet_${t}`).value=o.sotiet,updatePreviewTable(t)}),showNotification('Sao chép thành công! Hãy nhấn "Lưu và gửi cập nhật" để áp dụng.',"success")}
-    window.onload=function(){connectToMqtt(),setInterval(updateLocalClock,1e3),document.getElementById("managed-devices-list").addEventListener("click",function(e){const t=e.target.closest(".device-action-btn");if(!t)return;const o=t.getAttribute("data-device-name");t.classList.contains("remove-btn")?removeSatellite(o):t.classList.contains("wifi-btn")&&requestWifiReset(o)}),document.getElementById("discovered-devices-list").addEventListener("click",function(e){const t=e.target.closest(".add-btn");if(t){const e=t.getAttribute("data-device-name");addSatellite(e)}}),document.getElementById("password-modal-cancel-btn").addEventListener("click",hidePasswordModal),document.getElementById("password-modal-confirm-btn").addEventListener("click",confirmPasswordAndReset),document.getElementById("password-modal-overlay").addEventListener("click",function(e){e.target===this&&hidePasswordModal()})};
 
+    window.onload = function() { 
+        connectToMqtt();
+        setInterval(updateLocalClock, 1000);
+        
+        // Bắt sự kiện nhấn Enter trong ô mật khẩu
+        document.getElementById('admin-password-input').addEventListener('keyup', function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                document.querySelector('.modal-confirm-btn').click();
+            }
+        });
+    };
   </script>
 </body>
 </html>
