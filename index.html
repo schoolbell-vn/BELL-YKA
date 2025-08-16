@@ -1,522 +1,835 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <title>Bảng Điều Khiển Chuông Báo | THPT Yên Khánh A</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta charset="utf-8">
+  <title>Hẹn Giờ Chuông Báo - Điều khiển Internet</title>
+  <meta name="viewport" content="width=device-width,user-scalable=0" charset="utf-8">
   <script src="https://unpkg.com/mqtt/dist/mqtt.min.js" type="text/javascript"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap" rel="stylesheet">
   
-  <style>
-    /* --- CÀI ĐẶT BIẾN VÀ THIẾT LẬP CHUNG --- */
-    :root {
-        --bg-primary: #1a202c;       /* Nền chính đậm */
-        --bg-secondary: #2d3748;     /* Nền phụ, nền thẻ */
-        --bg-tertiary: #4a5568;      /* Nền cho input, tab */
-        --border-color: #4a5568;     /* Màu viền */
-        --text-primary: #edf2f7;     /* Màu chữ chính */
-        --text-secondary: #a0aec0;   /* Màu chữ phụ */
-        --accent-primary: #4299e1;   /* Màu nhấn chính (xanh) */
-        --accent-success: #48bb78;   /* Màu thành công (xanh lá) */
-        --accent-warning: #f6ad55;   /* Màu cảnh báo (vàng) */
-        --accent-danger: #f56565;    /* Màu nguy hiểm (đỏ) */
-        --font-family: 'Be Vietnam Pro', 'Segoe UI', sans-serif;
-        --border-radius: 12px;
-        --shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
-    }
+  <style type="text/css">
+    /* --- CÀI ĐẶT CHUNG & SỬA LỖI TRÀN KHUNG --- */
     * {
         box-sizing: border-box;
-        margin: 0;
-        padding: 0;
     }
     body {
-        background-color: var(--bg-primary);
-        font-family: var(--font-family);
-        color: var(--text-primary);
-        font-size: 16px;
-        line-height: 1.6;
-    }
-    .container {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 24px 16px 120px 16px; /* Thêm padding dưới để không bị footer che */
-    }
-
-    /* --- HEADER & STATUS --- */
-    .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 24px;
-    }
-    .header-title h1 {
-        font-size: 1.5em;
+        background: linear-gradient(135deg, #3a4750 0%, #4a627a 100%);
+        font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+        color: #f5f6fa;
+        min-height: 100vh;
         margin: 0;
-        color: var(--text-primary);
+        font-size: 15px;
     }
-    .header-title p {
-        font-size: 0.9em;
-        color: var(--accent-primary);
-        font-weight: 500;
-        margin: 0;
-    }
-    .status-indicator {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 0.8em;
-        font-weight: 500;
-        padding: 6px 12px;
-        border-radius: 20px;
-        transition: all 0.3s ease;
-    }
-    .status-indicator::before {
-        content: '';
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        display: block;
-        animation: pulse 2s infinite;
-    }
-    .status-connecting {
-        background-color: var(--bg-tertiary);
-        color: var(--text-secondary);
-    }
-    .status-connecting::before { background-color: var(--accent-warning); }
-    .status-connected {
-        background-color: rgba(72, 187, 120, 0.1);
-        color: var(--accent-success);
-    }
-    .status-connected::before { background-color: var(--accent-success); }
-    .status-disconnected {
-        background-color: rgba(245, 101, 101, 0.1);
-        color: var(--accent-danger);
-        animation: none;
-    }
-    .status-disconnected::before { background-color: var(--accent-danger); animation: none; }
-    
-    @keyframes pulse {
-        0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
-        70% { box-shadow: 0 0 0 8px rgba(255, 255, 255, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+    #main {
+        margin: 24px auto;
+        width: 380px;
+        max-width: 98vw;
     }
 
-    /* --- CARD LAYOUT --- */
-    .card {
-        background-color: var(--bg-secondary);
-        border-radius: var(--border-radius);
-        padding: 24px;
-        margin-bottom: 24px;
-        box-shadow: var(--shadow);
-        border: 1px solid var(--border-color);
-    }
-    .card-header {
-        margin-bottom: 20px;
-    }
-    .card-title {
-        font-size: 1.2em;
-        font-weight: 700;
-        color: var(--text-primary);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    .card-subtitle {
-        font-size: 0.9em;
-        color: var(--text-secondary);
-    }
-
-    /* --- TABS --- */
-    .tabs {
-        display: flex;
-        overflow-x: auto;
-        border-bottom: 2px solid var(--border-color);
-        margin-bottom: 24px;
-    }
-    .tab-button {
-        padding: 12px 16px;
-        cursor: pointer;
+    /* --- KHUNG NỘI DUNG CHÍNH --- */
+    #content {
+        background: #2c3e50;
         border: none;
-        background-color: transparent;
-        color: var(--text-secondary);
-        font-weight: 500;
-        font-size: 0.9em;
-        transition: all 0.2s ease-in-out;
-        border-bottom: 3px solid transparent;
-        white-space: nowrap;
-    }
-    .tab-button:hover {
-        color: var(--text-primary);
-    }
-    .tab-button.active {
-        color: var(--accent-primary);
-        border-bottom-color: var(--accent-primary);
-    }
-    .tab-content {
-        display: none;
-    }
-    .tab-content.active {
-        display: block;
+        width: 100%;
+        float: left;
+        border-radius: 18px;
+        padding-bottom: 24px;
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
     }
 
-    /* --- FORM ELEMENTS & GRIDS --- */
-    .form-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 20px;
-    }
-    .form-group {
-        display: flex;
-        flex-direction: column;
-    }
-    .form-group label {
-        font-size: 0.85em;
-        color: var(--text-secondary);
-        margin-bottom: 6px;
-        font-weight: 500;
-    }
-    .form-group input {
-        background-color: var(--bg-tertiary);
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        padding: 10px;
-        color: var(--text-primary);
-        font-size: 0.9em;
-        transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    .form-group input:focus {
-        outline: none;
-        border-color: var(--accent-primary);
-        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
-    }
-    .input-with-unit {
-        position: relative;
-    }
-    .input-with-unit span {
-        position: absolute;
-        right: 12px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--text-secondary);
-        font-size: 0.8em;
-    }
-    .input-with-unit input {
-        padding-right: 45px;
-    }
-
-    /* --- TOGGLE SWITCH --- */
-    .toggle-switch {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-    .toggle-switch label {
-        font-size: 1em;
-        font-weight: 500;
-        color: var(--text-primary);
-        cursor: pointer;
-    }
-    .toggle-switch .switch {
-        position: relative;
-        display: inline-block;
-        width: 44px;
-        height: 24px;
-    }
-    .toggle-switch .switch input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-    }
-    .toggle-switch .slider {
-        position: absolute;
-        cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: var(--bg-tertiary);
-        transition: .4s;
-        border-radius: 24px;
-    }
-    .toggle-switch .slider:before {
-        position: absolute;
-        content: "";
-        height: 18px;
-        width: 18px;
-        left: 3px;
-        bottom: 3px;
-        background-color: white;
-        transition: .4s;
-        border-radius: 50%;
-    }
-    .toggle-switch input:checked + .slider {
-        background-color: var(--accent-success);
-    }
-    .toggle-switch input:checked + .slider:before {
-        transform: translateX(20px);
-    }
-
-    /* --- BUTTONS & FOOTER --- */
-    .sticky-footer {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: linear-gradient(to top, rgba(26, 32, 44, 1), rgba(26, 32, 44, 0.9));
-        padding: 16px;
-        display: flex;
-        gap: 12px;
-        justify-content: center;
-        box-shadow: 0 -4px 10px rgba(0,0,0,0.2);
-        z-index: 100;
-    }
-    .btn {
-        padding: 12px 20px;
-        border: none;
-        border-radius: 8px;
-        font-weight: 700;
-        font-size: 0.9em;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-    }
-    .btn:active {
-        transform: scale(0.97);
-    }
-    .btn-primary {
-        background-color: var(--accent-primary);
-        color: white;
-    }
-    .btn-primary:hover {
-        background-color: #2b6cb0;
-    }
-    .btn-secondary {
-        background-color: var(--bg-tertiary);
-        color: var(--text-primary);
-    }
-    .btn-secondary:hover {
-        background-color: #4a5568;
-    }
-    .btn-warning {
-        background-color: var(--accent-warning);
-        color: #1a202c;
-    }
-    .btn-warning:hover {
-        background-color: #dd6b20;
-    }
-    .btn-danger {
-        background-color: var(--accent-danger);
-        color: white;
-    }
-    .btn-danger:hover {
-        background-color: #c53030;
-    }
-    .btn-subtle {
-        background-color: transparent;
-        color: var(--accent-primary);
-        font-size: 0.85em;
-        padding: 8px 12px;
-    }
-    .btn-subtle:hover {
-        background-color: rgba(66, 153, 225, 0.1);
-    }
-    .session-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid var(--border-color);
-        padding-bottom: 12px;
-        margin-bottom: 20px;
-    }
-    .session-card {
-        padding: 20px;
-        border: 1px solid var(--border-color);
-        border-radius: var(--border-radius);
-        margin-bottom: 24px;
-        background-color: rgba(0,0,0,0.1);
-    }
-    .session-card:last-child {
-        margin-bottom: 0;
-    }
-    hr.divider {
-        border: none;
-        height: 1px;
-        background-color: var(--border-color);
-        margin: 24px 0;
-    }
-    
-    /* --- NOTIFICATION --- */
+    /* === KHU VỰC THÔNG BÁO PHẢN HỒI === */
     #notification-area {
         position: fixed;
-        top: 20px;
-        right: 20px;
+        top: 15px;
+        left: 50%;
+        transform: translateX(-50%);
         z-index: 1010;
-        width: 320px;
+        width: 90%;
+        max-width: 360px;
     }
     .notification {
-        padding: 12px 18px;
+        padding: 10px 15px;
         border-radius: 8px;
         color: #fff;
-        font-weight: 500;
+        font-weight: bold;
+        text-align: center;
         box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         opacity: 0;
-        transform: translateX(20px);
+        transform: translateY(-20px);
         transition: opacity 0.3s, transform 0.3s;
         margin-bottom: 10px;
         font-size: 0.9em;
     }
     .notification.show {
         opacity: 1;
-        transform: translateX(0);
+        transform: translateY(0);
     }
-    .notification.success { background: var(--accent-success); }
-    .notification.error { background: var(--accent-danger); }
+    .notification.success {
+        background: linear-gradient(90deg, #27ae60, #2ecc71);
+    }
+    .notification.error {
+        background: linear-gradient(90deg, #c0392b, #e74c3c);
+    }
+
+    /* --- TIÊU ĐỀ & MÀU SẮC NỔI BẬT --- */
+    h2 {
+        font-size: 1.6em;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        text-align: center;
+        color: #f39c12;
+        text-shadow: 0 4px 12px rgba(243, 156, 18, 0.18), 0 2px 4px rgba(0,0,0,0.08);
+        letter-spacing: 1px;
+        font-weight: 800;
+    }
+    h3 {
+        margin-top: 28px;
+        margin-bottom: 18px; 
+        text-align: center;
+        font-size: 1.15em;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        padding: 12px 18px;
+        background: linear-gradient(90deg, #232526 60%, #414345 100%);
+        border-radius: 12px;
+        margin-left: 15px;
+        margin-right: 15px;
+        border-left: 5px solid;
+        border-right: 5px solid;
+        position: relative;
+        z-index: 2;
+        box-shadow: 0 4px 24px 0 #00000044, 0 2px 8px rgba(0,0,0,0.08);
+    }
+    #header-sang { 
+        color: #2ecc71 !important;
+        text-shadow: 0 0 12px #2ecc71, 0 2px 8px #000;
+        border-color: #2ecc71;
+        box-shadow: 0 4px 24px 0 #00000044, 0 2px 8px rgba(0,0,0,0.08),
+                    inset 5px 0 10px -5px #2ecc71,
+                    inset -5px 0 10px -5px #2ecc71;
+    }
+    #header-chieu { 
+        color: #3498db !important;
+        text-shadow: 0 0 12px #3498db, 0 2px 8px #000;
+        border-color: #3498db;
+        box-shadow: 0 4px 24px 0 #00000044, 0 2px 8px rgba(0,0,0,0.08),
+                    inset 5px 0 10px -5px #3498db,
+                    inset -5px 0 10px -5px #3498db;
+    }
+    hr { border: none; height: 1px; background: linear-gradient(90deg, #f1c40f 0%, #e0eafc 100%); margin: 28px 15px; border-radius: 2px; opacity: 0.5; }
+
+    /* --- THANH TRẠNG THÁI & ĐỒNG HỒ --- */
+    .status-bar { 
+        padding: 5px 15px;
+        margin: 0 15px 14px 15px; 
+        text-align: center; 
+        font-weight: bold; 
+        border-radius: 8px; 
+        transition: all 0.5s;
+        font-size: 0.7em;
+        text-transform: uppercase; letter-spacing: 0.7px; box-shadow: 0 2px 8px rgba(52, 152, 219, 0.10);
+        color: #ecf0f1;
+    }
+    .status-connected { background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%); color: #222; }
+    .status-disconnected { background: linear-gradient(90deg, #ff5858 0%, #f09819 100%); color: #fff; }
+    .status-connecting { background: linear-gradient(90deg, #7f8c8d 0%, #b2bec3 100%); color: #222; }
+    .clock-container { 
+        text-align: center; 
+        margin: 22px auto; 
+        background: linear-gradient(120deg, #232526 60%, #414345 100%); 
+        border: 2px solid #f1c40f; 
+        border-radius: 14px; 
+        padding: 8px 10px;
+        box-shadow: 0 2px 12px rgba(241, 196, 15, 0.10), 0 2px 5px rgba(0,0,0,0.08);
+        width: 90%;
+    }
+    .clock {
+        font-size: 2.5em;
+        color: #f1c40f;
+        text-shadow: 0 0 10px #f1c40f88;
+        letter-spacing: 2px;
+        font-family: 'Courier New', Courier, monospace;
+    }
+    .date-display { font-size: 0.9em; color: #ecf0f1; margin-top: 5px; font-weight: 500; }
+
+    /* --- KHU VỰC NÚT ĐIỀU KHIỂN --- */
+    .button-section {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 0 15px;
+        margin-top: 24px;
+    }
+    .modern-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 48px;
+        padding: 0 15px;
+        border: none;
+        border-radius: 10px;
+        font-size: 0.9em;
+        font-weight: 700;
+        letter-spacing: 1px;
+        transition: box-shadow 0.18s, transform 0.13s, filter 0.13s;
+        cursor: pointer;
+        outline: none;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+        text-transform: uppercase;
+        width: 100%;
+    }
+    .modern-btn svg {
+        width: 1.1em;
+        height: 1.1em;
+        margin-right: 10px;
+    }
+    .modern-btn:active {
+        transform: scale(0.97);
+        filter: brightness(0.97);
+        box-shadow: 0 2px 8px 0 #0004;
+    }
+    .save-button {
+        background: linear-gradient(90deg, #232526 60%, #414345 100%);
+        color: #00e6ff;
+        border-left: 4px solid #00e6ff;
+        border-right: 4px solid #00e6ff;
+        text-shadow: 0 0 12px #00e6ff, 0 2px 8px #000, 0 0 24px #fff;
+        box-shadow: 0 4px 18px 0 #00e6ff33, 0 2px 8px #fff2;
+    }
+    .save-button:hover {
+        filter: brightness(1.12);
+        box-shadow: 0 10px 32px #00e6ff99, 0 2px 12px #fff4;
+    }
+    .test-button {
+        background: linear-gradient(90deg, #232526 60%, #414345 100%);
+        color: #f1c40f;
+        border-left: 4px solid #f1c40f;
+        border-right: 4px solid #f1c40f;
+        text-shadow: 0 0 12px #f1c40f, 0 2px 8px #000, 0 0 24px #fff;
+        box-shadow: 0 4px 18px 0 #f1c40f33, 0 2px 8px #fff2;
+    }
+    .test-button:hover {
+        filter: brightness(1.08);
+        box-shadow: 0 10px 32px #f1c40f99, 0 2px 12px #fff4;
+    }
+    .advanced-button {
+        background: linear-gradient(90deg, #485563 0%, #29323c 100%);
+        color: #bdc3c7;
+        border-left: 4px solid #bdc3c7;
+        border-right: 4px solid #bdc3c7;
+        text-shadow: 0 0 12px #bdc3c7, 0 2px 8px #000;
+        box-shadow: 0 4px 18px 0 #bdc3c733, 0 2px 8px #fff2;
+    }
+    .advanced-button:hover {
+        filter: brightness(1.15);
+        box-shadow: 0 10px 32px #bdc3c799, 0 2px 12px #fff4;
+    }
+    .logout-button {
+        background: linear-gradient(90deg, #232526 60%, #414345 100%);
+        color: #e74c3c;
+        border-left: 4px solid #e74c3c;
+        border-right: 4px solid #e74c3c;
+        text-shadow: 0 0 12px #e74c3c, 0 2px 8px #000, 0 0 24px #fff;
+        box-shadow: 0 4px 18px 0 #e74c3c33, 0 2px 8px #fff2;
+    }
+    .logout-button:hover {
+        filter: brightness(1.08);
+        box-shadow: 0 10px 32px #e74c3c99, 0 2px 12px #fff4;
+    }
     
-    /* MODAL STYLES */
+    /* --- TAB NGÀY & NỘI DUNG TAB --- */
+    .tab { display: flex; justify-content: space-around; border-bottom: 2px solid #414345; margin: 0 15px 0 15px; position: relative; z-index: 1; }
+    .tab button {
+        flex-grow: 1; border: none; outline: none; cursor: pointer; padding: 10px 5px 8px 5px;
+        transition: all 0.18s cubic-bezier(.4,0,.2,1), box-shadow 0.18s;
+        font-size: 0.9em; font-weight: 700; border-radius: 8px 8px 0 0; margin: 0 2px;
+        position: relative; top: 2px; border-bottom: 3px solid transparent;
+        background: transparent; color: #bdc3c7;
+    }
+    .tab button:hover {
+        background: #414345; color: #fff;
+        transform: translateY(-2px);
+    }
+    .tablinks-sang.active { 
+        background: linear-gradient(90deg, #2ecc71 60%, #27ae60 100%);
+        color: #fff; 
+        border-bottom-color: #2ecc71;
+        z-index: 2;
+    }
+     .tablinks-chieu.active { 
+        background: linear-gradient(90deg, #3498db 60%, #2980b9 100%);
+        color: #fff; 
+        border-bottom-color: #3498db;
+        z-index: 2;
+    }
+    .tabcontent { 
+        display: none; padding: 15px 10px 10px 10px; background: #232526;
+        border-radius: 0 0 12px 12px;
+        margin-bottom: 8px;
+    }
+    .tabcontent h3 { 
+        font-size: 1em; margin-top: 0; margin-bottom: 15px; border: none; box-shadow: none; background: none; color: #f1c40f; font-weight: 700;
+        line-height: 1.4;
+    }
+    .session-subtitle {
+        font-size: 0.8em;
+        font-weight: normal;
+        text-transform: none;
+        color: #bdc3c7;
+    }
+    
+    /* --- KHU VỰC CÀI ĐẶT (DETAILS) --- */
+    details {
+        border: 1px solid #414345; border-radius: 10px; margin-bottom: 12px;
+        background: #232526; box-shadow: 0 2px 8px rgba(0,0,0, 0.1);
+        overflow: hidden; transition: box-shadow 0.2s;
+    }
+    summary {
+        font-weight: bold; padding: 12px 15px; cursor: pointer; outline: none;
+        transition: background 0.2s, color 0.2s; list-style: none;
+        font-size: 0.9em;
+    }
+    summary::-webkit-details-marker, summary::marker { display: none; }
+    
+    .sohoi-container {
+        padding: 0 15px;
+    }
+    summary#header-sohoi {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 50px;
+        border-radius: 10px;
+        background: linear-gradient(90deg, #232526 60%, #414345 100%);
+        color: #f1c40f;
+        border-left: 4px solid #f1c40f;
+        border-right: 4px solid #f1c40f;
+        text-shadow: 0 0 12px #f1c40f, 0 2px 8px #000, 0 0 24px #fff;
+        box-shadow: 0 4px 18px 0 #f1c40f33, 0 2px 8px #fff2;
+    }
+    summary#header-sohoi div:first-child {
+        font-size: 1em;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+    }
+    .details-content { padding: 12px 15px 16px 15px; border-top: 1px solid #414345; }
+    
+    .tabcontent details summary {
+        text-align: center;
+        font-size: 1em;
+        border-radius: 8px 8px 0 0;
+        background: #2c3e50;
+        color: #f1c40f;
+    }
+    details[open] > .tabcontent details summary { 
+        background: #f1c40f;
+        color: #232526; 
+    }
+    
+    /* --- BẢNG LỊCH CHI TIẾT --- */
+    .details-container table { width: 100%; border-collapse: collapse; margin-top: 10px; background: #232526; border-radius: 8px; overflow: hidden; }
+    .details-container th, .details-container td { border: 1px solid #414345; padding: 8px 5px; text-align: center; font-size: 0.9em; }
+    .details-container th { background: #f1c40f; color: #232526; font-weight: bold; }
+    .details-container tbody tr:nth-child(odd) { background: #232526; color: #ecf0f1; }
+    .details-container tbody tr:nth-child(even) { background: #414345; color: #ecf0f1; }
+
+    .divider-yellow {
+        width: 90%; height: 2px; background: linear-gradient(90deg, #f1c40f 0%, #fff200 100%);
+        border-radius: 2px; margin: 24px auto 18px auto; box-shadow: 0 2px 8px #f1c40f55;
+    }
+
+    /* --- GIAO DIỆN LƯỚI "THÔNG MINH" CHO CÀI ĐẶT --- */
+    .settings-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        padding: 8px 0;
+    }
+    .setting-item {
+        background: #232526;
+        border: 1px solid #414345;
+        border-radius: 8px;
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        transition: all 0.2s ease-in-out;
+    }
+    .setting-item:hover {
+        border-color: #f1c40f;
+    }
+    .setting-item.full-width {
+        grid-column: 1 / -1;
+    }
+    .setting-item-icon {
+        flex-shrink: 0;
+        margin-right: 10px;
+        color: #f1c40f;
+    }
+    .setting-item-icon svg {
+        width: 22px;
+        height: 22px;
+    }
+    .input-wrapper {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    .input-wrapper label {
+        font-size: 0.8em;
+        font-weight: 600;
+        color: #bdc3c7;
+        margin-bottom: 4px;
+    }
+    .unit-input {
+        display: flex;
+        align-items: center;
+    }
+    .unit-input input {
+        width: 100%;
+        margin-right: 8px;
+    }
+    .unit-input span {
+        font-size: 0.9em;
+        color: #bdc3c7;
+    }
+    .setting-item input[type="time"] {
+        width: 100%;
+        padding: 8px;
+        font-size: 0.9em;
+    }
+    .activation-copy-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding: 0 5px;
+        margin-bottom: 15px;
+    }
+    .activation-control {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .activation-control label {
+        font-weight: bold;
+        font-size: 0.95em;
+        cursor: pointer;
+    }
+    .copy-button {
+        padding: 7px 12px;
+        font-size: 0.8em;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.18s;
+        font-weight: 700;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        text-shadow: 0 1px 2px #00000044;
+    }
+    .copy-button:active {
+        transform: scale(0.96);
+        filter: brightness(0.95);
+    }
+    .copy-button.sang {
+        background: linear-gradient(90deg, #16a085 0%, #43e97b 100%);
+    }
+    .copy-button.chieu {
+        background: linear-gradient(90deg, #2980b9 0%, #6dd5fa 100%);
+    }
+
+    /* === Giao diện cho Modal Chung === */
     .modal-overlay {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.7); display: flex; align-items: center;
-        justify-content: center; z-index: 1000; opacity: 0;
-        visibility: hidden; transition: opacity 0.3s, visibility 0.3s;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s, visibility 0.3s;
     }
-    .modal-overlay.visible { opacity: 1; visibility: visible; }
+    .modal-overlay.visible {
+        opacity: 1;
+        visibility: visible;
+    }
     .modal-content {
-        background: var(--bg-secondary); padding: 24px;
-        border-radius: var(--border-radius);
-        width: 95%; max-width: 450px;
-        box-shadow: var(--shadow); transform: scale(0.9);
-        transition: transform 0.3s; border-top: 4px solid var(--accent-primary);
+        background: #2c3e50;
+        padding: 20px;
+        border-radius: 15px;
+        border-top: 5px solid #f1c40f;
+        width: 95%;
+        max-width: 400px;
+        box-shadow: 0 5px 25px rgba(0,0,0,0.4);
+        transform: scale(0.9);
+        transition: transform 0.3s;
     }
-    .modal-overlay.visible .modal-content { transform: scale(1); }
+    .modal-overlay.visible .modal-content {
+        transform: scale(1);
+    }
     .modal-content h4 {
-        margin-top: 0; margin-bottom: 16px; color: var(--text-primary);
-        text-align: center; font-size: 1.2em;
+        margin-top: 0;
+        margin-bottom: 20px;
+        color: #f1c40f;
+        text-align: center;
+        font-size: 1.2em;
+        text-transform: uppercase;
     }
-    .modal-buttons { display: flex; gap: 12px; margin-top: 24px; }
-    .modal-buttons button { flex-grow: 1; }
+    .modal-buttons {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+    }
+    .modal-buttons button {
+        flex-grow: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 0.9em;
+        transition: all 0.2s;
+    }
+    .modal-confirm-btn {
+        background: #f1c40f;
+        color: #232526;
+    }
+    .modal-cancel-btn {
+        background: #7f8c8d;
+        color: #fff;
+    }
+    
     .modal-input {
-        width: 100%; padding: 12px; border-radius: 8px;
-        border: 1px solid var(--border-color); background-color: var(--bg-tertiary);
-        color: var(--text-primary); font-size: 1em; margin-bottom: 12px;
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        border: 2px solid #7f8c8d;
+        background-color: #2c3e50;
+        color: #ecf0f1;
+        font-size: 1em;
+        margin-bottom: 15px;
     }
     .modal-input:focus {
-        outline: none; border-color: var(--accent-primary);
-        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+        outline: none;
+        border-color: #f1c40f;
     }
-    /* Advanced Modal Specifics */
+
+    /* === Giao diện cho Modal Cài đặt Nâng cao (NÂNG CẤP) === */
+    #advanced-settings-modal .modal-content {
+        background: #232526;
+        border-top-color: #f39c12; /* Màu vàng */
+        color: #f5f6fa;
+    }
+    #advanced-settings-modal h4 {
+        color: #f39c12; /* Màu vàng */
+        text-shadow: 0 0 10px #f39c12;
+    }
     .adv-modal-tabs {
-        display: flex; border-bottom: 2px solid var(--border-color); margin-bottom: 15px;
+        display: flex;
+        border-bottom: 2px solid #414345;
+        margin-bottom: 15px;
     }
     .adv-modal-tab {
-        flex-grow: 1; padding: 10px; text-align: center; cursor: pointer;
-        font-weight: bold; color: var(--text-secondary); border-bottom: 3px solid transparent;
-        transition: all 0.2s; font-size: 0.9em;
+        flex-grow: 1;
+        padding: 10px;
+        text-align: center;
+        cursor: pointer;
+        font-weight: bold;
+        color: #7f8c8d;
+        border-bottom: 3px solid transparent;
+        transition: all 0.2s;
+        font-size: 0.9em;
     }
     .adv-modal-tab.active {
-        color: var(--accent-primary); border-bottom-color: var(--accent-primary);
+        color: #f39c12; /* Màu vàng */
+        border-bottom-color: #f39c12; /* Màu vàng */
     }
-    .adv-modal-tab-content { display: none; }
-    .adv-modal-tab-content.active { display: block; }
+    .adv-modal-tab-content {
+        display: none;
+    }
+    .adv-modal-tab-content.active {
+        display: block;
+    }
     .adv-modal-tab-content h5 {
-        text-align: center; color: var(--accent-primary); text-transform: uppercase;
-        margin: 10px 0 15px 0; letter-spacing: 1px; font-size: 0.8em;
+        text-align: center;
+        color: #f39c12; /* Màu vàng */
+        text-transform: uppercase;
+        margin: 10px 0 15px 0;
+        letter-spacing: 1px;
+        font-size: 0.9em;
     }
-    .device-list {
-        display: flex; flex-direction: column; gap: 10px; max-height: 280px;
-        overflow-y: auto; padding: 5px; background: var(--bg-primary);
-        border-radius: 8px; border: 1px solid var(--border-color);
-    }
-    .list-placeholder {
-        text-align: center; padding: 20px; color: var(--text-secondary); font-size: 0.9em;
+    
+    /* === Giao diện cho Tab Hệ thống & Reset WiFi (MỚI) === */
+    .actions-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
     }
     .action-item {
-        display: flex; align-items: center; background: var(--bg-secondary);
-        border-radius: 8px; padding: 12px; border-left: 4px solid var(--accent-primary);
-        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        background: #2c3e50;
+        border-radius: 8px;
+        padding: 12px;
+        border-left: 4px solid #f39c12; /* Màu vàng */
+        transition: background-color 0.2s;
     }
-    .action-text .title { font-weight: bold; font-size: 1em; color: var(--text-primary); }
-    .action-text .description { font-size: 0.85em; color: var(--text-secondary); }
-    .action-btn { flex-shrink: 0; margin-left: 15px; }
+    .action-item:hover {
+        background-color: #34495e;
+    }
+    .action-icon {
+        flex-shrink: 0;
+        margin-right: 15px;
+        color: #f39c12; /* Màu vàng */
+    }
+    .action-icon svg {
+        width: 28px;
+        height: 28px;
+    }
+    .action-text {
+        flex-grow: 1;
+    }
+    .action-text .title {
+        font-weight: bold;
+        font-size: 1em;
+        color: #f5f6fa; /* Màu trắng */
+    }
+    .action-text .description {
+        font-size: 0.8em;
+        color: #bdc3c7;
+    }
+    .action-btn {
+        padding: 7px 15px;
+        font-size: 0.8em;
+        font-weight: bold;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+        background-color: #f39c12; /* Màu vàng */
+        color: #232526;
+    }
+    .action-btn.reset {
+        background-color: #c0392b;
+        color: #fff;
+    }
+    .system-info-list .info-item {
+        padding: 10px 5px;
+        font-size: 0.9em;
+    }
+    .system-info-list .info-item .label {
+        color: #f39c12; /* Màu vàng */
+    }
+     .system-info-list .info-item .value {
+        color: #f5f6fa; /* Màu trắng */
+    }
+
+
+    /* === Giao diện cho Quản lý Vệ tinh === */
+    .device-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-height: 280px;
+        overflow-y: auto;
+        padding: 5px;
+        background: #2c3e50;
+        border-radius: 8px;
+    }
+    .device-item {
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+        background: #34495e;
+        border-radius: 8px;
+        border-left: 4px solid #f1c40f;
+        gap: 8px;
+    }
+    .device-item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .device-name {
+        font-weight: bold;
+        font-size: 1em;
+        color: #ecf0f1;
+    }
+    .device-status {
+        font-size: 0.85em;
+        font-weight: bold;
+    }
+    .device-status.connected { color: #2ecc71; }
+    .device-status.disconnected { color: #e74c3c; }
+    
+    .device-info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+        font-size: 0.8em;
+        color: #bdc3c7;
+    }
+    .device-info-grid span {
+        background-color: #2c3e50;
+        padding: 4px 6px;
+        border-radius: 4px;
+    }
+    .device-info-grid .label {
+        font-weight: bold;
+        color: #ecf0f1;
+    }
+    
+    .device-actions {
+        display: flex;
+        gap: 8px;
+    }
+    .device-action-btn {
+        padding: 5px 10px;
+        border: none;
+        border-radius: 5px;
+        color: #fff;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s;
+        flex-shrink: 0;
+        font-size: 0.75em;
+        flex-grow: 1;
+    }
+    .device-action-btn:hover {
+        filter: brightness(1.1);
+        transform: scale(1.05);
+    }
+    .add-btn { background-color: #27ae60; }
+    .remove-btn { background-color: #c0392b; }
+    .cancel-btn { background-color: #7f8c8d; }
+
+    .list-placeholder {
+        text-align: center;
+        padding: 20px;
+        color: #7f8c8d;
+        font-size: 0.9em;
+    }
 
   </style>
 </head>
 <body>
-
   <div id="notification-area"></div>
 
-  <div class="container">
-    <header class="header">
-      <div class="header-title">
-        <h1>Bảng Điều Khiển Chuông Báo</h1>
-        <p>THPT Yên Khánh A</p>
+  <div id="main">
+    <div id="content">
+      <div style="text-align: center; padding: 15px 0 5px 0;">
+        <h2 style="margin: 0; padding: 0;">CHUÔNG BÁO TỰ ĐỘNG</h2>
+        <p style="margin: 5px 0 0 0; padding: 0; font-size: 1.1em; color: #00e6ff; font-weight: bold; text-shadow: 0 0 8px #00e6ff, 0 2px 8px #000; letter-spacing: 1.2px;">THPT YÊN KHÁNH A</p>
       </div>
-      <div id="status" class="status-indicator status-connecting">Đang kết nối</div>
-    </header>
+      <div class="clock-container" id="clock-wrapper" style="display: none;">
+        <div id="clock" class="clock">--:--:--</div>
+        <div id="date" class="date-display">Đang chờ đồng bộ...</div>
+      </div>
+      
+      <div id="status" class="status-bar status-connecting">Đang kết nối...</div>
+      
+      <h3 id="header-sang">LỊCH BUỔI SÁNG</h3>
+      <div class="tab" id="tab_sang">
+        <button class="tablinks-sang" onclick="openDay(event, 't2_sang', 'sang')">Thứ 2</button>
+        <button class="tablinks-sang" onclick="openDay(event, 't3_sang', 'sang')">Thứ 3</button>
+        <button class="tablinks-sang" onclick="openDay(event, 't4_sang', 'sang')">Thứ 4</button>
+        <button class="tablinks-sang" onclick="openDay(event, 't5_sang', 'sang')">Thứ 5</button>
+        <button class="tablinks-sang" onclick="openDay(event, 't6_sang', 'sang')">Thứ 6</button>
+        <button class="tablinks-sang" onclick="openDay(event, 't7_sang', 'sang')">Thứ 7</button>
+        <button class="tablinks-sang" onclick="openDay(event, 'cn_sang', 'sang')">CN</button>
+      </div>
+      <div id="tab-container-sang"></div>
+      <div class="divider-yellow"></div>
+      
+      <h3 id="header-chieu">LỊCH BUỔI CHIỀU</h3>
+      <div class="tab" id="tab_chieu">
+        <button class="tablinks-chieu" onclick="openDay(event, 't2_chieu', 'chieu')">Thứ 2</button>
+        <button class="tablinks-chieu" onclick="openDay(event, 't3_chieu', 'chieu')">Thứ 3</button>
+        <button class="tablinks-chieu" onclick="openDay(event, 't4_chieu', 'chieu')">Thứ 4</button>
+        <button class="tablinks-chieu" onclick="openDay(event, 't5_chieu', 'chieu')">Thứ 5</button>
+        <button class="tablinks-chieu" onclick="openDay(event, 't6_chieu', 'chieu')">Thứ 6</button>
+        <button class="tablinks-chieu" onclick="openDay(event, 't7_chieu', 'chieu')">Thứ 7</button>
+        <button class="tablinks-chieu" onclick="openDay(event, 'cn_chieu', 'chieu')">CN</button>
+      </div>
+      <div id="tab-container-chieu"></div>
+      <div class="divider-yellow"></div>
+      
+      <div class="sohoi-container">
+          <details>
+              <summary id="header-sohoi">
+                  <div>CÀI ĐẶT SỐ HỒI CHUÔNG</div>
+                  <span style="font-size: 0.8em; font-weight: normal; color: #ccc; margin-top: 2px;">(SÁNG - CHIỀU)</span>
+              </summary>
+              <div class="details-content">
+                  <div class="settings-grid">
+                      <div class="setting-item">
+                          <div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13.586V10c0-3.217-2.185-5.927-5-6.758V2h-4v1.242C7.185 4.073 5 6.783 5 10v3.586l-1.707 1.707A.996.996 0 0 0 3 16v2a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-2a.996.996 0 0 0-.293-.707L19 13.586zM19 17H5v-.586l1.707-1.707A.996.996 0 0 0 7 14v-4c0-2.757 2.243-5 5-5s5 2.243 5 5v4c0 .266.105.52.293.707L19 16.414V17zM12 22a2.98 2.98 0 0 0 2.818-2H9.182A2.98 2.98 0 0 0 12 22z"></path></svg></div>
+                          <div class="input-wrapper">
+                              <label for="sohoi_batdau">Bắt đầu buổi học</label>
+                              <div class="unit-input"><input id="sohoi_batdau" type="number" value="6"><span>hồi</span></div>
+                          </div>
+                      </div>
+                      <div class="setting-item">
+                          <div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M13 16.438V7.562a1 1 0 0 0-1.555-.832L8 9.562v4.876l3.445 2.832A1 1 0 0 0 13 16.438zM12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path></svg></div>
+                          <div class="input-wrapper">
+                              <label for="sohoi_vaotiet">Vào tiết</label>
+                              <div class="unit-input"><input id="sohoi_vaotiet" type="number" value="5"><span>hồi</span></div>
+                          </div>
+                      </div>
+                      <div class="setting-item">
+                          <div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M18 5h-2V2H8v3H6c-1.654 0-3 1.346-3 3v6c0 1.654 1.346 3 3 3h1v1c0 .552.447 1 1 1h6c.553 0 1-.448 1-1v-1h1c1.654 0 3-1.346 3-3V8c0-1.654-1.346-3-3-3zm1 9c0 .552-.447 1-1 1H6c-.553 0-1-.448-1-1V8c0-.552.447-1 1-1h12c.553 0 1 .448 1 1v6z"></path></svg></div>
+                          <div class="input-wrapper">
+                              <label for="sohoi_rachoi">Ra chơi</label>
+                              <div class="unit-input"><input id="sohoi_rachoi" type="number" value="3"><span>hồi</span></div>
+                          </div>
+                      </div>
+                      <div class="setting-item">
+                          <div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M14 12V8h-4v4H8l4 4 4-4h-2z"></path></svg></div>
+                          <div class="input-wrapper">
+                              <label for="sohoi_duvao">Dự vào lớp</label>
+                              <div class="unit-input"><input id="sohoi_duvao" type="number" value="2"><span>hồi</span></div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </details>
+      </div>
 
-    <div class="tabs" id="day-tabs">
-      <button class="tab-button active" data-day="t2">Thứ 2</button>
-      <button class="tab-button" data-day="t3">Thứ 3</button>
-      <button class="tab-button" data-day="t4">Thứ 4</button>
-      <button class="tab-button" data-day="t5">Thứ 5</button>
-      <button class="tab-button" data-day="t6">Thứ 6</button>
-      <button class="tab-button" data-day="t7">Thứ 7</button>
-      <button class="tab-button" data-day="cn">Chủ Nhật</button>
-    </div>
+      <div class="divider-yellow"></div>
 
-    <div id="tab-content-container">
+      <!-- === KHU VỰC NÚT ĐIỀU KHIỂN (ĐÃ SẮP XẾP LẠI) === -->
+      <div class="button-section">
+        <button class="modern-btn save-button" onclick="publishUpdate()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+            <span>Lưu và gửi cập nhật</span>
+        </button>
+        <button class="modern-btn test-button" onclick="publishTestBell()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            <span>Thử Chuông Chung</span>
+        </button>
+        <button class="modern-btn advanced-button" onclick="openAdvancedSettingsModal()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 0 2l-.15.08a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1 0-2l.15-.08a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            <span>Cài đặt nâng cao</span>
+        </button>
+        <button class="modern-btn logout-button" onclick="logout()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            <span>Đăng xuất</span>
+        </button>
       </div>
 
-    <div class="card">
-      <div class="card-header">
-        <h2 class="card-title">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13.586V10c0-3.217-2.185-5.927-5-6.758V2h-4v1.242C7.185 4.073 5 6.783 5 10v3.586l-1.707 1.707A.996.996 0 0 0 3 16v2a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-2a.996.996 0 0 0-.293-.707L19 13.586zM12 22a2.98 2.98 0 0 0 2.818-2H9.182A2.98 2.98 0 0 0 12 22z"></path></svg>
-            Cài Đặt Chung
-        </h2>
-        <p class="card-subtitle">Thiết lập số hồi chuông cho các loại thông báo.</p>
-      </div>
-      <div class="form-grid">
-        <div class="form-group">
-            <label for="sohoi_batdau">Bắt đầu buổi học</label>
-            <div class="input-with-unit"><input id="sohoi_batdau" type="number" value="6"><span>hồi</span></div>
-        </div>
-        <div class="form-group">
-            <label for="sohoi_vaotiet">Vào tiết</label>
-            <div class="input-with-unit"><input id="sohoi_vaotiet" type="number" value="5"><span>hồi</span></div>
-        </div>
-        <div class="form-group">
-            <label for="sohoi_rachoi">Ra chơi</label>
-            <div class="input-with-unit"><input id="sohoi_rachoi" type="number" value="3"><span>hồi</span></div>
-        </div>
-        <div class="form-group">
-            <label for="sohoi_duvao">Dự vào lớp</label>
-            <div class="input-with-unit"><input id="sohoi_duvao" type="number" value="2"><span>hồi</span></div>
-        </div>
-      </div>
     </div>
   </div>
 
-  <footer class="sticky-footer">
-      <button class="btn btn-secondary" onclick="openAdvancedSettingsModal()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 0 2l-.15.08a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1 0-2l.15-.08a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-        Nâng cao
-      </button>
-      <button class="btn btn-warning" onclick="publishTestBell()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-        Thử chuông
-      </button>
-      <button class="btn btn-primary" onclick="publishUpdate()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
-        Lưu & Gửi Cập Nhật
-      </button>
-  </footer>
-
+  <!-- === MODAL CÀI ĐẶT NÂNG CAO (MỚI) === -->
   <div class="modal-overlay" id="advanced-settings-modal">
-      <div class="modal-content">
+    <div class="modal-content">
         <h4>Cài đặt nâng cao</h4>
         <div class="adv-modal-tabs">
             <div class="adv-modal-tab active" onclick="switchAdvTab(event, 'adv-tab-satellites')">Quản lý Vệ tinh</div>
@@ -524,45 +837,77 @@
             <div class="adv-modal-tab" onclick="switchAdvTab(event, 'adv-tab-reset')">Reset WiFi</div>
         </div>
         
+        <!-- Tab 1: Quản lý Vệ tinh -->
         <div id="adv-tab-satellites" class="adv-modal-tab-content active">
             <h5>CÁC THIẾT BỊ ĐANG QUẢN LÝ</h5>
-            <div id="managed-devices-list" class="device-list"><p class="list-placeholder">Chưa có thiết bị nào.</p></div>
-            <hr class="divider">
+            <div id="managed-devices-list" class="device-list">
+                <p class="list-placeholder">Chưa có thiết bị nào được quản lý.</p>
+            </div>
+            <hr style="margin: 20px 0; background: #414345; height: 1px; opacity: 0.5;">
             <h5>CÁC THIẾT BỊ ĐÃ PHÁT HIỆN</h5>
-            <div id="discovered-devices-list" class="device-list"><p class="list-placeholder">Đang chờ tín hiệu...</p></div>
+            <div id="discovered-devices-list" class="device-list">
+                <p class="list-placeholder">Đang chờ tín hiệu từ các thiết bị...</p>
+            </div>
         </div>
 
+        <!-- Tab 2: Hệ thống -->
         <div id="adv-tab-system" class="adv-modal-tab-content">
+             <div class="system-info-list">
+                <div class="info-item">
+                    <span class="label">Máy chủ (WiFi):</span>
+                    <span class="value" id="info-ssid">Đang tải...</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Máy chủ (IP):</span>
+                    <span class="value" id="info-ip">Đang tải...</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Module Đồng hồ (RTC):</span>
+                    <span class="value" id="info-rtc">Đang tải...</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Màn hình LCD:</span>
+                    <span class="value" id="info-lcd">Đang tải...</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Sử dụng Flash (ROM):</span>
+                    <span class="value" id="info-flash">Đang tải...</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Sử dụng bộ nhớ (RAM):</span>
+                    <span class="value" id="info-ram">Đang tải...</span>
+                </div>
             </div>
+        </div>
+
+        <!-- Tab 3: Reset WiFi -->
         <div id="adv-tab-reset" class="adv-modal-tab-content">
-            <div id="reset-actions-list" class="actions-list"></div>
+            <div id="reset-actions-list" class="actions-list">
+                <!-- Nội dung sẽ được tạo bởi JavaScript -->
+            </div>
         </div>
 
         <div class="modal-buttons">
-            <button class="btn btn-danger" onclick="logout()">Đăng xuất</button>
-            <button class="btn btn-secondary" onclick="closeAdvancedSettingsModal()">Đóng</button>
+            <button class="modal-cancel-btn" onclick="closeAdvancedSettingsModal()">Đóng</button>
         </div>
-      </div>
+    </div>
   </div>
 
+  <!-- Modal Nhập Mật khẩu -->
   <div class="modal-overlay" id="password-modal-overlay">
       <div class="modal-content">
           <h4 id="password-modal-title">Xác thực quyền Quản trị</h4>
-          <p style="text-align: center; margin-top: -10px; margin-bottom: 20px; color: var(--text-secondary); font-size: 0.9em;">Vui lòng nhập mật khẩu để tiếp tục.</p>
+          <p style="text-align: center; margin-top: -10px; margin-bottom: 20px; color: #bdc3c7; font-size: 0.9em;">Vui lòng nhập mật khẩu để tiếp tục.</p>
           <input type="password" id="admin-password-input" class="modal-input" placeholder="Mật khẩu quản trị...">
           <div class="modal-buttons">
-              <button class="btn btn-secondary" onclick="closePasswordModal()">Hủy</button>
-              <button class="btn btn-primary" onclick="confirmWifiReset()">Xác nhận</button>
+              <button class="modal-cancel-btn" onclick="closePasswordModal()">Hủy</button>
+              <button class="modal-confirm-btn" onclick="confirmWifiReset()">Xác nhận</button>
           </div>
       </div>
   </div>
-  
-  <script>
-    // =================================================================
-    // =========== TOÀN BỘ JAVASCRIPT GIỮ NGUYÊN TỪ FILE CŨ ==========
-    // =================================================================
-    // ... (dán toàn bộ script của file cũ vào đây) ...
 
+
+  <script>
     if("true"!==sessionStorage.getItem("isLoggedIn"))window.location.href="login.html";
     
     let client, serverTime = null, deviceToReset = null;
@@ -585,8 +930,8 @@
     function connectToMqtt(){
         console.log("Đang kết nối đến MQTT broker...");
         const statusDiv = document.getElementById("status");
-        statusDiv.textContent="Đang kết nối";
-        statusDiv.className="status-indicator status-connecting";
+        statusDiv.textContent="Đang kết nối...";
+        statusDiv.className="status-bar status-connecting";
         
         client=mqtt.connect(brokerUrl,options);
         
@@ -608,11 +953,13 @@
             
             if (topic === ONLINE_STATUS_TOPIC) {
                 if (payloadString === 'online') {
-                    statusDiv.textContent = "Đang hoạt động";
-                    statusDiv.className = "status-indicator status-connected";
+                    statusDiv.textContent = "Thiết bị đang hoạt động";
+                    statusDiv.className = "status-bar status-connected";
+                    document.getElementById('clock-wrapper').style.display = 'block';
                 } else {
-                    statusDiv.textContent = "Ngoại tuyến";
-                    statusDiv.className = "status-indicator status-disconnected";
+                    statusDiv.textContent = "Thiết bị ngoại tuyến";
+                    statusDiv.className = "status-bar status-disconnected";
+                    document.getElementById('clock-wrapper').style.display = 'none';
                     serverTime = null;
                 }
             }
@@ -622,7 +969,24 @@
             }
 
             if (topic === SYS_INFO_TOPIC) {
-                 // Logic xử lý SYS_INFO_TOPIC giữ nguyên
+                try {
+                    const info = JSON.parse(payloadString);
+                    document.getElementById('info-ssid').textContent = info.ssid || 'N/A';
+                    document.getElementById('info-ip').textContent = info.ip || 'N/A';
+                    
+                    const rtcStatus = document.getElementById('info-rtc');
+                    if(info.rtc) { rtcStatus.textContent = "Đã kết nối"; rtcStatus.className = "value connected"; } 
+                    else { rtcStatus.textContent = "Không tìm thấy"; rtcStatus.className = "value disconnected"; }
+
+                    const lcdStatus = document.getElementById('info-lcd');
+                    if(info.lcd) { lcdStatus.textContent = "Đã kết nối"; lcdStatus.className = "value connected"; } 
+                    else { lcdStatus.textContent = "Không tìm thấy"; lcdStatus.className = "value disconnected"; }
+
+                    document.getElementById('info-flash').textContent = (info.flash_usage) ? info.flash_usage + " %" : 'N/A';
+                    document.getElementById('info-ram').textContent = (info.ram_usage) ? info.ram_usage + " %" : 'N/A';
+                } catch(e) {
+                    console.error("Lỗi parse JSON thông tin hệ thống:", e);
+                }
             }
             
             if (topic === MANAGE_STATUS_TOPIC) {
@@ -649,8 +1013,9 @@
         
         client.on("close",()=>{
             console.log("Mất kết nối MQTT. Đang thử kết nối lại...");
-            statusDiv.textContent = "Mất kết nối";
-            statusDiv.className = "status-indicator status-disconnected";
+            statusDiv.textContent = "Mất kết nối máy chủ";
+            statusDiv.className = "status-bar status-disconnected";
+            document.getElementById('clock-wrapper').style.display = 'none';
             serverTime = null;
         });
     }
@@ -661,33 +1026,190 @@
         notif.className = `notification ${type}`;
         notif.textContent = message;
         area.appendChild(notif);
+        
         setTimeout(() => { notif.classList.add('show'); }, 10);
+
         setTimeout(() => {
             notif.classList.remove('show');
-            setTimeout(() => { area.contains(notif) && area.removeChild(notif); }, 300);
+            setTimeout(() => {
+                if(area.contains(notif)) {
+                    area.removeChild(notif);
+                }
+            }, 300);
         }, 4000);
     }
     
-    // === CÁC HÀM XỬ LÝ MODAL (MỚI & CẬP NHẬT) - Giữ nguyên logic ===
-    function openAdvancedSettingsModal() { document.getElementById('advanced-settings-modal').classList.add('visible'); }
-    function closeAdvancedSettingsModal() { document.getElementById('advanced-settings-modal').classList.remove('visible'); }
+    // === CÁC HÀM XỬ LÝ MODAL (MỚI & CẬP NHẬT) ===
+    function openAdvancedSettingsModal() {
+        document.getElementById('advanced-settings-modal').classList.add('visible');
+        // Tự động tải thông tin hệ thống khi mở modal
+        if (document.getElementById('adv-tab-system').classList.contains('active')) {
+            requestSystemInfo();
+        }
+    }
+    function closeAdvancedSettingsModal() {
+        document.getElementById('advanced-settings-modal').classList.remove('visible');
+    }
     function switchAdvTab(evt, tabName) {
         document.querySelectorAll('.adv-modal-tab').forEach(tab => tab.classList.remove('active'));
         document.querySelectorAll('.adv-modal-tab-content').forEach(content => content.classList.remove('active'));
         evt.currentTarget.classList.add('active');
         document.getElementById(tabName).classList.add('active');
+        
+        // Tự động tải thông tin hệ thống khi chuyển sang tab Hệ thống
+        if (tabName === 'adv-tab-system') {
+            requestSystemInfo();
+        }
     }
-    function openPasswordModal(deviceName) { /* ... logic giữ nguyên ... */ }
-    function closePasswordModal() { /* ... logic giữ nguyên ... */ }
-    function confirmWifiReset() { /* ... logic giữ nguyên ... */ }
+    function requestSystemInfo() {
+        if (client && client.connected) {
+            client.publish(CONTROL_TOPIC, "GET_SYS_INFO", {qos: 1});
+        } else {
+            showNotification("Chưa kết nối đến máy chủ!", 'error');
+        }
+    }
+    function openPasswordModal(deviceName) {
+        deviceToReset = deviceName;
+        document.getElementById('password-modal-title').textContent = `Reset WiFi cho ${deviceName}`;
+        document.getElementById('password-modal-overlay').classList.add('visible');
+        document.getElementById('admin-password-input').focus();
+    }
+    function closePasswordModal() {
+        document.getElementById('password-modal-overlay').classList.remove('visible');
+        document.getElementById('admin-password-input').value = '';
+        deviceToReset = null;
+    }
+    function confirmWifiReset() {
+        const password = document.getElementById('admin-password-input').value;
+        if (!password) {
+            showNotification('Vui lòng nhập mật khẩu!', 'error');
+            return;
+        }
+        if (!deviceToReset) {
+            console.error("Lỗi: Không có thiết bị nào được chọn để reset.");
+            closePasswordModal();
+            return;
+        }
+        const payload = { command: "RESET_WIFI", target: deviceToReset, admin_pass: password };
+        if (client && client.connected) {
+            client.publish(CONTROL_TOPIC, JSON.stringify(payload), { qos: 1 });
+            showNotification(`Đã gửi lệnh Reset WiFi đến ${deviceToReset}...`);
+        } else {
+            showNotification("Chưa kết nối đến máy chủ!", 'error');
+        }
+        closePasswordModal();
+    }
 
-    // === CÁC HÀM QUẢN LÝ VỆ TINH & RESET WIFI - Giữ nguyên logic ===
-    function addSatellite(deviceName) { /* ... logic giữ nguyên ... */ }
-    function removeSatellite(deviceName) { /* ... logic giữ nguyên ... */ }
-    function renderDeviceLists(managed, discovered) { /* ... logic giữ nguyên, chỉ CSS thay đổi giao diện */ }
+    // === CÁC HÀM QUẢN LÝ VỆ TINH & RESET WIFI ===
+    function addSatellite(deviceName) {
+        if (client && client.connected) {
+            client.publish(MANAGE_ADD_TOPIC, deviceName, { qos: 1 });
+        } else {
+            showNotification("Chưa kết nối đến máy chủ!", 'error');
+        }
+    }
+    function removeSatellite(deviceName) {
+        if (confirm(`Bạn có chắc muốn ngừng quản lý thiết bị "${deviceName}" không?`)) {
+            if (client && client.connected) {
+                client.publish(MANAGE_REMOVE_TOPIC, deviceName, { qos: 1 });
+            } else {
+                showNotification("Chưa kết nối đến máy chủ!", 'error');
+            }
+        }
+    }
+    function renderDeviceLists(managed, discovered) {
+        const managedListDiv = document.getElementById('managed-devices-list');
+        const discoveredListDiv = document.getElementById('discovered-devices-list');
+        const resetListDiv = document.getElementById('reset-actions-list');
+
+        // Render danh sách quản lý
+        managedListDiv.innerHTML = '';
+        if (managed.length === 0) {
+            managedListDiv.innerHTML = '<p class="list-placeholder">Chưa có thiết bị nào được quản lý.</p>';
+        } else {
+            managed.forEach(dev => {
+                const item = document.createElement('div');
+                item.className = 'device-item';
+                const statusClass = dev.online ? 'connected' : 'disconnected';
+                const statusText = dev.online ? 'Online' : 'Offline';
+                const rssiText = dev.rssi ? `${dev.rssi} dBm` : 'N/A';
+                const uptimeText = dev.uptime || 'N/A';
+                const ipText = dev.ip || 'N/A';
+                item.innerHTML = `
+                    <div class="device-item-header">
+                        <span class="device-name">${dev.name}</span>
+                        <span class="device-status ${statusClass}">${statusText}</span>
+                    </div>
+                    <div class="device-info-grid">
+                        <span><span class="label">IP:</span> ${ipText}</span>
+                        <span><span class="label">Sóng WiFi:</span> ${rssiText}</span>
+                        <span style="grid-column: 1 / -1;"><span class="label">Uptime:</span> ${uptimeText}</span>
+                    </div>
+                    <div class="device-actions">
+                        <button class="device-action-btn cancel-btn" onclick="removeSatellite('${dev.name}')">Hủy</button>
+                    </div>
+                `;
+                managedListDiv.appendChild(item);
+            });
+        }
+
+        // Render danh sách phát hiện
+        discoveredListDiv.innerHTML = '';
+        if (discovered.length === 0) {
+            discoveredListDiv.innerHTML = '<p class="list-placeholder">Không phát hiện thiết bị mới nào.</p>';
+        } else {
+            discovered.forEach(dev => {
+                const item = document.createElement('div');
+                item.className = 'device-item';
+                item.style.flexDirection = 'row';
+                item.style.justifyContent = 'space-between';
+                item.innerHTML = `
+                    <div class="device-info">
+                        <span class="device-name">${dev.name}</span>
+                        <div class="device-info-grid" style="grid-template-columns: 1fr; font-size: 0.8em;">
+                           <span><span class="label">IP:</span> ${dev.ip || 'N/A'}</span>
+                        </div>
+                    </div>
+                    <button class="device-action-btn add-btn" onclick="addSatellite('${dev.name}')">Thêm</button>
+                `;
+                discoveredListDiv.appendChild(item);
+            });
+        }
+        
+        // Render danh sách Reset WiFi
+        resetListDiv.innerHTML = '';
+        // Thêm máy chủ
+        resetListDiv.innerHTML += `
+            <div class="action-item">
+                <div class="action-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20 12c0-2.54-1.19-4.81-3.04-6.27L16 0H8l-.96 5.73C5.19 7.19 4 9.46 4 12s1.19 4.81 3.04 6.27L8 24h8l.96-5.73C18.81 16.81 20 14.54 20 12zM6 12c0-1.81 1-3.38 2.47-4.27L9.1 4h5.8l.63 3.73C17 8.62 18 10.19 18 12s-1 3.38-2.47 4.27L14.9 20h-5.8l-.63-3.73C7 15.38 6 13.81 6 12z"></path><path d="M12 15c1.65 0 3-1.35 3-3s-1.35-3-3-3-3 1.35-3 3 1.35 3 3 3z"></path></svg>
+                </div>
+                <div class="action-text">
+                    <div class="title">ESP32-MayChu</div>
+                    <div class="description">Xóa cấu hình WiFi của thiết bị Máy Chủ.</div>
+                </div>
+                <button class="action-btn reset" onclick="openPasswordModal('ESP32-MayChu')">Reset</button>
+            </div>
+        `;
+        // Thêm các vệ tinh
+        managed.forEach(dev => {
+            resetListDiv.innerHTML += `
+                <div class="action-item">
+                    <div class="action-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 13h-2v-2h2v2zm0-4h-2V7h2v2z"></path></svg>
+                    </div>
+                    <div class="action-text">
+                        <div class="title">${dev.name}</div>
+                        <div class="description">Xóa cấu hình WiFi của thiết bị Vệ tinh này.</div>
+                    </div>
+                    <button class="action-btn reset" onclick="openPasswordModal('${dev.name}')">Reset</button>
+                </div>
+            `;
+        });
+    }
 
     // === CÁC HÀM XỬ LÝ FORM & DỮ LIỆU ===
-    function _load(e){try{const t=JSON.parse(e);t.schedule&&t.epoch&&(populateForm(t))}catch(t){console.error("Lỗi parse JSON từ MQTT:",t)}}
+    function _load(e){try{const t=JSON.parse(e);t.schedule&&t.epoch&&(setTime(t.epoch),populateForm(t))}catch(t){console.error("Lỗi parse JSON từ MQTT:",t)}}
     
     function publishUpdate(){
         if(!client||!client.connected) return showNotification("Chưa kết nối máy chủ!", 'error');
@@ -697,7 +1219,8 @@
                 schedule: scheduleData,
                 admin_pass: ADMIN_PASSWORD_FOR_SAVE 
             };
-            client.publish(SET_DATA_TOPIC, JSON.stringify(payload), {qos:1, retain:true});
+            const payloadString = JSON.stringify(payload);
+            client.publish(SET_DATA_TOPIC, payloadString, {qos:1, retain:true});
             showNotification("Đã gửi lệnh cập nhật lịch...");
         } catch(e) {
             showNotification("Lỗi: " + e.message, 'error');
@@ -707,7 +1230,8 @@
     
     function publishTestBell(){
         if(client&&client.connected) {
-            client.publish(CONTROL_TOPIC, JSON.stringify({ command: "TEST_BELL" }), {qos:1});
+            const payload = { command: "TEST_BELL" };
+            client.publish(CONTROL_TOPIC, JSON.stringify(payload), {qos:1});
             showNotification("Đã gửi lệnh thử chuông chung...");
         } else {
             showNotification("Chưa kết nối máy chủ!", 'error');
@@ -715,224 +1239,31 @@
     }
 
     function logout(){sessionStorage.removeItem("isLoggedIn"),window.location.href="login.html"}
+    function setTime(e){isNaN(e)||e<1e5?(console.log("Invalid epoch received, clock not set:",e),serverTime=null):(serverTime=new Date(1e3*e),document.getElementById("date").innerHTML=serverTime.toLocaleDateString("vi-VN",{weekday:"long",year:"numeric",month:"long",day:"numeric",timeZone:"Asia/Ho_Chi_Minh"}),updateLocalClock())}
+    function updateLocalClock(){serverTime&&(serverTime.setSeconds(serverTime.getSeconds()+1),document.getElementById("clock").innerHTML=serverTime.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit",timeZone:"Asia/Ho_Chi_Minh",hour12:!1}))}
     
-    const days = [
-        { id: "t2", name: "Thứ 2" }, { id: "t3", name: "Thứ 3" },
-        { id: "t4", name: "Thứ 4" }, { id: "t5", name: "Thứ 5" },
-        { id: "t6", name: "Thứ 6" }, { id: "t7", name: "Thứ 7" },
-        { id: "cn", name: "Chủ Nhật" }
-    ];
-
-    function createDayContent(day) {
-        const { id, name } = day;
-        const isT2 = id === 't2';
-        const isWeekday = ['t3', 't4', 't5', 't6', 't7'].includes(id);
-
-        let specialInputSang = '';
-        if (isT2) {
-            specialInputSang = `
-                <div class="form-group">
-                    <label for="chaoco_${id}_sang">TG Chào cờ</label>
-                    <div class="input-with-unit"><input id="chaoco_${id}_sang" type="number" value="40"><span>phút</span></div>
-                </div>`;
-        } else if (isWeekday) {
-            specialInputSang = `
-                <div class="form-group">
-                    <label for="chunhiem_${id}_sang">TG Chủ nhiệm</label>
-                    <div class="input-with-unit"><input id="chunhiem_${id}_sang" type="number" value="15"><span>phút</span></div>
-                </div>`;
-        }
-
-        const copyButtonSang = isWeekday ? `<button class="btn btn-subtle" onclick="copyMorningSchedule('${id}')">Sao chép</button>` : '';
-        const copyButtonChieu = id !== 'cn' ? `<button class="btn btn-subtle" onclick="copyAfternoonSchedule('${id}')">Sao chép</button>` : '';
-
-        return `
-        <div id="${id}" class="tab-content">
-            <div class="session-card">
-                <div class="session-header">
-                    <div class="toggle-switch">
-                        <label class="switch"><input type="checkbox" id="enable_${id}_sang" checked><span class="slider"></span></label>
-                        <label for="enable_${id}_sang">Lịch Buổi Sáng</label>
-                    </div>
-                    ${copyButtonSang}
-                </div>
-                <div class="form-grid">
-                    <div class="form-group"><label for="gio_${id}_sang">Giờ vào học</label><input id="gio_${id}_sang" type="time"></div>
-                    ${specialInputSang}
-                    <div class="form-group"><label for="tiethoc_${id}_sang">TG Tiết học</label><div class="input-with-unit"><input id="tiethoc_${id}_sang" type="number" value="45"><span>phút</span></div></div>
-                    <div class="form-group"><label for="rachoi_${id}_sang">TG Ra chơi</label><div class="input-with-unit"><input id="rachoi_${id}_sang" type="number" value="5"><span>phút</span></div></div>
-                    <div class="form-group"><label for="duvaotiet_${id}_sang">TG Dự vào</label><div class="input-with-unit"><input id="duvaotiet_${id}_sang" type="number" value="3"><span>phút</span></div></div>
-                    <div class="form-group"><label for="sotiet_${id}_sang">Số tiết học</label><div class="input-with-unit"><input id="sotiet_${id}_sang" type="number" value="5"><span>tiết</span></div></div>
-                </div>
-            </div>
-
-            <div class="session-card">
-                <div class="session-header">
-                    <div class="toggle-switch">
-                        <label class="switch"><input type="checkbox" id="enable_${id}_chieu" checked><span class="slider"></span></label>
-                        <label for="enable_${id}_chieu">Lịch Buổi Chiều</label>
-                    </div>
-                    ${copyButtonChieu}
-                </div>
-                <div class="form-grid">
-                    <div class="form-group"><label for="gio_${id}_chieu">Giờ vào học</label><input id="gio_${id}_chieu" type="time"></div>
-                    <div class="form-group"><label for="tiethoc_${id}_chieu">TG Tiết học</label><div class="input-with-unit"><input id="tiethoc_${id}_chieu" type="number" value="45"><span>phút</span></div></div>
-                    <div class="form-group"><label for="rachoi_${id}_chieu">TG Ra chơi</label><div class="input-with-unit"><input id="rachoi_${id}_chieu" type="number" value="5"><span>phút</span></div></div>
-                    <div class="form-group"><label for="duvaotiet_${id}_chieu">TG Dự vào</label><div class="input-with-unit"><input id="duvaotiet_${id}_chieu" type="number" value="3"><span>phút</span></div></div>
-                    <div class="form-group"><label for="sotiet_${id}_chieu">Số tiết học</label><div class="input-with-unit"><input id="sotiet_${id}_chieu" type="number" value="5"><span>tiết</span></div></div>
-                </div>
-            </div>
-        </div>`;
-    }
-
-    function populateForm(data) {
-        const schedule = data.schedule || data;
-        if (!schedule || !schedule.sohoi || !schedule.lich) {
-            console.error("Dữ liệu lịch không hợp lệ:", data);
-            return;
-        }
-
-        Object.keys(schedule.sohoi).forEach(key => {
-            const el = document.getElementById(`sohoi_${key}`);
-            if (el) el.value = schedule.sohoi[key] || "";
-        });
-
-        ['sang', 'chieu'].forEach(session => {
-            days.forEach(day => {
-                const dayData = schedule.lich?.[session]?.[day.id];
-                if (dayData) {
-                    const prefix = `${day.id}_${session}`;
-                    document.getElementById(`enable_${prefix}`).checked = dayData.enabled;
-                    document.getElementById(`gio_${prefix}`).value = dayData.gio || "";
-                    document.getElementById(`tiethoc_${prefix}`).value = dayData.tiethoc || "";
-                    document.getElementById(`rachoi_${prefix}`).value = dayData.rachoi || "";
-                    document.getElementById(`duvaotiet_${prefix}`).value = dayData.duvaotiet || "";
-                    document.getElementById(`sotiet_${prefix}`).value = dayData.sotiet || "";
-                    
-                    const chaocoEl = document.getElementById(`chaoco_${prefix}`);
-                    if (chaocoEl) chaocoEl.value = dayData.chaoco || 0;
-                    
-                    const chunhiemEl = document.getElementById(`chunhiem_${prefix}`);
-                    if (chunhiemEl) chunhiemEl.value = dayData.chunhiem || 0;
-                }
-            });
-        });
-    }
-
-    function gatherDataFromForm() {
-        const data = { sohoi: {}, lich: { sang: {}, chieu: {} } };
-        ['batdau', 'vaotiet', 'rachoi', 'duvao'].forEach(key => {
-            data.sohoi[key] = parseInt(document.getElementById(`sohoi_${key}`).value) || 0;
-        });
-
-        ['sang', 'chieu'].forEach(session => {
-            days.forEach(day => {
-                const prefix = `${day.id}_${session}`;
-                const dayData = data.lich[session][day.id] = {};
-                dayData.enabled = document.getElementById(`enable_${prefix}`).checked;
-                dayData.gio = document.getElementById(`gio_${prefix}`).value;
-                dayData.tiethoc = parseInt(document.getElementById(`tiethoc_${prefix}`).value) || 0;
-                dayData.rachoi = parseInt(document.getElementById(`rachoi_${prefix}`).value) || 0;
-                dayData.duvaotiet = parseInt(document.getElementById(`duvaotiet_${prefix}`).value) || 0;
-                dayData.sotiet = parseInt(document.getElementById(`sotiet_${prefix}`).value) || 0;
-                
-                const chaocoEl = document.getElementById(`chaoco_${prefix}`);
-                if (chaocoEl) dayData.chaoco = parseInt(chaocoEl.value) || 0;
-
-                const chunhiemEl = document.getElementById(`chunhiem_${prefix}`);
-                if (chunhiemEl) dayData.chunhiem = parseInt(chunhiemEl.value) || 0;
-            });
-        });
-        return data;
-    }
-
-    function copyAfternoonSchedule(sourceDayId) {
-        if (!confirm(`Sao chép lịch chiều của ngày này cho các ngày còn lại (T2-T7)?`)) return;
-        const sourcePrefix = `${sourceDayId}_chieu`;
-        const schedule = {
-            enabled: document.getElementById(`enable_${sourcePrefix}`).checked,
-            gio: document.getElementById(`gio_${sourcePrefix}`).value,
-            tiethoc: document.getElementById(`tiethoc_${sourcePrefix}`).value,
-            rachoi: document.getElementById(`rachoi_${sourcePrefix}`).value,
-            duvaotiet: document.getElementById(`duvaotiet_${sourcePrefix}`).value,
-            sotiet: document.getElementById(`sotiet_${sourcePrefix}`).value,
-        };
-        days.filter(d => d.id !== sourceDayId && d.id !== 'cn').forEach(day => {
-            const targetPrefix = `${day.id}_chieu`;
-            document.getElementById(`enable_${targetPrefix}`).checked = schedule.enabled;
-            document.getElementById(`gio_${targetPrefix}`).value = schedule.gio;
-            document.getElementById(`tiethoc_${targetPrefix}`).value = schedule.tiethoc;
-            document.getElementById(`rachoi_${targetPrefix}`).value = schedule.rachoi;
-            document.getElementById(`duvaotiet_${targetPrefix}`).value = schedule.duvaotiet;
-            document.getElementById(`sotiet_${targetPrefix}`).value = schedule.sotiet;
-        });
-        showNotification('Đã sao chép! Nhấn "Lưu" để áp dụng.', "success");
-    }
-
-    function copyMorningSchedule(sourceDayId) {
-        if (!confirm(`Sao chép lịch sáng của ngày này cho các ngày còn lại (T3-T7)?`)) return;
-        const sourcePrefix = `${sourceDayId}_sang`;
-        const schedule = {
-            enabled: document.getElementById(`enable_${sourcePrefix}`).checked,
-            gio: document.getElementById(`gio_${sourcePrefix}`).value,
-            chunhiem: document.getElementById(`chunhiem_${sourcePrefix}`).value,
-            tiethoc: document.getElementById(`tiethoc_${sourcePrefix}`).value,
-            rachoi: document.getElementById(`rachoi_${sourcePrefix}`).value,
-            duvaotiet: document.getElementById(`duvaotiet_${sourcePrefix}`).value,
-            sotiet: document.getElementById(`sotiet_${sourcePrefix}`).value,
-        };
-        ['t3', 't4', 't5', 't6', 't7'].filter(id => id !== sourceDayId).forEach(dayId => {
-            const targetPrefix = `${dayId}_sang`;
-            document.getElementById(`enable_${targetPrefix}`).checked = schedule.enabled;
-            document.getElementById(`gio_${targetPrefix}`).value = schedule.gio;
-            document.getElementById(`chunhiem_${targetPrefix}`).value = schedule.chunhiem;
-            document.getElementById(`tiethoc_${targetPrefix}`).value = schedule.tiethoc;
-            document.getElementById(`rachoi_${targetPrefix}`).value = schedule.rachoi;
-            document.getElementById(`duvaotiet_${targetPrefix}`).value = schedule.duvaotiet;
-            document.getElementById(`sotiet_${targetPrefix}`).value = schedule.sotiet;
-        });
-        showNotification('Đã sao chép! Nhấn "Lưu" để áp dụng.', "success");
-    }
+    const createDayContent=(e,t,o)=>{const n="t2_sang"===e,a="sang"===o&&["t3_sang","t4_sang","t5_sang","t6_sang","t7_sang"].includes(e),s="sang"===o&&"cn_sang"!==e,i=s?"":"full-width",d=`<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586z"></path></svg></div>`,r=`<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm-1 15H6V7h12v12z"></path></svg></div>`,l=`<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 2H6c-1.206 0-3 .799-3 3v14c0 2.201 1.794 3 3 3h15v-2H6.012C5.55 19.988 5 19.806 5 19s.55-.988 1.012-1H21V4c0-1.103-.897-2-2-2zm0 13H6V5h13v10z"></path></svg></div>`,c=`<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M18 5h-2V2H8v3H6c-1.654 0-3 1.346-3 3v6c0 1.654 1.346 3 3 3h1v1c0 .552.447 1 1 1h6c.553 0 1-.448 1-1v-1h1c1.654 0 3-1.346 3-3V8c0-1.654-1.346-3-3-3zm1 9c0 .552-.447 1-1 1H6c-.553 0-1-.448-1-1V8c0-.552.447-1 1-1h12c.553 0 1 .448 1 1v6z"></path></svg></div>`,m=`<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M14 12V8h-4v4H8l4 4 4-4h-2z"></path></svg></div>`,p=`<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h2v2H4zm0 5h2v2H4zm0 5h2v2H4zm16-8V6H8v2h12zm0 5H8v2h12zm0 5H8v2h12z"></path></svg></div>`;let u="";n?u=`<div class="setting-item ${i}">${r}<div class="input-wrapper"><label for="chaoco_${e}">TG Chào cờ</label><div class="unit-input"><input id="chaoco_${e}" type="number" value="40"><span>phút</span></div></div></div>`:a&&(u=`<div class="setting-item ${i}">${r}<div class="input-wrapper"><label for="chunhiem_${e}">TG Chủ nhiệm</label><div class="unit-input"><input id="chunhiem_${e}" type="number" value="15"><span>phút</span></div></div></div>`);let g="";const h="sang"===o&&["t3_sang","t4_sang","t5_sang","t6_sang","t7_sang"].includes(e);return"chieu"===o?g=`<button class="copy-button chieu" onclick="copyAfternoonSchedule('${e}')">Sao chép đến</button>`:h&&(g=`<button class="copy-button sang" onclick="copyMorningSchedule('${e}')">Sao chép đến</button>`),`\n        <div id="${e}" class="tabcontent">\n          <h3>Cài đặt Lịch ${t}<br><span class="session-subtitle">(Buổi ${"sang"===o?"Sáng":"Chiều"})</span></h3>\n          <div class="activation-copy-row">\n            <div class="activation-control">\n                <input type="checkbox" id="enable_${e}" class="enable-checkbox" checked>\n                <label for="enable_${e}">Kích hoạt lịch</label>\n            </div>\n            ${g}\n          </div>\n          <hr style="margin: 15px; background: #414345; height: 1px; opacity: 0.5;">\n          \n          <div class="settings-grid">\n              <div class="setting-item ${i}">${d}<div class="input-wrapper"><label for="gio_${e}">Giờ vào học</label><input id="gio_${e}" type="time"></div></div>\n              \n              ${u}\n              \n              <div class="setting-item">${l}<div class="input-wrapper"><label for="tiethoc_${e}">TG Tiết học</label><div class="unit-input"><input id="tiethoc_${e}" type="number" value="45"><span>phút</span></div></div></div>\n              <div class="setting-item">${c}<div class="input-wrapper"><label for="rachoi_${e}">TG Ra chơi</label><div class="unit-input"><input id="rachoi_${e}" type="number" value="5"><span>phút</span></div></div></div>\n              <div class="setting-item">${m}<div class="input-wrapper"><label for="duvaotiet_${e}">TG Dự vào</label><div class="unit-input"><input id="duvaotiet_${e}" type="number" value="3"><span>phút</span></div></div></div>\n              <div class="setting-item">${p}<div class="input-wrapper"><label for="sotiet_${e}">Số tiết học</label><div class="unit-input"><input id="sotiet_${e}" type="number" value="5"><span>tiết</span></div></div></div>\n          </div>\n\n          <button class="modern-btn preview-button" onclick="updatePreviewTable('${e}')" style="height: 40px; font-size: 0.85em; background: #34495e; color: #f1c40f; border: 1px solid #f1c40f;">Cập nhật bảng chi tiết</button>\n          <details style="margin-top: 15px;">\n              <summary>Xem chi tiết lịch</summary>\n              <div class="details-container" id="details-${e}"></div>\n          </details>\n        </div>`};
+    const containerSang=document.getElementById("tab-container-sang"),containerChieu=document.getElementById("tab-container-chieu"),days=[{id:"t2",name:"Thứ 2"},{id:"t3",name:"Thứ 3"},{id:"t4",name:"Thứ 4"},{id:"t5",name:"Thứ 5"},{id:"t6",name:"Thứ 6"},{id:"t7",name:"Thứ 7"},{id:"cn",name:"Chủ Nhật"}];days.forEach(e=>{containerSang.innerHTML+=createDayContent(`${e.id}_sang`,e.name,"sang"),containerChieu.innerHTML+=createDayContent(`${e.id}_chieu`,e.name,"chieu")});
+    function populateForm(e){const t=e.schedule?e.schedule:e;t&&t.sohoi&&t.lich?(console.log("Bat dau cap nhat form voi du lieu:",t),t.sohoi&&["batdau","vaotiet","rachoi","duvao"].forEach(e=>{const o=document.getElementById(`sohoi_${e}`);o&&(o.value=t.sohoi[e]||"")}),["sang","chieu"].forEach(e=>{days.forEach(o=>{const n=t.lich?.[e]?.[o.id];if(n){document.getElementById(`enable_${o.id}_${e}`).checked=n.enabled,document.getElementById(`gio_${o.id}_${e}`).value=n.gio||"",document.getElementById(`tiethoc_${o.id}_${e}`).value=n.tiethoc||"",document.getElementById(`rachoi_${o.id}_${e}`).value=n.rachoi||"",document.getElementById(`duvaotiet_${o.id}_${e}`).value=n.duvaotiet||"",document.getElementById(`sotiet_${o.id}_${e}`).value=n.sotiet||"";const t=document.getElementById(`chaoco_${o.id}_${e}`);t&&(t.value=n.chaoco||0);const a=document.getElementById(`chunhiem_${o.id}_${e}`);a&&(a.value=n.chunhiem||0),updatePreviewTable(`${o.id}_${e}`)}})})):console.error("Dữ liệu lịch học nhận được không hợp lệ hoặc không đầy đủ:",e)}
+    function gatherDataFromForm(){const e={sohoi:{},lich:{sang:{},chieu:{}}};return["batdau","vaotiet","rachoi","duvao"].forEach(t=>{e.sohoi[t]=parseInt(document.getElementById(`sohoi_${t}`).value)||0}),["sang","chieu"].forEach(t=>{days.forEach(o=>{const n=e.lich[t][o.id]={};n.enabled=document.getElementById(`enable_${o.id}_${t}`).checked,n.gio=document.getElementById(`gio_${o.id}_${t}`).value,n.tiethoc=parseInt(document.getElementById(`tiethoc_${o.id}_${t}`).value)||0,n.rachoi=parseInt(document.getElementById(`rachoi_${o.id}_${t}`).value)||0,n.duvaotiet=parseInt(document.getElementById(`duvaotiet_${o.id}_${t}`).value)||0,n.sotiet=parseInt(document.getElementById(`sotiet_${o.id}_${t}`).value)||0;const a=document.getElementById(`chaoco_${o.id}_${t}`);a&&(n.chaoco=parseInt(a.value)||0);const l=document.getElementById(`chunhiem_${o.id}_${t}`);l&&(n.chunhiem=parseInt(l.value)||0)})}),e}
+    function openDay(e,t,o){const n=e.currentTarget,a=document.getElementById(t);if(n.classList.contains("active"))return a.style.display="none",void n.classList.remove("active");let s;const i=document.getElementsByClassName("tabcontent");for(s=0;s<i.length;s++)i[s].style.display="none";const d=document.getElementsByClassName("tablinks-sang");for(s=0;s<d.length;s++)d[s].className=d[s].className.replace(" active","");const r=document.getElementsByClassName("tablinks-chieu");for(s=0;s<r.length;s++)r[s].className=r[s].className.replace(" active","");a.style.display="block",n.className+=" active"}
+    function timeToMinute(e){if(!e)return 0;const[t,o]=e.split(":").map(Number);return 60*t+o}function minuteToTime(e){const t=Math.floor(e/60).toString().padStart(2,"0"),o=(e%60).toString().padStart(2,"0");return`${t}:${o}`}
+    function calculateSchedule(e){const t=e=>parseInt(document.getElementById(e)?.value)||0,o=e=>timeToMinute(document.getElementById(e).value),n=o(`gio_${e}`),a=t(`tiethoc_${e}`),l=t(`rachoi_${e}`),c=t(`duvaotiet_${e}`),s=t(`sotiet_${e}`),i=t(`chaoco_${e}`),d=t(`chunhiem_${e}`);let r=[],u=n;if(i>0)r.push({time:u,description:"Dự vào"}),u+=c,r.push({time:u,description:"Chào cờ"}),u+=i,r.push({time:u,description:"Vào tiết 1"});else if(d>0)r.push({time:u,description:"Bắt đầu SH"}),c>0&&r.push({time:u+d,description:"Dự vào tiết 1"}),u=u+d+c,r.push({time:u,description:"Vào tiết 1"});else r.push({time:u,description:"Vào tiết 1"});for(let e=1;e<=s;e++){let t=u+a;e<s?(l>0&&r.push({time:t,description:`Ra chơi tiết ${e}`}),u=(t+=l)+c,c>0&&r.push({time:t,description:`Dự vào tiết ${e+1}`}),r.push({time:u,description:`Vào tiết ${e+1}`}))  :l>0&&r.push({time:t,description:"Ra về"})}const m=Array.from(new Map(r.map(e=>[e.time,e])).values());return m.map(e=>({...e,time:minuteToTime(e.time)})).sort((e,t)=>timeToMinute(e.time)-timeToMinute(t.time))}
+    function updatePreviewTable(e){const t=document.getElementById(`enable_${e}`).checked,o=document.getElementById("details-"+e);if(!o)return;if(!t)return void(o.innerHTML="<p style='text-align:center; padding: 10px;'>Lịch này đang tắt.</p>");const n=calculateSchedule(e);let a="<table><thead><tr><th>STT</th><th>Thời gian</th><th>Nội dung</th></tr></thead><tbody>";n.forEach((e,t)=>{a+=`<tr><td>${t+1}</td><td>${e.time}</td><td>${e.description}</td></tr>`}),a+="</tbody></table>",o.innerHTML=a}
+    function copyAfternoonSchedule(e){const t=document.querySelector(`.tablinks-chieu[onclick*="'${e}'"]`).innerText;if(!confirm(`Bạn có chắc muốn sao chép lịch của ${t} (chiều) đến tất cả các ngày còn lại của buổi chiều không?`))return;const o={enabled:document.getElementById(`enable_${e}`).checked,gio:document.getElementById(`gio_${e}`).value,tiethoc:document.getElementById(`tiethoc_${e}`).value,rachoi:document.getElementById(`rachoi_${e}`).value,duvaotiet:document.getElementById(`duvaotiet_${e}`).value,sotiet:document.getElementById(`sotiet_${e}`).value},n=e.replace("_chieu","");days.filter(e=>e.id!==n).forEach(e=>{const t=`${e.id}_chieu`;document.getElementById(`enable_${t}`).checked=o.enabled,document.getElementById(`gio_${t}`).value=o.gio,document.getElementById(`tiethoc_${t}`).value=o.tiethoc,document.getElementById(`rachoi_${t}`).value=o.rachoi,document.getElementById(`duvaotiet_${t}`).value=o.duvaotiet,document.getElementById(`sotiet_${t}`).value=o.sotiet,updatePreviewTable(t)}),showNotification('Sao chép thành công! Hãy nhấn "Lưu và gửi cập nhật" để áp dụng.',"success")}
+    function copyMorningSchedule(e){const t=document.querySelector(`.tablinks-sang[onclick*="'${e}'"]`).innerText;if(!confirm(`Bạn có chắc muốn sao chép lịch của ${t} (sáng) đến các ngày còn lại (T3-T7) không?`))return;const o={enabled:document.getElementById(`enable_${e}`).checked,gio:document.getElementById(`gio_${e}`).value,chunhiem:document.getElementById(`chunhiem_${e}`).value,tiethoc:document.getElementById(`tiethoc_${e}`).value,rachoi:document.getElementById(`rachoi_${e}`).value,duvaotiet:document.getElementById(`duvaotiet_${e}`).value,sotiet:document.getElementById(`sotiet_${e}`).value},n=e.replace("_sang",""),a=["t3","t4","t5","t6","t7"].filter(e=>e!==n);a.forEach(e=>{const t=`${e}_sang`;document.getElementById(`enable_${t}`).checked=o.enabled,document.getElementById(`gio_${t}`).value=o.gio,document.getElementById(`chunhiem_${t}`).value=o.chunhiem,document.getElementById(`tiethoc_${t}`).value=o.tiethoc,document.getElementById(`rachoi_${t}`).value=o.rachoi,document.getElementById(`duvaotiet_${t}`).value=o.duvaotiet,document.getElementById(`sotiet_${t}`).value=o.sotiet,updatePreviewTable(t)}),showNotification('Sao chép thành công! Hãy nhấn "Lưu và gửi cập nhật" để áp dụng.',"success")}
 
     window.onload = function() { 
-        // Initial setup
         connectToMqtt();
-        
-        const tabContainer = document.getElementById('tab-content-container');
-        days.forEach(day => {
-            tabContainer.innerHTML += createDayContent(day);
-        });
-
-        const dayTabs = document.getElementById('day-tabs');
-        const tabContents = tabContainer.querySelectorAll('.tab-content');
-
-        dayTabs.addEventListener('click', (e) => {
-            if (e.target.tagName === 'BUTTON') {
-                const targetDay = e.target.dataset.day;
-
-                dayTabs.querySelector('.active').classList.remove('active');
-                e.target.classList.add('active');
-
-                tabContents.forEach(content => {
-                    content.classList.remove('active');
-                    if (content.id === targetDay) {
-                        content.classList.add('active');
-                    }
-                });
-            }
-        });
-
-        // Activate the first tab by default
-        document.querySelector('.tab-content').classList.add('active');
+        setInterval(updateLocalClock, 1000);
         
         document.getElementById('admin-password-input').addEventListener('keyup', function(event) {
             if (event.key === "Enter") {
                 event.preventDefault();
-                document.querySelector('#password-modal-overlay .btn-primary').click();
+                document.querySelector('#password-modal-overlay .modal-confirm-btn').click();
             }
         });
     };
-
   </script>
 </body>
 </html>
