@@ -815,7 +815,7 @@
             <span>Thử Chuông Chung</span>
         </button>
         <button class="modern-btn advanced-button" onclick="openAdvancedSettingsModal()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 0 2l-.15.08a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1 0-2l.15-.08a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 0 2l-.15.08a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l-.22-.38a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1 0-2l.15-.08a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
             <span>Cài đặt nâng cao</span>
         </button>
         <button class="modern-btn logout-button" onclick="logout()">
@@ -827,14 +827,15 @@
     </div>
   </div>
 
-  <!-- === MODAL CÀI ĐẶT NÂNG CAO (MỚI) === -->
+  <!-- === MODAL CÀI ĐẶT NÂNG CAO (ĐÃ CẬP NHẬT) === -->
   <div class="modal-overlay" id="advanced-settings-modal">
     <div class="modal-content">
         <h4>Cài đặt nâng cao</h4>
         <div class="adv-modal-tabs">
             <div class="adv-modal-tab active" onclick="switchAdvTab(event, 'adv-tab-satellites')">Quản lý Vệ tinh</div>
             <div class="adv-modal-tab" onclick="switchAdvTab(event, 'adv-tab-system')">Hệ thống</div>
-            <div class="adv-modal-tab" onclick="switchAdvTab(event, 'adv-tab-reset')">Reset WiFi</div>
+            <div class="adv-modal-tab" onclick="switchAdvTab(event, 'adv-tab-reset-wifi')">Reset WiFi</div>
+            <div class="adv-modal-tab" onclick="switchAdvTab(event, 'adv-tab-reset-esp')">Reset ESP</div>
         </div>
         
         <!-- Tab 1: Quản lý Vệ tinh -->
@@ -881,8 +882,15 @@
         </div>
 
         <!-- Tab 3: Reset WiFi -->
-        <div id="adv-tab-reset" class="adv-modal-tab-content">
-            <div id="reset-actions-list" class="actions-list">
+        <div id="adv-tab-reset-wifi" class="adv-modal-tab-content">
+            <div id="reset-wifi-actions-list" class="actions-list">
+                <!-- Nội dung sẽ được tạo bởi JavaScript -->
+            </div>
+        </div>
+
+        <!-- Tab 4: Reset ESP (MỚI) -->
+        <div id="adv-tab-reset-esp" class="adv-modal-tab-content">
+            <div id="reset-esp-actions-list" class="actions-list">
                 <!-- Nội dung sẽ được tạo bởi JavaScript -->
             </div>
         </div>
@@ -893,15 +901,15 @@
     </div>
   </div>
 
-  <!-- Modal Nhập Mật khẩu -->
+  <!-- Modal Nhập Mật khẩu (ĐÃ CẬP NHẬT) -->
   <div class="modal-overlay" id="password-modal-overlay">
       <div class="modal-content">
           <h4 id="password-modal-title">Xác thực quyền Quản trị</h4>
-          <p style="text-align: center; margin-top: -10px; margin-bottom: 20px; color: #bdc3c7; font-size: 0.9em;">Vui lòng nhập mật khẩu để tiếp tục.</p>
+          <p id="password-modal-description" style="text-align: center; margin-top: -10px; margin-bottom: 20px; color: #bdc3c7; font-size: 0.9em;">Vui lòng nhập mật khẩu để tiếp tục.</p>
           <input type="password" id="admin-password-input" class="modal-input" placeholder="Mật khẩu quản trị...">
           <div class="modal-buttons">
               <button class="modal-cancel-btn" onclick="closePasswordModal()">Hủy</button>
-              <button class="modal-confirm-btn" onclick="confirmWifiReset()">Xác nhận</button>
+              <button class="modal-confirm-btn" onclick="confirmAction()">Xác nhận</button>
           </div>
       </div>
   </div>
@@ -910,7 +918,8 @@
   <script>
     if("true"!==sessionStorage.getItem("isLoggedIn"))window.location.href="login.html";
     
-    let client, serverTime = null, deviceToReset = null;
+    // Cập nhật biến toàn cục để xử lý hành động và thiết bị mục tiêu
+    let client, serverTime = null, targetDevice = null, targetAction = null;
     
     const brokerUrl="wss://366af3ec40124749863257ecd2c62b3e.s1.eu.hivemq.cloud:8884/mqtt";
     const options={username:"ngoctuyka",password:"Tu12345678@",clientId:"WebAppClient_"+parseInt(1e3*Math.random()),reconnectPeriod:2e3,protocolVersion: 4};
@@ -1039,10 +1048,9 @@
         }, 4000);
     }
     
-    // === CÁC HÀM XỬ LÝ MODAL (MỚI & CẬP NHẬT) ===
+    // === CÁC HÀM XỬ LÝ MODAL (CẬP NHẬT) ===
     function openAdvancedSettingsModal() {
         document.getElementById('advanced-settings-modal').classList.add('visible');
-        // Tự động tải thông tin hệ thống khi mở modal
         if (document.getElementById('adv-tab-system').classList.contains('active')) {
             requestSystemInfo();
         }
@@ -1056,7 +1064,6 @@
         evt.currentTarget.classList.add('active');
         document.getElementById(tabName).classList.add('active');
         
-        // Tự động tải thông tin hệ thống khi chuyển sang tab Hệ thống
         if (tabName === 'adv-tab-system') {
             requestSystemInfo();
         }
@@ -1068,39 +1075,76 @@
             showNotification("Chưa kết nối đến máy chủ!", 'error');
         }
     }
-    function openPasswordModal(deviceName) {
-        deviceToReset = deviceName;
-        document.getElementById('password-modal-title').textContent = `Reset WiFi cho ${deviceName}`;
+
+    // Hàm mở modal mật khẩu chung (ĐÃ CẬP NHẬT)
+    function openPasswordModal(deviceName, action) {
+        targetDevice = deviceName;
+        targetAction = action;
+        const titleEl = document.getElementById('password-modal-title');
+        const descEl = document.getElementById('password-modal-description');
+
+        if (action === 'wifi') {
+            titleEl.textContent = `Reset WiFi cho ${deviceName}`;
+            descEl.textContent = `Hành động này sẽ xóa cấu hình WiFi đã lưu trên ${deviceName}.`;
+        } else if (action === 'restart') {
+            titleEl.textContent = `Khởi động lại ${deviceName}`;
+            descEl.textContent = `Hành động này sẽ khởi động lại thiết bị ${deviceName}.`;
+        }
+
         document.getElementById('password-modal-overlay').classList.add('visible');
         document.getElementById('admin-password-input').focus();
     }
+
+    // Hàm đóng modal mật khẩu (ĐÃ CẬP NHẬT)
     function closePasswordModal() {
         document.getElementById('password-modal-overlay').classList.remove('visible');
         document.getElementById('admin-password-input').value = '';
-        deviceToReset = null;
+        targetDevice = null;
+        targetAction = null;
     }
-    function confirmWifiReset() {
+    
+    // Hàm xác nhận hành động chung (ĐÃ CẬP NHẬT)
+    function confirmAction() {
         const password = document.getElementById('admin-password-input').value;
         if (!password) {
             showNotification('Vui lòng nhập mật khẩu!', 'error');
             return;
         }
-        if (!deviceToReset) {
-            console.error("Lỗi: Không có thiết bị nào được chọn để reset.");
+        if (!targetDevice || !targetAction) {
+            console.error("Lỗi: Không có thiết bị hoặc hành động nào được chọn.");
             closePasswordModal();
             return;
         }
-        const payload = { command: "RESET_WIFI", target: deviceToReset, admin_pass: password };
+
+        let payload = {
+            target: targetDevice,
+            admin_pass: password
+        };
+        let notificationText = '';
+
+        if (targetAction === 'wifi') {
+            payload.command = "RESET_WIFI";
+            notificationText = `Đã gửi lệnh Reset WiFi đến ${targetDevice}...`;
+        } else if (targetAction === 'restart') {
+            payload.command = "RESTART_ESP";
+            notificationText = `Đã gửi lệnh khởi động lại đến ${targetDevice}...`;
+        } else {
+            console.error("Hành động không xác định:", targetAction);
+            closePasswordModal();
+            return;
+        }
+
         if (client && client.connected) {
             client.publish(CONTROL_TOPIC, JSON.stringify(payload), { qos: 1 });
-            showNotification(`Đã gửi lệnh Reset WiFi đến ${deviceToReset}...`);
+            showNotification(notificationText);
         } else {
             showNotification("Chưa kết nối đến máy chủ!", 'error');
         }
         closePasswordModal();
     }
 
-    // === CÁC HÀM QUẢN LÝ VỆ TINH & RESET WIFI ===
+
+    // === CÁC HÀM QUẢN LÝ VỆ TINH & RESET (CẬP NHẬT) ===
     function addSatellite(deviceName) {
         if (client && client.connected) {
             client.publish(MANAGE_ADD_TOPIC, deviceName, { qos: 1 });
@@ -1117,13 +1161,21 @@
             }
         }
     }
+    
+    // Hàm render danh sách thiết bị (ĐÃ CẬP NHẬT)
     function renderDeviceLists(managed, discovered) {
         const managedListDiv = document.getElementById('managed-devices-list');
         const discoveredListDiv = document.getElementById('discovered-devices-list');
-        const resetListDiv = document.getElementById('reset-actions-list');
+        const resetWifiListDiv = document.getElementById('reset-wifi-actions-list');
+        const resetEspListDiv = document.getElementById('reset-esp-actions-list');
+
+        // Xóa nội dung cũ
+        managedListDiv.innerHTML = '';
+        discoveredListDiv.innerHTML = '';
+        resetWifiListDiv.innerHTML = '';
+        resetEspListDiv.innerHTML = '';
 
         // Render danh sách quản lý
-        managedListDiv.innerHTML = '';
         if (managed.length === 0) {
             managedListDiv.innerHTML = '<p class="list-placeholder">Chưa có thiết bị nào được quản lý.</p>';
         } else {
@@ -1154,7 +1206,6 @@
         }
 
         // Render danh sách phát hiện
-        discoveredListDiv.innerHTML = '';
         if (discovered.length === 0) {
             discoveredListDiv.innerHTML = '<p class="list-placeholder">Không phát hiện thiết bị mới nào.</p>';
         } else {
@@ -1176,39 +1227,41 @@
             });
         }
         
-        // Render danh sách Reset WiFi
-        resetListDiv.innerHTML = '';
-        // Thêm máy chủ
-        resetListDiv.innerHTML += `
-            <div class="action-item">
-                <div class="action-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20 12c0-2.54-1.19-4.81-3.04-6.27L16 0H8l-.96 5.73C5.19 7.19 4 9.46 4 12s1.19 4.81 3.04 6.27L8 24h8l.96-5.73C18.81 16.81 20 14.54 20 12zM6 12c0-1.81 1-3.38 2.47-4.27L9.1 4h5.8l.63 3.73C17 8.62 18 10.19 18 12s-1 3.38-2.47 4.27L14.9 20h-5.8l-.63-3.73C7 15.38 6 13.81 6 12z"></path><path d="M12 15c1.65 0 3-1.35 3-3s-1.35-3-3-3-3 1.35-3 3 1.35 3 3 3z"></path></svg>
-                </div>
-                <div class="action-text">
-                    <div class="title">ESP32-MayChu</div>
-                    <div class="description">Xóa cấu hình WiFi của thiết bị Máy Chủ.</div>
-                </div>
-                <button class="action-btn reset" onclick="openPasswordModal('ESP32-MayChu')">Reset</button>
-            </div>
-        `;
-        // Thêm các vệ tinh
-        managed.forEach(dev => {
-            resetListDiv.innerHTML += `
+        // --- Render danh sách cho các Tab Reset ---
+        const allDevices = [{ name: 'ESP32-MayChu', type: 'Máy Chủ' }, ...managed.map(d => ({...d, type: 'Vệ tinh'}))];
+
+        allDevices.forEach(dev => {
+            // Render cho Reset WiFi
+            resetWifiListDiv.innerHTML += `
                 <div class="action-item">
                     <div class="action-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 13h-2v-2h2v2zm0-4h-2V7h2v2z"></path></svg>
                     </div>
                     <div class="action-text">
                         <div class="title">${dev.name}</div>
-                        <div class="description">Xóa cấu hình WiFi của thiết bị Vệ tinh này.</div>
+                        <div class="description">Xóa cấu hình WiFi của thiết bị ${dev.type} này.</div>
                     </div>
-                    <button class="action-btn reset" onclick="openPasswordModal('${dev.name}')">Reset</button>
+                    <button class="action-btn reset" onclick="openPasswordModal('${dev.name}', 'wifi')">Reset WiFi</button>
+                </div>
+            `;
+            
+            // Render cho Reset ESP
+            resetEspListDiv.innerHTML += `
+                <div class="action-item">
+                     <div class="action-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 2.5a1 1 0 1 0-2 0v2.4a6.5 6.5 0 1 0 9.9 7.4 1 1 0 1 0-1.8-1a4.5 4.5 0 1 1-6.6-5.9V8a1 1 0 1 0 2 0V2.5z"></path></svg>
+                    </div>
+                    <div class="action-text">
+                        <div class="title">${dev.name}</div>
+                        <div class="description">Khởi động lại thiết bị ${dev.type} này.</div>
+                    </div>
+                    <button class="action-btn reset" style="background-color: #e67e22;" onclick="openPasswordModal('${dev.name}', 'restart')">Restart</button>
                 </div>
             `;
         });
     }
 
-    // === CÁC HÀM XỬ LÝ FORM & DỮ LIỆU ===
+    // === CÁC HÀM XỬ LÝ FORM & DỮ LIỆU (Giữ nguyên) ===
     function _load(e){try{const t=JSON.parse(e);t.schedule&&t.epoch&&(setTime(t.epoch),populateForm(t))}catch(t){console.error("Lỗi parse JSON từ MQTT:",t)}}
     
     function publishUpdate(){
