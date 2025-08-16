@@ -605,6 +605,9 @@
         font-size: 0.8em;
         color: #bdc3c7;
     }
+    .action-text .title.connected { color: #2ecc71; }
+    .action-text .title.disconnected { color: #e74c3c; }
+
     .action-btn {
         padding: 7px 15px;
         font-size: 0.8em;
@@ -620,18 +623,7 @@
         background-color: #c0392b;
         color: #fff;
     }
-    .system-info-list .info-item {
-        padding: 10px 5px;
-        font-size: 0.9em;
-    }
-    .system-info-list .info-item .label {
-        color: #f39c12; /* Màu vàng */
-    }
-     .system-info-list .info-item .value {
-        color: #f5f6fa; /* Màu trắng */
-    }
-
-
+    
     /* === Giao diện cho Quản lý Vệ tinh === */
     .device-list {
         display: flex;
@@ -852,32 +844,50 @@
             </div>
         </div>
 
-        <!-- Tab 2: Hệ thống -->
+        <!-- Tab 2: Hệ thống (GIAO DIỆN MỚI) -->
         <div id="adv-tab-system" class="adv-modal-tab-content">
-             <div class="system-info-list">
-                <div class="info-item">
-                    <span class="label">Máy chủ (WiFi):</span>
-                    <span class="value" id="info-ssid">Đang tải...</span>
+            <div id="system-info-actions-list" class="actions-list">
+                <div class="action-item">
+                    <div class="action-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"></path><path d="M1.42 9a16 16 0 0 1 21.16 0"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><line x1="12" y1="20" x2="12.01" y2="20"></line></svg></div>
+                    <div class="action-text">
+                        <div class="title" id="info-ssid">Đang tải...</div>
+                        <div class="description">Tên mạng WiFi máy chủ đang kết nối</div>
+                    </div>
                 </div>
-                <div class="info-item">
-                    <span class="label">Máy chủ (IP):</span>
-                    <span class="value" id="info-ip">Đang tải...</span>
+                <div class="action-item">
+                    <div class="action-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></div>
+                    <div class="action-text">
+                        <div class="title" id="info-ip">Đang tải...</div>
+                        <div class="description">Địa chỉ IP của máy chủ</div>
+                    </div>
                 </div>
-                <div class="info-item">
-                    <span class="label">Module Đồng hồ (RTC):</span>
-                    <span class="value" id="info-rtc">Đang tải...</span>
+                <div class="action-item">
+                    <div class="action-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
+                    <div class="action-text">
+                        <div class="title" id="info-rtc">Đang tải...</div>
+                        <div class="description">Module đồng hồ (RTC)</div>
+                    </div>
                 </div>
-                <div class="info-item">
-                    <span class="label">Màn hình LCD:</span>
-                    <span class="value" id="info-lcd">Đang tải...</span>
+                <div class="action-item">
+                    <div class="action-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg></div>
+                    <div class="action-text">
+                        <div class="title" id="info-lcd">Đang tải...</div>
+                        <div class="description">Màn hình LCD</div>
+                    </div>
                 </div>
-                <div class="info-item">
-                    <span class="label">Sử dụng Flash (ROM):</span>
-                    <span class="value" id="info-flash">Đang tải...</span>
+                <div class="action-item">
+                    <div class="action-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg></div>
+                    <div class="action-text">
+                        <div class="title" id="info-flash">Đang tải...</div>
+                        <div class="description">Bộ nhớ chương trình (Flash)</div>
+                    </div>
                 </div>
-                <div class="info-item">
-                    <span class="label">Sử dụng bộ nhớ (RAM):</span>
-                    <span class="value" id="info-ram">Đang tải...</span>
+                <div class="action-item">
+                    <div class="action-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line><line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line></svg></div>
+                    <div class="action-text">
+                        <div class="title" id="info-ram">Đang tải...</div>
+                        <div class="description">Bộ nhớ tạm (RAM)</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -896,7 +906,7 @@
             </div>
         </div>
 
-        <!-- Tab 5: Đổi mật khẩu (MỚI) -->
+        <!-- Tab 5: Đổi mật khẩu -->
         <div id="adv-tab-change-pass" class="adv-modal-tab-content">
             <h5>THAY ĐỔI MẬT KHẨU QUẢN TRỊ</h5>
             <div class="actions-list" style="gap: 15px; padding-top: 10px;">
@@ -913,7 +923,7 @@
     </div>
   </div>
 
-  <!-- Modal Nhập Mật khẩu (ĐÃ CẬP NHẬT) -->
+  <!-- Modal Nhập Mật khẩu -->
   <div class="modal-overlay" id="password-modal-overlay">
       <div class="modal-content">
           <h4 id="password-modal-title">Xác thực quyền Quản trị</h4>
@@ -930,7 +940,6 @@
   <script>
     if("true"!==sessionStorage.getItem("isLoggedIn"))window.location.href="login.html";
     
-    // Cập nhật biến toàn cục để xử lý hành động và thiết bị mục tiêu
     let client, serverTime = null, targetDevice = null, targetAction = null;
     
     const brokerUrl="wss://366af3ec40124749863257ecd2c62b3e.s1.eu.hivemq.cloud:8884/mqtt";
@@ -946,7 +955,6 @@
     const MANAGE_REMOVE_TOPIC = "esp32/bell/manage/remove";
     const MANAGE_STATUS_TOPIC = "esp32/bell/manage/status";
     const COMMAND_ACK_TOPIC = "esp32/bell/command/ack";
-    const ADMIN_PASSWORD_FOR_SAVE = "YenKhanhA@2025";
 
     function connectToMqtt(){
         console.log("Đang kết nối đến MQTT broker...");
@@ -996,12 +1004,12 @@
                     document.getElementById('info-ip').textContent = info.ip || 'N/A';
                     
                     const rtcStatus = document.getElementById('info-rtc');
-                    if(info.rtc) { rtcStatus.textContent = "Đã kết nối"; rtcStatus.className = "value connected"; } 
-                    else { rtcStatus.textContent = "Không tìm thấy"; rtcStatus.className = "value disconnected"; }
+                    rtcStatus.textContent = info.rtc ? "Đã kết nối" : "Không tìm thấy";
+                    rtcStatus.className = info.rtc ? "title connected" : "title disconnected";
 
                     const lcdStatus = document.getElementById('info-lcd');
-                    if(info.lcd) { lcdStatus.textContent = "Đã kết nối"; lcdStatus.className = "value connected"; } 
-                    else { lcdStatus.textContent = "Không tìm thấy"; lcdStatus.className = "value disconnected"; }
+                    lcdStatus.textContent = info.lcd ? "Đã kết nối" : "Không tìm thấy";
+                    lcdStatus.className = info.lcd ? "title connected" : "title disconnected";
 
                     document.getElementById('info-flash').textContent = (info.flash_usage) ? info.flash_usage + " %" : 'N/A';
                     document.getElementById('info-ram').textContent = (info.ram_usage) ? info.ram_usage + " %" : 'N/A';
@@ -1060,7 +1068,6 @@
         }, 4000);
     }
     
-    // === CÁC HÀM XỬ LÝ MODAL (CẬP NHẬT) ===
     function openAdvancedSettingsModal() {
         document.getElementById('advanced-settings-modal').classList.add('visible');
         if (document.getElementById('adv-tab-system').classList.contains('active')) {
@@ -1088,7 +1095,6 @@
         }
     }
 
-    // Hàm mở modal mật khẩu chung (ĐÃ CẬP NHẬT)
     function openPasswordModal(deviceName, action) {
         targetDevice = deviceName;
         targetAction = action;
@@ -1107,7 +1113,6 @@
         document.getElementById('admin-password-input').focus();
     }
 
-    // Hàm đóng modal mật khẩu (ĐÃ CẬP NHẬT)
     function closePasswordModal() {
         document.getElementById('password-modal-overlay').classList.remove('visible');
         document.getElementById('admin-password-input').value = '';
@@ -1115,7 +1120,6 @@
         targetAction = null;
     }
     
-    // Hàm xác nhận hành động chung (ĐÃ CẬP NHẬT)
     function confirmAction() {
         const password = document.getElementById('admin-password-input').value;
         if (!password) {
@@ -1155,7 +1159,6 @@
         closePasswordModal();
     }
 
-    // HÀM MỚI: Xử lý thay đổi mật khẩu
     function handleChangePassword() {
         const oldPass = document.getElementById('old-admin-password').value;
         const newPass = document.getElementById('new-admin-password').value;
@@ -1190,7 +1193,6 @@
         }
     }
 
-    // === CÁC HÀM QUẢN LÝ VỆ TINH & RESET (CẬP NHẬT) ===
     function addSatellite(deviceName) {
         if (client && client.connected) {
             client.publish(MANAGE_ADD_TOPIC, deviceName, { qos: 1 });
@@ -1208,20 +1210,17 @@
         }
     }
     
-    // Hàm render danh sách thiết bị (ĐÃ CẬP NHẬT)
     function renderDeviceLists(managed, discovered) {
         const managedListDiv = document.getElementById('managed-devices-list');
         const discoveredListDiv = document.getElementById('discovered-devices-list');
         const resetWifiListDiv = document.getElementById('reset-wifi-actions-list');
         const resetEspListDiv = document.getElementById('reset-esp-actions-list');
 
-        // Xóa nội dung cũ
         managedListDiv.innerHTML = '';
         discoveredListDiv.innerHTML = '';
         resetWifiListDiv.innerHTML = '';
         resetEspListDiv.innerHTML = '';
 
-        // Render danh sách quản lý
         if (managed.length === 0) {
             managedListDiv.innerHTML = '<p class="list-placeholder">Chưa có thiết bị nào được quản lý.</p>';
         } else {
@@ -1251,7 +1250,6 @@
             });
         }
 
-        // Render danh sách phát hiện
         if (discovered.length === 0) {
             discoveredListDiv.innerHTML = '<p class="list-placeholder">Không phát hiện thiết bị mới nào.</p>';
         } else {
@@ -1273,11 +1271,9 @@
             });
         }
         
-        // --- Render danh sách cho các Tab Reset ---
         const allDevices = [{ name: 'ESP32-MayChu', type: 'Máy Chủ' }, ...managed.map(d => ({...d, type: 'Vệ tinh'}))];
 
         allDevices.forEach(dev => {
-            // Render cho Reset WiFi
             resetWifiListDiv.innerHTML += `
                 <div class="action-item">
                     <div class="action-icon">
@@ -1291,7 +1287,6 @@
                 </div>
             `;
             
-            // Render cho Reset ESP
             resetEspListDiv.innerHTML += `
                 <div class="action-item">
                      <div class="action-icon">
@@ -1307,7 +1302,6 @@
         });
     }
 
-    // === CÁC HÀM XỬ LÝ FORM & DỮ LIỆU (Giữ nguyên) ===
     function _load(e){try{const t=JSON.parse(e);t.schedule&&t.epoch&&(setTime(t.epoch),populateForm(t))}catch(t){console.error("Lỗi parse JSON từ MQTT:",t)}}
     
     function publishUpdate(){
