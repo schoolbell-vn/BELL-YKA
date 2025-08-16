@@ -456,7 +456,6 @@
             <div id="reset-esp-actions-list" class="actions-list"></div>
         </div>
 
-        <!-- Tab 5: Bảo mật (MỚI) -->
         <div id="adv-tab-security" class="adv-modal-tab-content">
             <h5>ĐỔI MẬT KHẨU QUẢN TRỊ</h5>
             <div class="form-group">
@@ -501,6 +500,7 @@
     const brokerUrl="wss://366af3ec40124749863257ecd2c62b3e.s1.eu.hivemq.cloud:8884/mqtt";
     const options={username:"ngoctuyka",password:"Tu12345678@",clientId:"WebAppClient_"+parseInt(1e3*Math.random()),reconnectPeriod:2e3,protocolVersion: 4};
     
+    const ONLINE_STATUS_TOPIC = "esp32/bell/status/online";
     const DATA_STATUS_TOPIC = "esp32/bell/data/status";
     const SET_DATA_TOPIC = "esp32/bell/data/set";
     const GET_DATA_TOPIC = "esp32/bell/data/get";
@@ -518,9 +518,8 @@
         client=mqtt.connect(brokerUrl,options);
         
         client.on("connect",()=>{
-            statusDiv.textContent = "Thiết bị đang hoạt động";
-            statusDiv.className = "status-bar status-connected";
-            const topicsToSubscribe = [DATA_STATUS_TOPIC, SYS_INFO_TOPIC, MANAGE_STATUS_TOPIC, COMMAND_ACK_TOPIC];
+            console.log("MQTT Client connected to broker.");
+            const topicsToSubscribe = [DATA_STATUS_TOPIC, ONLINE_STATUS_TOPIC, SYS_INFO_TOPIC, MANAGE_STATUS_TOPIC, COMMAND_ACK_TOPIC];
             client.subscribe(topicsToSubscribe, {qos:1}, (err)=>{
                 if(!err) client.publish(GET_DATA_TOPIC, '1', { qos: 1 });
             });
@@ -528,6 +527,22 @@
         
         client.on("message",(topic, payload)=>{
             const payloadString = payload.toString();
+            
+            // *** KHỐI LỆNH ĐÃ ĐƯỢC PHỤC HỒI ***
+            if (topic === ONLINE_STATUS_TOPIC) {
+                if (payloadString === 'online') {
+                    statusDiv.textContent = "Thiết bị đang hoạt động";
+                    statusDiv.className = "status-bar status-connected";
+                    document.getElementById('clock-wrapper').style.display = 'block';
+                } else {
+                    statusDiv.textContent = "Thiết bị ngoại tuyến";
+                    statusDiv.className = "status-bar status-disconnected";
+                    document.getElementById('clock-wrapper').style.display = 'none';
+                    serverTime = null;
+                }
+            }
+            // *** KẾT THÚC KHỐI LỆNH PHỤC HỒI ***
+
             if (topic === DATA_STATUS_TOPIC && payloadString) _load(payloadString);
             if (topic === SYS_INFO_TOPIC) updateSysInfo(payloadString);
             if (topic === MANAGE_STATUS_TOPIC) updateDeviceLists(payloadString);
@@ -537,6 +552,7 @@
         client.on("close",()=>{
             statusDiv.textContent = "Mất kết nối máy chủ";
             statusDiv.className = "status-bar status-disconnected";
+            document.getElementById('clock-wrapper').style.display = 'none';
             serverTime = null;
         });
     }
@@ -723,38 +739,24 @@
         });
     }
 
-    // *** HÀM MỚI ĐỂ ĐỔI MẬT KHẨU ***
     function changeAdminPassword() {
         const currentPass = document.getElementById('current-password').value;
         const newPass = document.getElementById('new-password').value;
         const confirmPass = document.getElementById('confirm-password').value;
 
-        if (!currentPass || !newPass || !confirmPass) {
-            return showNotification("Vui lòng nhập đầy đủ thông tin.", 'error');
-        }
-        if (newPass !== confirmPass) {
-            return showNotification("Mật khẩu mới không khớp.", 'error');
-        }
-        if (newPass.length < 8) {
-            return showNotification("Mật khẩu mới phải có ít nhất 8 ký tự.", 'error');
-        }
+        if (!currentPass || !newPass || !confirmPass) return showNotification("Vui lòng nhập đầy đủ thông tin.", 'error');
+        if (newPass !== confirmPass) return showNotification("Mật khẩu mới không khớp.", 'error');
+        if (newPass.length < 8) return showNotification("Mật khẩu mới phải có ít nhất 8 ký tự.", 'error');
         
-        const payload = {
-            command: "CHANGE_ADMIN_PASS",
-            old_pass: currentPass,
-            new_pass: newPass
-        };
+        const payload = { command: "CHANGE_ADMIN_PASS", old_pass: currentPass, new_pass: newPass };
 
         if (client && client.connected) {
             client.publish(CONTROL_TOPIC, JSON.stringify(payload), { qos: 1 });
             showNotification("Đã gửi yêu cầu đổi mật khẩu...");
-            // Xóa các trường sau khi gửi
             document.getElementById('current-password').value = '';
             document.getElementById('new-password').value = '';
             document.getElementById('confirm-password').value = '';
-        } else {
-            showNotification("Chưa kết nối đến máy chủ!", 'error');
-        }
+        } else { showNotification("Chưa kết nối đến máy chủ!", 'error'); }
     }
 
     function _load(e){try{const t=JSON.parse(e);t.schedule&&t.epoch&&(setTime(t.epoch),populateForm(t))}catch(t){console.error("Lỗi parse JSON từ MQTT:",t)}}
