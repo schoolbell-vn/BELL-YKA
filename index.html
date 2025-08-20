@@ -608,8 +608,8 @@
         font-size: 0.8em;
         color: #bdc3c7;
     }
-    .action-text .title.connected { color: #2ecc71; }
-    .action-text .title.disconnected { color: #e74c3c; }
+    .action-text .description.connected { color: #2ecc71; }
+    .action-text .description.disconnected { color: #e74c3c; }
 
     .action-btn {
         padding: 7px 15px;
@@ -883,10 +883,7 @@
         <!-- Tab 2: Hệ thống -->
         <div id="adv-tab-system" class="adv-modal-tab-content">
             <div id="system-info-actions-list" class="actions-list">
-                <p class="list-placeholder">Nhấn "Làm mới" để tải thông tin...</p>
-                <div style="padding-top: 10px;">
-                    <button class="action-btn" style="width: 100%; height: 40px;" onclick="requestSystemInfo()">Làm mới</button>
-                </div>
+                <!-- Nội dung được tạo bởi JavaScript -->
             </div>
         </div>
 
@@ -1023,19 +1020,20 @@
                 _load(payloadString);
             }
 
-            // *** LOGIC ĐÃ SỬA ***
+            // ====================================================================
+            // ============     *** BAT DAU THAY DOI CHO PSRAM *** ==============
+            // ====================================================================
             if (topic === SYS_INFO_TOPIC) {
                 try {
                     const info = JSON.parse(payloadString);
-                    renderSystemInfo(info); // Gọi hàm mới để hiển thị
+                    renderSystemInfo(info); // Goi ham moi de render tab he thong
                 } catch(e) {
                     console.error("Lỗi parse JSON thông tin hệ thống:", e);
-                    const listDiv = document.getElementById('system-info-actions-list');
-                    if (listDiv) {
-                        listDiv.innerHTML = '<p class="list-placeholder">Lỗi khi nhận dữ liệu hệ thống.</p>';
-                    }
                 }
             }
+            // ====================================================================
+            // ============     *** KET THUC THAY DOI CHO PSRAM *** ==============
+            // ====================================================================
             
             if (topic === MANAGE_STATUS_TOPIC) {
                 try {
@@ -1089,65 +1087,6 @@
         });
     }
 
-    // *** HÀM MỚI ĐỂ HIỂN THỊ THÔNG TIN HỆ THỐNG ***
-    function renderSystemInfo(info) {
-        const listDiv = document.getElementById('system-info-actions-list');
-        if (!listDiv) return;
-
-        const rtcStatusClass = info.rtc ? 'connected' : 'disconnected';
-        const rtcStatusText = info.rtc ? 'Đã kết nối' : 'Không tìm thấy';
-        const lcdStatusClass = info.lcd ? 'connected' : 'disconnected';
-        const lcdStatusText = info.lcd ? 'Đã kết nối' : 'Không tìm thấy';
-
-        listDiv.innerHTML = `
-            <div class="action-item">
-                <div class="action-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12.001 2.003c-5.514 0-10 4.486-10 10s4.486 10 10 10 10-4.486 10-10-4.486-10-10-10zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"/><path d="M13.001 12.003h-2v-5h2v5zM11.001 14.003h2v2h-2z"/></svg></div>
-                <div class="action-text">
-                    <div class="title">${info.ssid || 'N/A'}</div>
-                    <div class="description">Tên mạng WiFi đang kết nối</div>
-                </div>
-            </div>
-            <div class="action-item">
-                <div class="action-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12.001 2.003c-5.514 0-10 4.486-10 10s4.486 10 10 10 10-4.486 10-10-4.486-10-10-10zm4.893 12.483-2.782-1.424c-.58-.297-1.111-.02-1.111.622v2.634c0 .641.531.919 1.111.622l2.782-1.424c.579-.297.579-1.57 0-1.87zM8.001 12.003c0-.642.531-.919 1.111-.622l2.782 1.424c.579.297.579 1.57 0 1.87l-2.782 1.424c-.58.297-1.111.02-1.111-.622v-3.498z"/></svg></div>
-                <div class="action-text">
-                    <div class="title">${info.ip || 'N/A'}</div>
-                    <div class="description">Địa chỉ IP của thiết bị</div>
-                </div>
-            </div>
-            <div class="action-item">
-                <div class="action-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c-5.523 0-10 4.477-10 10s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586V7z"></path></svg></div>
-                <div class="action-text">
-                    <div class="title ${rtcStatusClass}">${rtcStatusText}</div>
-                    <div class="description">Trạng thái Module RTC DS3231</div>
-                </div>
-            </div>
-            <div class="action-item">
-                <div class="action-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20 3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h3l-1 1v2h12v-2l-1-1h3c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 13H4V5h16v11z"></path></svg></div>
-                <div class="action-text">
-                    <div class="title ${lcdStatusClass}">${lcdStatusText}</div>
-                    <div class="description">Trạng thái Màn hình LCD 16x2</div>
-                </div>
-            </div>
-            <div class="action-item">
-                <div class="action-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 6h-9c-.83 0-1.5.67-1.5 1.5v9c0 .83.67 1.5 1.5 1.5h9c.83 0 1.5-.67 1.5-1.5v-9c0-.83-.67-1.5-1.5-1.5zM15 15H9v-1.5h6V15zm0-3H9V10.5h6V12z"></path></svg></div>
-                <div class="action-text">
-                    <div class="title">${info.flash_usage ? `${info.flash_usage}% (${info.running_partition || ''})` : 'N/A'}</div>
-                    <div class="description">Bộ nhớ Flash đã sử dụng</div>
-                </div>
-            </div>
-            <div class="action-item">
-                <div class="action-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M4 5h16v2H4zm0 4h16v2H4zm0 4h16v2H4zm0 4h16v2H4z"></path></svg></div>
-                <div class="action-text">
-                    <div class="title">${info.ram_usage ? `${info.ram_usage}%` : 'N/A'}</div>
-                    <div class="description">Bộ nhớ RAM đã sử dụng</div>
-                </div>
-            </div>
-            <div style="padding-top: 10px;">
-                <button class="action-btn" style="width: 100%; height: 40px;" onclick="requestSystemInfo()">Làm mới</button>
-            </div>
-        `;
-    }
-
     function showNotification(message, type = 'success') {
         const area = document.getElementById('notification-area');
         const notif = document.createElement('div');
@@ -1186,13 +1125,63 @@
             requestSystemInfo();
         }
     }
+    
+    // ====================================================================
+    // ============     *** BAT DAU THAY DOI CHO PSRAM *** ==============
+    // ====================================================================
+    function renderSystemInfo(info) {
+        const listDiv = document.getElementById('system-info-actions-list');
+        if (!listDiv) return;
+
+        listDiv.innerHTML = ''; // Clear previous content
+
+        const createItem = (icon, title, value, valueClass = '') => {
+            return `
+                <div class="action-item">
+                    <div class="action-icon">${icon}</div>
+                    <div class="action-text">
+                        <div class="title">${title}</div>
+                        <div class="description ${valueClass}">${value}</div>
+                    </div>
+                </div>
+            `;
+        };
+
+        const wifiIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C7.486 2 3.407 3.585 0 6l1.414 1.414C4.195 5.53 7.855 4 12 4s7.805 1.53 10.586 3.414L24 6C20.593 3.585 16.514 2 12 2zm0 4c-3.145 0-6.195 1.229-8.485 3.414L5.414 11.31C7.21 9.898 9.51 9 12 9s4.79 0.898 6.586 2.31l1.899-1.898C18.195 7.229 15.145 6 12 6zm0 5c-1.854 0-3.58.718-4.828 1.968L9.07 14.864C9.945 14.18 10.94 13.8 12 13.8s2.055 0.38 2.93 1.064l1.898-1.898C15.58 11.718 13.854 11 12 11zm0 4.2c-0.828 0-1.5 0.672-1.5 1.5s0.672 1.5 1.5 1.5 1.5-0.672 1.5-1.5-0.672-1.5-1.5-1.5z"></path></svg>';
+        const ipIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm-1.999 14.413-3.713-3.713 1.414-1.414 2.299 2.299 4.949-4.95 1.414 1.414-6.363 6.364z"></path></svg>';
+        const rtcIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586z"></path></svg>';
+        const lcdIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20 3H4c-1.103 0-2 .897-2 2v11c0 1.103.897 2 2 2h3l-1 2v1h12v-1l-1-2h3c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2zM4 14V5h16l.002 9H4z"></path></svg>';
+        const flashIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"></path></svg>';
+        const ramIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 5h16v2H4zm0 4h16v2H4zm0 4h16v2H4zm0 4h16v2H4z"></path></svg>';
+
+        listDiv.innerHTML += createItem(wifiIcon, 'Tên WiFi (SSID)', info.ssid || 'N/A');
+        listDiv.innerHTML += createItem(ipIcon, 'Địa chỉ IP', info.ip || 'N/A');
+        listDiv.innerHTML += createItem(rtcIcon, 'Module RTC', info.rtc ? 'Đã kết nối' : 'Không tìm thấy', info.rtc ? 'description connected' : 'description disconnected');
+        listDiv.innerHTML += createItem(lcdIcon, 'Màn hình LCD', info.lcd ? 'Đã kết nối' : 'Không tìm thấy', info.lcd ? 'description connected' : 'description disconnected');
+        listDiv.innerHTML += createItem(flashIcon, 'Bộ nhớ Flash', `${info.flash_usage || 'N/A'} % (${info.running_partition || ''})`);
+        
+        listDiv.innerHTML += createItem(ramIcon, 'RAM trong (SRAM)', `${info.sram_usage_percent || 'N/A'} % (Còn trống ${info.sram_free_kb || 'N/A'} KB)`);
+        listDiv.innerHTML += createItem(ramIcon, 'RAM ngoài (PSRAM)', `${info.psram_usage_percent || 'N/A'} % (Còn trống ${info.psram_free_mb || 'N/A'} MB)`);
+    }
+
     function requestSystemInfo() {
+        const listDiv = document.getElementById('system-info-actions-list');
+        if (listDiv) {
+            listDiv.innerHTML = '<p class="list-placeholder">Đang tải thông tin hệ thống...</p>';
+        }
+
         if (client && client.connected) {
             client.publish(CONTROL_TOPIC, "GET_SYS_INFO", {qos: 1});
         } else {
             showNotification("Chưa kết nối đến máy chủ!", 'error');
+            if (listDiv) {
+                listDiv.innerHTML = '<p class="list-placeholder" style="color: #e74c3c;">Không thể tải, chưa kết nối máy chủ.</p>';
+            }
         }
     }
+    // ====================================================================
+    // ============     *** KET THUC THAY DOI CHO PSRAM *** ==============
+    // ====================================================================
 
     function openPasswordModal(deviceName, action) {
         targetDevice = deviceName;
