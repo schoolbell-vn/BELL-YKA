@@ -274,12 +274,31 @@
     .tabcontent h3 { 
         font-size: 1em; margin-top: 0; margin-bottom: 15px; border: none; box-shadow: none; background: none; color: #f1c40f; font-weight: 700;
         line-height: 1.4;
+        cursor: pointer;
+        position: relative;
+        padding-right: 25px; /* Space for the arrow */
+    }
+    .tabcontent h3::after { /* Collapsible Arrow */
+        content: '▼';
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 0.8em;
+        transition: transform 0.2s ease-in-out;
+    }
+    .tabcontent h3.expanded::after {
+        transform: translateY(-50%) rotate(180deg);
     }
     .session-subtitle {
         font-size: 0.8em;
         font-weight: normal;
         text-transform: none;
         color: #bdc3c7;
+    }
+    .collapsible-settings {
+        display: none; /* Hidden by default */
+        overflow: hidden;
     }
 
     /* === CÀI ĐẶT NÚT GẠT (TOGGLE SWITCH) HIỆN ĐẠI === */
@@ -1531,6 +1550,18 @@
     function updateLocalClock(){serverTime&&(serverTime.setSeconds(serverTime.getSeconds()+1),document.getElementById("clock").innerHTML=serverTime.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit",timeZone:"Asia/Ho_Chi_Minh",hour12:!1}))}
     
     // === CÁC HÀM ĐIỀU KHIỂN GIAO DIỆN ĐỘNG ===
+    function toggleSettings(headerElement) {
+        const content = headerElement.nextElementSibling;
+        if (content && content.classList.contains('collapsible-settings')) {
+            headerElement.classList.toggle('expanded');
+            if (content.style.display === "block") {
+                content.style.display = "none";
+            } else {
+                content.style.display = "block";
+            }
+        }
+    }
+
     function toggleSpecialEvent(dayId) {
         const checkbox = document.getElementById(`has_special_${dayId}`);
         const container = document.getElementById(`special_event_container_${dayId}`);
@@ -1549,34 +1580,36 @@
 
     const createDayContent=(e,t,o)=>{const n="t2_sang"===e,a="sang"===o&&["t3_sang","t4_sang","t5_sang","t6_sang","t7_sang"].includes(e),s="sang"===o&&"cn_sang"!==e,i=s?"":"full-width",d=`<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586z"></path></svg></div>`,r=`<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm-1 15H6V7h12v12z"></path></svg></div>`,l=`<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 2H6c-1.206 0-3 .799-3 3v14c0 2.201 1.794 3 3 3h15v-2H6.012C5.55 19.988 5 19.806 5 19s.55-.988 1.012-1H21V4c0-1.103-.897-2-2-2zm0 13H6V5h13v10z"></path></svg></div>`,c=`<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M18 5h-2V2H8v3H6c-1.654 0-3 1.346-3 3v6c0 1.654 1.346 3 3 3h1v1c0 .552.447 1 1 1h6c.553 0 1-.448 1-1v-1h1c1.654 0 3-1.346 3-3V8c0-1.654-1.346-3-3-3zm1 9c0 .552-.447 1-1 1H6c-.553 0-1-.448-1-1V8c0-.552.447-1 1-1h12c.553 0 1 .448 1 1v6z"></path></svg></div>`,m=`<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M14 12V8h-4v4H8l4 4 4-4h-2z"></path></svg></div>`,p=`<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h2v2H4zm0 5h2v2H4zm0 5h2v2H4zm16-8V6H8v2h12zm0 5H8v2h12zm0 5H8v2h12z"></path></svg></div>`;let u="";(n||a)&&(u=n?`${r}<div class="input-wrapper"><label for="chaoco_${e}">TG Chào cờ</label><div class="unit-input"><input id="chaoco_${e}" type="number" value="40"><span>phút</span></div></div>`:`${r}<div class="input-wrapper"><label for="chunhiem_${e}">TG Chủ nhiệm</label><div class="unit-input"><input id="chunhiem_${e}" type="number" value="15"><span>phút</span></div></div>`);let g="";const h="sang"===o&&["t3_sang","t4_sang","t5_sang","t6_sang","t7_sang"].includes(e);return"chieu"===o?g=`<div class="copy-button-container"><button class="copy-button chieu" onclick="copyAfternoonSchedule('${e}')">Sao chép đến các ngày Chiều</button></div>`:h&&(g=`<div class="copy-button-container"><button class="copy-button sang" onclick="copyMorningSchedule('${e}')">Sao chép đến T3-T7 (Sáng)</button></div>`),`
         <div id="${e}" class="tabcontent">
-            <h3>Cài đặt Lịch ${t}<br><span class="session-subtitle">(Buổi ${"sang"===o?"Sáng":"Chiều"})</span></h3>
+            <h3 onclick="toggleSettings(this)">Cài đặt Lịch ${t}<br><span class="session-subtitle">(Buổi ${"sang"===o?"Sáng":"Chiều"})</span></h3>
             
-            <div class="toggle-group">
-                <div class="toggle-control">
-                    <label class="label-text" for="enable_${e}">Kích hoạt Lịch</label>
-                    <label class="switch ${"chieu"===o?"chieu-toggle":""}">
-                        <input type="checkbox" id="enable_${e}" checked>
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                ${u?`<div class="toggle-control">
-                        <label class="label-text" for="has_special_${e}">Có Giờ Chào cờ / Sinh hoạt</label>
+            <div class="collapsible-settings">
+                <div class="toggle-group">
+                    <div class="toggle-control">
+                        <label class="label-text" for="enable_${e}">Kích hoạt Lịch</label>
                         <label class="switch ${"chieu"===o?"chieu-toggle":""}">
-                            <input type="checkbox" id="has_special_${e}" onchange="toggleSpecialEvent('${e}')">
+                            <input type="checkbox" id="enable_${e}" checked>
                             <span class="slider"></span>
                         </label>
-                    </div>`:""}
-                <div class="toggle-control">
-                    <label class="label-text" for="has_duvao_${e}">Có Chuông Dự vào lớp</label>
-                    <label class="switch ${"chieu"===o?"chieu-toggle":""}">
-                        <input type="checkbox" id="has_duvao_${e}" onchange="toggleDuVao('${e}')" checked>
-                        <span class="slider"></span>
-                    </label>
+                    </div>
+                    ${u?`<div class="toggle-control">
+                            <label class="label-text" for="has_special_${e}">Có Giờ Chào cờ / Sinh hoạt</label>
+                            <label class="switch ${"chieu"===o?"chieu-toggle":""}">
+                                <input type="checkbox" id="has_special_${e}" onchange="toggleSpecialEvent('${e}')">
+                                <span class="slider"></span>
+                            </label>
+                        </div>`:""}
+                    <div class="toggle-control">
+                        <label class="label-text" for="has_duvao_${e}">Có Chuông Dự vào lớp</label>
+                        <label class="switch ${"chieu"===o?"chieu-toggle":""}">
+                            <input type="checkbox" id="has_duvao_${e}" onchange="toggleDuVao('${e}')" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
                 </div>
+                ${g}
+                <hr style="margin: 15px; background: #414345; height: 1px; opacity: 0.5;">
             </div>
-            ${g}
-            <hr style="margin: 15px; background: #414345; height: 1px; opacity: 0.5;">
-            
+
             <div class="settings-grid">
                 <div class="setting-item ${i}">${d}<div class="input-wrapper"><label for="gio_${e}">Giờ vào học</label><input id="gio_${e}" type="time"></div></div>
                 
@@ -1696,26 +1729,29 @@
         let currentTime = startTime;
 
         if (flagCeremonyTime > 0) {
-            if (prepareTime > 0) schedule.push({ time: currentTime, description: "Dự vào" });
-            currentTime += prepareTime;
             schedule.push({ time: currentTime, description: "Chào cờ / SHCN" });
             currentTime += flagCeremonyTime;
-            schedule.push({ time: currentTime, description: "Vào tiết 1" });
-        } else {
-            schedule.push({ time: currentTime, description: "Vào tiết 1" });
+            if (prepareTime > 0) {
+                schedule.push({ time: currentTime, description: "Dự vào tiết 1" });
+                currentTime += prepareTime;
+            }
         }
         
         for (let i = 1; i <= lessonCount; i++) {
-            let lessonEndTime = currentTime + lessonTime;
+            schedule.push({ time: currentTime, description: `Vào tiết ${i}` });
+            currentTime += lessonTime;
             
-            if (i < lessonCount) {
-                if (breakTime > 0) schedule.push({ time: lessonEndTime, description: `Ra chơi tiết ${i}` });
-                currentTime = lessonEndTime + breakTime;
-                if (prepareTime > 0) schedule.push({ time: currentTime, description: `Dự vào tiết ${i + 1}` });
-                currentTime += prepareTime;
-                schedule.push({ time: currentTime, description: `Vào tiết ${i + 1}` });
-            } else {
-                 if (breakTime > 0) schedule.push({ time: lessonEndTime, description: "Ra về" });
+            if (breakTime > 0) {
+                if (i < lessonCount) {
+                    schedule.push({ time: currentTime, description: `Ra chơi tiết ${i}` });
+                    currentTime += breakTime;
+                    if (prepareTime > 0) {
+                        schedule.push({ time: currentTime, description: `Dự vào tiết ${i+1}` });
+                        currentTime += prepareTime;
+                    }
+                } else {
+                    schedule.push({ time: currentTime, description: "Ra về" });
+                }
             }
         }
         
