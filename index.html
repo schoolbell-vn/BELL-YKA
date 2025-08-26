@@ -158,7 +158,7 @@
     .button-section {
         display: flex;
         flex-direction: column;
-        gap: 12px;
+        gap: 10px; /* Reduced gap */
         padding: 0 15px;
         margin-top: 24px;
     }
@@ -166,14 +166,14 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        height: 48px;
+        height: 45px; /* Reduced height */
         padding: 0 15px;
         border: none;
         border-radius: 10px;
         font-size: 0.9em;
         font-weight: 700;
         letter-spacing: 1px;
-        transition: box-shadow 0.18s, transform 0.13s, filter 0.13s;
+        transition: all 0.2s ease-out; /* Smooth transition for all properties */
         cursor: pointer;
         outline: none;
         position: relative;
@@ -181,6 +181,10 @@
         z-index: 1;
         text-transform: uppercase;
         width: 100%;
+    }
+    .modern-btn:hover {
+        transform: translateY(-2px); /* Hover effect */
+        filter: brightness(1.1);
     }
     .modern-btn svg {
         width: 1.1em;
@@ -197,24 +201,22 @@
         color: #00e6ff;
         border-left: 4px solid #00e6ff;
         border-right: 4px solid #00e6ff;
-        text-shadow: 0 0 12px #00e6ff, 0 2px 8px #000, 0 0 24px #fff;
-        box-shadow: 0 4px 18px 0 #00e6ff33, 0 2px 8px #fff2;
+        text-shadow: 0 0 12px #00e6ff, 0 2px 8px #000;
+        box-shadow: 0 4px 18px 0 #00000044;
     }
     .save-button:hover {
-        filter: brightness(1.12);
-        box-shadow: 0 10px 32px #00e6ff99, 0 2px 12px #fff4;
+        box-shadow: 0 8px 24px #00e6ff55;
     }
     .test-button {
         background: linear-gradient(90deg, #232526 60%, #414345 100%);
         color: #f1c40f;
         border-left: 4px solid #f1c40f;
         border-right: 4px solid #f1c40f;
-        text-shadow: 0 0 12px #f1c40f, 0 2px 8px #000, 0 0 24px #fff;
-        box-shadow: 0 4px 18px 0 #f1c40f33, 0 2px 8px #fff2;
+        text-shadow: 0 0 12px #f1c40f, 0 2px 8px #000;
+        box-shadow: 0 4px 18px 0 #00000044;
     }
     .test-button:hover {
-        filter: brightness(1.08);
-        box-shadow: 0 10px 32px #f1c40f99, 0 2px 12px #fff4;
+        box-shadow: 0 8px 24px #f1c40f55;
     }
     .advanced-button {
         background: linear-gradient(90deg, #485563 0%, #29323c 100%);
@@ -222,30 +224,28 @@
         border-left: 4px solid #bdc3c7;
         border-right: 4px solid #bdc3c7;
         text-shadow: 0 0 12px #bdc3c7, 0 2px 8px #000;
-        box-shadow: 0 4px 18px 0 #bdc3c733, 0 2px 8px #fff2;
+        box-shadow: 0 4px 18px 0 #00000044;
     }
     .advanced-button:hover {
-        filter: brightness(1.15);
-        box-shadow: 0 10px 32px #bdc3c799, 0 2px 12px #fff4;
+        box-shadow: 0 8px 24px #bdc3c755;
     }
     .logout-button {
         background: linear-gradient(90deg, #232526 60%, #414345 100%);
         color: #e74c3c;
         border-left: 4px solid #e74c3c;
         border-right: 4px solid #e74c3c;
-        text-shadow: 0 0 12px #e74c3c, 0 2px 8px #000, 0 0 24px #fff;
-        box-shadow: 0 4px 18px 0 #e74c3c33, 0 2px 8px #fff2;
+        text-shadow: 0 0 12px #e74c3c, 0 2px 8px #000;
+        box-shadow: 0 4px 18px 0 #00000044;
     }
     .logout-button:hover {
-        filter: brightness(1.08);
-        box-shadow: 0 10px 32px #e74c3c99, 0 2px 12px #fff4;
+        box-shadow: 0 8px 24px #e74c3c55;
     }
     
     /* --- TAB NGÀY & NỘI DUNG TAB --- */
     .tab { display: flex; justify-content: space-around; border-bottom: 2px solid #414345; margin: 0 15px 0 15px; position: relative; z-index: 1; }
     .tab button {
         flex-grow: 1; border: none; outline: none; cursor: pointer; padding: 10px 5px 8px 5px;
-        transition: all 0.18s cubic-bezier(.4,0,.2,1), box-shadow 0.18s;
+        transition: all 0.2s ease-out; /* Smooth transition */
         font-size: 0.9em; font-weight: 700; border-radius: 8px 8px 0 0; margin: 0 2px;
         position: relative; top: 2px; border-bottom: 3px solid transparent;
         background: transparent; color: #bdc3c7;
@@ -267,28 +267,47 @@
         z-index: 2;
     }
     .tabcontent { 
-        display: none; padding: 15px 10px 10px 10px; background: #232526;
+        display: none; 
+        padding: 10px; 
+        background: #232526;
         border-radius: 0 0 12px 12px;
         margin-bottom: 8px;
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        transition: max-height 0.5s ease-in-out, opacity 0.4s ease-in-out, padding 0.5s ease-in-out;
     }
-    .tabcontent h3 { 
-        font-size: 1em; margin-top: 0; margin-bottom: 15px; border: none; box-shadow: none; background: none; color: #f1c40f; font-weight: 700;
-        line-height: 1.4;
+    .tabcontent.active {
+        display: block;
+        max-height: 1000px; /* Large enough value */
+        opacity: 1;
+        padding: 15px 10px 10px 10px;
+    }
+    .tabcontent h3 { /* Redesigned collapsible header */
+        font-size: 1em; 
+        margin: 0; 
+        margin-bottom: 10px;
+        padding: 10px 15px;
+        color: #f1c40f; 
+        font-weight: 700;
         cursor: pointer;
         position: relative;
-        padding-right: 25px; /* Space for the arrow */
+        border-bottom: 1px solid #414345;
+        background: rgba(44, 62, 80, 0.5);
+        border-radius: 8px;
+        text-align: left;
     }
     .tabcontent h3::after { /* Collapsible Arrow */
         content: '▼';
         position: absolute;
-        right: 0;
+        right: 15px;
         top: 50%;
-        transform: translateY(-50%);
+        transform: translateY(-50%) scale(0.9);
         font-size: 0.8em;
-        transition: transform 0.2s ease-in-out;
+        transition: transform 0.3s ease-in-out;
     }
     .tabcontent h3.expanded::after {
-        transform: translateY(-50%) rotate(180deg);
+        transform: translateY(-50%) scale(0.9) rotate(180deg);
     }
     .session-subtitle {
         font-size: 0.8em;
@@ -297,8 +316,16 @@
         color: #bdc3c7;
     }
     .collapsible-settings {
-        display: none; /* Hidden by default */
         overflow: hidden;
+        max-height: 0;
+        opacity: 0;
+        transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out, margin-top 0.4s ease-in-out;
+        margin-top: 0;
+    }
+    .collapsible-settings.expanded {
+        max-height: 500px; /* Large enough value */
+        opacity: 1;
+        margin-top: 10px;
     }
 
     /* === CÀI ĐẶT NÚT GẠT (TOGGLE SWITCH) HIỆN ĐẠI === */
@@ -306,7 +333,7 @@
         background-color: #2c3e50;
         border-radius: 8px;
         padding: 5px;
-        margin: 0 5px 15px 5px;
+        margin: 0 5px 10px 5px;
         box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
     }
     .toggle-control {
@@ -317,53 +344,33 @@
     }
     .toggle-control .label-text {
         font-weight: bold;
-        font-size: 0.95em;
+        font-size: 0.9em;
         cursor: pointer;
     }
     .switch {
         position: relative;
         display: inline-block;
-        width: 50px;
-        height: 26px;
+        width: 46px; height: 24px;
         flex-shrink: 0;
     }
-    .switch input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-    }
+    .switch input { opacity: 0; width: 0; height: 0; }
     .slider {
-        position: absolute;
-        cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
+        position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
         background-color: #4a4e54;
         transition: .3s;
-        border-radius: 26px;
+        border-radius: 24px;
     }
     .slider:before {
-        position: absolute;
-        content: "";
-        height: 20px;
-        width: 20px;
-        left: 3px;
-        bottom: 3px;
+        position: absolute; content: "";
+        height: 18px; width: 18px;
+        left: 3px; bottom: 3px;
         background-color: #bdc3c7;
         transition: .3s cubic-bezier(.4,0,.2,1);
         border-radius: 50%;
     }
-    input:checked + .slider {
-        background: linear-gradient(90deg, #27ae60, #2ecc71);
-    }
-    .chieu-toggle input:checked + .slider {
-        background: linear-gradient(90deg, #2980b9, #3498db);
-    }
-    input:checked + .slider:before {
-        transform: translateX(24px);
-        background-color: white;
-    }
+    input:checked + .slider { background: linear-gradient(90deg, #27ae60, #2ecc71); }
+    .chieu-toggle input:checked + .slider { background: linear-gradient(90deg, #2980b9, #3498db); }
+    input:checked + .slider:before { transform: translateX(22px); background-color: white; }
 
     /* --- KHU VỰC CÀI ĐẶT (DETAILS) --- */
     details {
@@ -418,6 +425,8 @@
     .details-container table { width: 100%; border-collapse: collapse; margin-top: 10px; background: #232526; border-radius: 8px; overflow: hidden; }
     .details-container th, .details-container td { border: 1px solid #414345; padding: 8px 5px; text-align: center; font-size: 0.9em; }
     .details-container th { background: #f1c40f; color: #232526; font-weight: bold; }
+    .details-container tbody tr { transition: background-color 0.2s; }
+    .details-container tbody tr:hover { background-color: #f1c40f22; }
     .details-container tbody tr:nth-child(odd) { background: #232526; color: #ecf0f1; }
     .details-container tbody tr:nth-child(even) { background: #414345; color: #ecf0f1; }
 
@@ -430,20 +439,21 @@
     .settings-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 10px;
+        gap: 8px; /* Reduced gap */
         padding: 8px 0;
     }
     .setting-item {
         background: #232526;
         border: 1px solid #414345;
         border-radius: 8px;
-        padding: 10px;
+        padding: 8px; /* Reduced padding */
         display: flex;
         align-items: center;
         transition: all 0.2s ease-in-out;
     }
     .setting-item:hover {
         border-color: #f1c40f;
+        transform: translateY(-1px);
     }
     .setting-item.full-width {
         grid-column: 1 / -1;
@@ -1554,11 +1564,7 @@
         const content = headerElement.nextElementSibling;
         if (content && content.classList.contains('collapsible-settings')) {
             headerElement.classList.toggle('expanded');
-            if (content.style.display === "block") {
-                content.style.display = "none";
-            } else {
-                content.style.display = "block";
-            }
+            content.classList.toggle('expanded');
         }
     }
 
@@ -1735,7 +1741,23 @@
         return e;
     }
 
-    function openDay(e,t,o){const n=e.currentTarget,a=document.getElementById(t);if(n.classList.contains("active"))return a.style.display="none",void n.classList.remove("active");let s;const i=document.getElementsByClassName("tabcontent");for(s=0;s<i.length;s++)i[s].style.display="none";const d=document.getElementsByClassName("tablinks-sang");for(s=0;s<d.length;s++)d[s].className=d[s].className.replace(" active","");const r=document.getElementsByClassName("tablinks-chieu");for(s=0;s<r.length;s++)r[s].className=r[s].className.replace(" active","");a.style.display="block",n.className+=" active"}
+    function openDay(event, dayId) {
+        const clickedButton = event.currentTarget;
+        const targetContent = document.getElementById(dayId);
+
+        // Check if the clicked tab is already active
+        const isAlreadyActive = clickedButton.classList.contains("active");
+
+        // Deactivate all tabs and contents first
+        document.querySelectorAll('.tablinks-sang, .tablinks-chieu').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tabcontent').forEach(content => content.classList.remove('active'));
+
+        // If it was not active, activate it. If it was active, it remains closed.
+        if (!isAlreadyActive) {
+            clickedButton.classList.add('active');
+            targetContent.classList.add('active');
+        }
+    }
     function timeToMinute(e){if(!e)return 0;const[t,o]=e.split(":").map(Number);return 60*t+o}function minuteToTime(e){const t=Math.floor(e/60).toString().padStart(2,"0"),o=(e%60).toString().padStart(2,"0");return`${t}:${o}`}
     
     function calculateSchedule(dayId){
