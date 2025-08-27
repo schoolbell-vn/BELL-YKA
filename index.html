@@ -1761,52 +1761,56 @@
     function timeToMinute(e){if(!e)return 0;const[t,o]=e.split(":").map(Number);return 60*t+o}function minuteToTime(e){const t=Math.floor(e/60).toString().padStart(2,"0"),o=(e%60).toString().padStart(2,"0");return`${t}:${o}`}
     
     function calculateSchedule(dayId){
-        const getVal = id => parseInt(document.getElementById(id)?.value) || 0;
-        const getTime = id => timeToMinute(document.getElementById(id).value);
-        
-        const hasSpecial = document.getElementById(`has_special_${dayId}`)?.checked;
-        const hasDuVao = document.getElementById(`has_duvao_${dayId}`)?.checked;
-        
-        const startTime = getTime(`gio_${dayId}`);
-        const lessonTime = getVal(`tiethoc_${dayId}`);
-        const breakTime = getVal(`rachoi_${dayId}`);
-        const prepareTime = hasDuVao ? getVal(`duvaotiet_${dayId}`) : 0;
-        const lessonCount = getVal(`sotiet_${dayId}`);
-        const flagCeremonyTime = hasSpecial ? (getVal(`chaoco_${dayId}`) || getVal(`chunhiem_${dayId}`)) : 0;
-        
-        let schedule = [];
-        let currentTime = startTime;
+    const getVal = id => parseInt(document.getElementById(id)?.value) || 0;
+    const getTime = id => timeToMinute(document.getElementById(id).value);
+    
+    const hasSpecial = document.getElementById(`has_special_${dayId}`)?.checked;
+    const hasDuVao = document.getElementById(`has_duvao_${dayId}`)?.checked;
+    
+    const startTime = getTime(`gio_${dayId}`);
+    const lessonTime = getVal(`tiethoc_${dayId}`);
+    const breakTime = getVal(`rachoi_${dayId}`);
+    const prepareTime = hasDuVao ? getVal(`duvaotiet_${dayId}`) : 0;
+    const lessonCount = getVal(`sotiet_${dayId}`);
+    const flagCeremonyTime = hasSpecial ? (getVal(`chaoco_${dayId}`) || getVal(`chunhiem_${dayId}`)) : 0;
+    
+    let schedule = [];
+    let currentTime = startTime;
 
-        if (flagCeremonyTime > 0) {
-            schedule.push({ time: currentTime, description: "Chào cờ / SHCN" });
-            currentTime += flagCeremonyTime;
-            if (prepareTime > 0) {
-                schedule.push({ time: currentTime, description: "Dự vào tiết 1" });
-                currentTime += prepareTime;
-            }
-        }
-        
-        for (let i = 1; i <= lessonCount; i++) {
-            schedule.push({ time: currentTime, description: `Vào tiết ${i}` });
-            currentTime += lessonTime;
-            
-            if (breakTime > 0) {
-                if (i < lessonCount) {
-                    schedule.push({ time: currentTime, description: `Ra chơi tiết ${i}` });
-                    currentTime += breakTime;
-                    if (prepareTime > 0) {
-                        schedule.push({ time: currentTime, description: `Dự vào tiết ${i+1}` });
-                        currentTime += prepareTime;
-                    }
-                } else {
-                    schedule.push({ time: currentTime, description: "Ra về" });
-                }
-            }
-        }
-        
-        const uniqueSchedule = Array.from(new Map(schedule.map(item => [item.time, item])).values());
-        return uniqueSchedule.map(item => ({ ...item, time: minuteToTime(item.time) })).sort((a, b) => timeToMinute(a.time) - timeToMinute(b.time));
+    // *** BẮT ĐẦU PHẦN SỬA LỖI QUAN TRỌNG ***
+    // Logic này đảm bảo sau khi Chào cờ sẽ vào thẳng Tiết 1
+    if (flagCeremonyTime > 0) {
+        schedule.push({ time: currentTime, description: "Chào cờ / SHCN" });
+        currentTime += flagCeremonyTime;
+        // LỖI ĐÃ ĐƯỢC XÓA: Không còn đoạn code cộng "Dự vào tiết 1" ở đây nữa.
     }
+    // *** KẾT THÚC PHẦN SỬA LỖI ***
+    
+    // Vòng lặp tính toán cho tất cả các tiết học, bao gồm cả tiết 1
+    for (let i = 1; i <= lessonCount; i++) {
+        // Mốc thời gian tiếp theo luôn là "Vào tiết"
+        schedule.push({ time: currentTime, description: `Vào tiết ${i}` });
+        currentTime += lessonTime;
+        
+        // Logic ra chơi chỉ áp dụng giữa các tiết và cuối buổi
+        if (breakTime > 0) {
+            if (i < lessonCount) { // Nếu chưa phải tiết cuối
+                schedule.push({ time: currentTime, description: `Ra chơi tiết ${i}` });
+                currentTime += breakTime;
+                if (prepareTime > 0) {
+                    schedule.push({ time: currentTime, description: `Dự vào tiết ${i+1}` });
+                    currentTime += prepareTime;
+                }
+            } else { // Nếu là tiết cuối cùng
+                schedule.push({ time: currentTime, description: "Ra về" });
+            }
+        }
+    }
+    
+    // Sắp xếp lại và trả về kết quả
+    const uniqueSchedule = Array.from(new Map(schedule.map(item => [item.time, item])).values());
+    return uniqueSchedule.map(item => ({ ...item, time: minuteToTime(item.time) })).sort((a, b) => timeToMinute(a.time) - timeToMinute(b.time));
+}
 
     function updatePreviewTable(e){const t=document.getElementById(`enable_${e}`).checked,o=document.getElementById("details-"+e);if(!o)return;if(!t)return void(o.innerHTML="<p style='text-align:center; padding: 10px;'>Lịch này đang tắt.</p>");const n=calculateSchedule(e);let a="<table><thead><tr><th>STT</th><th>Thời gian</th><th>Nội dung</th></tr></thead><tbody>";n.forEach((e,t)=>{a+=`<tr><td>${t+1}</td><td>${e.time}</td><td>${e.description}</td></tr>`}),a+="</tbody></table>",o.innerHTML=a}
     
@@ -2022,4 +2026,3 @@
   </script>
 </body>
 </html>
-
