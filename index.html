@@ -2085,12 +2085,31 @@
     }
 
     function initializeTabs() {
-        // [MỚI] Thiết lập trạng thái ban đầu cho các tab
-        document.querySelector(`.tablinks-day[onclick*="'${selectedDay}'"]`).classList.add('active');
-        document.querySelector(`.tablinks-session[onclick*="'${selectedSession}'"]`).classList.add('active');
-        showActiveTab();
+    // [SỬA ĐỔI] Thêm logic tự động chọn ngày hiện tại
+    const dayMap = ['cn', 't2', 't3', 't4', 't5', 't6', 't7'];
+    const today = new Date();
+    const currentDayId = dayMap[today.getDay()];
+
+    // Cập nhật biến trạng thái toàn cục
+    selectedDay = currentDayId;
+
+    // Tìm và kích hoạt nút của ngày hiện tại
+    const todayButton = document.querySelector(`.tablinks-day[onclick*="'${currentDayId}'"]`);
+    if (todayButton) {
+        // Xóa active cũ nếu có để tránh có 2 nút được chọn
+        document.querySelectorAll('.tablinks-day').forEach(btn => btn.classList.remove('active'));
+        todayButton.classList.add('active');
+    } else {
+        // Nếu không tìm thấy (dự phòng), kích hoạt nút đầu tiên
+        document.querySelector('.tablinks-day').classList.add('active');
     }
 
+    // Kích hoạt buổi mặc định (buổi sáng)
+    document.querySelector(`.tablinks-session[onclick*="'${selectedSession}'"]`).classList.add('active');
+
+    // Hiển thị nội dung tab tương ứng
+    showActiveTab();
+}
     window.onload = function() { 
         connectToMqtt();
         setInterval(updateLocalClock, 1000);
