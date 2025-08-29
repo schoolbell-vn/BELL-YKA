@@ -104,21 +104,20 @@
     }
     hr { border: none; height: 1px; background: linear-gradient(90deg, #f1c40f 0%, #e0eafc 100%); margin: 28px 15px; border-radius: 2px; opacity: 0.5; }
 
-    /* --- THANH TRẠNG THÁI & ĐỒNG HỒ --- */
-    .status-bar { 
-        padding: 5px 15px;
-        margin: 0 15px 14px 15px; 
-        text-align: center; 
-        font-weight: bold; 
-        border-radius: 8px; 
-        transition: all 0.5s;
-        font-size: 0.7em;
-        text-transform: uppercase; letter-spacing: 0.7px; box-shadow: 0 2px 8px rgba(52, 152, 219, 0.10);
-        color: #ecf0f1;
+    /* --- [ĐÃ SỬA] TRẠNG THÁI & ĐỒNG HỒ --- */
+     #school-name-status {
+        margin: 5px 0 15px 0; /* Tăng margin-bottom để tạo khoảng cách */
+        padding: 0;
+        font-size: 1.1em;
+        font-weight: bold;
+        text-shadow: 0 2px 8px #000;
+        letter-spacing: 1.2px;
+        transition: color 0.5s ease; /* Hiệu ứng chuyển màu mượt mà */
     }
-    .status-connected { background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%); color: #222; }
-    .status-disconnected { background: linear-gradient(90deg, #ff5858 0%, #f09819 100%); color: #fff; }
-    .status-connecting { background: linear-gradient(90deg, #7f8c8d 0%, #b2bec3 100%); color: #222; }
+    .status-color-connected { color: #43e97b; }
+    .status-color-disconnected { color: #ff5858; }
+    .status-color-connecting { color: #00e6ff; }
+
     .clock-container { 
         text-align: center; 
         margin: 22px auto; 
@@ -572,14 +571,12 @@
     <div id="content">
       <div style="text-align: center; padding: 15px 0 5px 0;">
         <h2 style="margin: 0; padding: 0;">CHUÔNG BÁO TỰ ĐỘNG</h2>
-        <p style="margin: 5px 0 0 0; padding: 0; font-size: 1.1em; color: #00e6ff; font-weight: bold; text-shadow: 0 0 8px #00e6ff, 0 2px 8px #000; letter-spacing: 1.2px;">THPT YÊN KHÁNH A</p>
+        <p id="school-name-status">THPT YÊN KHÁNH A</p>
       </div>
       <div class="clock-container" id="clock-wrapper" style="display: none;">
         <div id="clock" class="clock">--:--:--</div>
         <div id="date" class="date-display">Đang chờ đồng bộ...</div>
       </div>
-      
-      <div id="status" class="status-bar status-connecting">Đang kết nối...</div>
       
       <h3 style="text-align: center; font-size: 1.15em; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: #ecf0f1; background: none; border: none; box-shadow: none; margin-bottom: 10px; margin-top: 20px;">
         CÀI ĐẶT LỊCH HỌC
@@ -639,9 +636,8 @@
 
     function connectToMqtt(){
         console.log("Đang kết nối đến MQTT broker...");
-        const statusDiv = document.getElementById("status");
-        statusDiv.textContent="Đang kết nối...";
-        statusDiv.className="status-bar status-connecting";
+        const schoolNameStatus = document.getElementById("school-name-status");
+        schoolNameStatus.className="status-color-connecting";
         
         client=mqtt.connect(brokerUrl,options);
         
@@ -664,15 +660,14 @@
         
         client.on("message",(topic, payload)=>{
             const payloadString = payload.toString();
+            const schoolNameStatus = document.getElementById("school-name-status");
             
             if (topic === ONLINE_STATUS_TOPIC) {
                 if (payloadString === 'online') {
-                    statusDiv.textContent = "Thiết bị đang hoạt động";
-                    statusDiv.className = "status-bar status-connected";
+                    schoolNameStatus.className = "status-color-connected";
                     document.getElementById('clock-wrapper').style.display = 'block';
                 } else {
-                    statusDiv.textContent = "Thiết bị ngoại tuyến";
-                    statusDiv.className = "status-bar status-disconnected";
+                    schoolNameStatus.className = "status-color-disconnected";
                     document.getElementById('clock-wrapper').style.display = 'none';
                     serverTime = null;
                 }
@@ -697,8 +692,8 @@
         
         client.on("close",()=>{
             console.log("Mất kết nối MQTT. Đang thử kết nối lại...");
-            statusDiv.textContent = "Mất kết nối máy chủ";
-            statusDiv.className = "status-bar status-disconnected";
+            const schoolNameStatus = document.getElementById("school-name-status");
+            schoolNameStatus.className = "status-color-disconnected";
             document.getElementById('clock-wrapper').style.display = 'none';
             serverTime = null;
         });
