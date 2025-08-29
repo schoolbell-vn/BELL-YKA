@@ -413,6 +413,7 @@
         transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out;
         max-height: 1000px; /* Đủ lớn để chứa nội dung */
         opacity: 1;
+        margin-top: 15px; /* Thêm khoảng cách với phần tử bên trên */
     }
     .settings-grid-container.hidden {
         max-height: 0;
@@ -859,21 +860,21 @@
                         </label>
                     </div>
                 </div>
-                
-                <div id="settings_container_${e}" class="settings-grid-container">
-                    ${g}
-                    <hr style="margin: 15px; background: #414345; height: 1px; opacity: 0.5;">
+            </div>
+            
+            <div id="settings_container_${e}" class="settings-grid-container">
+                ${g}
+                <hr style="margin: 15px; background: #414345; height: 1px; opacity: 0.5;">
 
-                    <div class="settings-grid">
-                        <div class="setting-item full-width">${d}<div class="input-wrapper"><label for="gio_${e}">Giờ vào học</label><input id="gio_${e}" type="time"></div></div>
-                        
-                        <div id="special_event_container_${e}" class="setting-item full-width" style="display: none;">${u}</div>
-                        
-                        <div class="setting-item">${l}<div class="input-wrapper"><label for="tiethoc_${e}">TG Tiết học</label><div class="unit-input"><input id="tiethoc_${e}" type="number" value="45"><span>phút</span></div></div></div>
-                        <div class="setting-item">${c}<div class="input-wrapper"><label for="rachoi_${e}">TG Ra chơi</label><div class="unit-input"><input id="rachoi_${e}" type="number" value="5"><span>phút</span></div></div></div>
-                        <div class="setting-item" id="duvao_wrapper_${e}">${m}<div class="input-wrapper"><label for="duvaotiet_${e}">TG Dự vào</label><div class="unit-input"><input id="duvaotiet_${e}" type="number" value="3"><span>phút</span></div></div></div>
-                        <div class="setting-item">${p}<div class="input-wrapper"><label for="sotiet_${e}">Số tiết học</label><div class="unit-input"><input id="sotiet_${e}" type="number" value="5"><span>tiết</span></div></div></div>
-                    </div>
+                <div class="settings-grid">
+                    <div class="setting-item full-width">${d}<div class="input-wrapper"><label for="gio_${e}">Giờ vào học</label><input id="gio_${e}" type="time"></div></div>
+                    
+                    <div id="special_event_container_${e}" class="setting-item full-width" style="display: none;">${u}</div>
+                    
+                    <div class="setting-item">${l}<div class="input-wrapper"><label for="tiethoc_${e}">TG Tiết học</label><div class="unit-input"><input id="tiethoc_${e}" type="number" value="45"><span>phút</span></div></div></div>
+                    <div class="setting-item">${c}<div class="input-wrapper"><label for="rachoi_${e}">TG Ra chơi</label><div class="unit-input"><input id="rachoi_${e}" type="number" value="5"><span>phút</span></div></div></div>
+                    <div class="setting-item" id="duvao_wrapper_${e}">${m}<div class="input-wrapper"><label for="duvaotiet_${e}">TG Dự vào</label><div class="unit-input"><input id="duvaotiet_${e}" type="number" value="3"><span>phút</span></div></div></div>
+                    <div class="setting-item">${p}<div class="input-wrapper"><label for="sotiet_${e}">Số tiết học</label><div class="unit-input"><input id="sotiet_${e}" type="number" value="5"><span>tiết</span></div></div></div>
                 </div>
             </div>
 
