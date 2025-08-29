@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <title>Hẹn Giờ Chuông Báo - Điều khiển Internet</title>
+  <title>Hẹn Giờ Chuông Báo - Lịch Học</title>
   <meta name="viewport" content="width=device-width,user-scalable=0" charset="utf-8">
   <script src="https://unpkg.com/mqtt/dist/mqtt.min.js" type="text/javascript"></script>
   
@@ -102,22 +102,6 @@
         z-index: 2;
         box-shadow: 0 4px 24px 0 #00000044, 0 2px 8px rgba(0,0,0,0.08);
     }
-    #header-sang { 
-        color: #2ecc71 !important;
-        text-shadow: 0 0 12px #2ecc71, 0 2px 8px #000;
-        border-color: #2ecc71;
-        box-shadow: 0 4px 24px 0 #00000044, 0 2px 8px rgba(0,0,0,0.08),
-                    inset 5px 0 10px -5px #2ecc71,
-                    inset -5px 0 10px -5px #2ecc71;
-    }
-    #header-chieu { 
-        color: #3498db !important;
-        text-shadow: 0 0 12px #3498db, 0 2px 8px #000;
-        border-color: #3498db;
-        box-shadow: 0 4px 24px 0 #00000044, 0 2px 8px rgba(0,0,0,0.08),
-                    inset 5px 0 10px -5px #3498db,
-                    inset -5px 0 10px -5px #3498db;
-    }
     hr { border: none; height: 1px; background: linear-gradient(90deg, #f1c40f 0%, #e0eafc 100%); margin: 28px 15px; border-radius: 2px; opacity: 0.5; }
 
     /* --- THANH TRẠNG THÁI & ĐỒNG HỒ --- */
@@ -181,6 +165,7 @@
         z-index: 1;
         text-transform: uppercase;
         width: 100%;
+        text-decoration: none; /* Dành cho thẻ a */
     }
     .modern-btn:hover {
         transform: translateY(-2px); /* Hover effect */
@@ -206,17 +191,6 @@
     }
     .save-button:hover {
         box-shadow: 0 8px 24px #00e6ff55;
-    }
-    .test-button {
-        background: linear-gradient(90deg, #232526 60%, #414345 100%);
-        color: #f1c40f;
-        border-left: 4px solid #f1c40f;
-        border-right: 4px solid #f1c40f;
-        text-shadow: 0 0 12px #f1c40f, 0 2px 8px #000;
-        box-shadow: 0 4px 18px 0 #00000044;
-    }
-    .test-button:hover {
-        box-shadow: 0 8px 24px #f1c40f55;
     }
     .advanced-button {
         background: linear-gradient(90deg, #485563 0%, #29323c 100%);
@@ -253,18 +227,6 @@
     .tab button:hover {
         background: #414345; color: #fff;
         transform: translateY(-2px);
-    }
-    .tablinks-sang.active { 
-        background: linear-gradient(90deg, #2ecc71 60%, #27ae60 100%);
-        color: #fff; 
-        border-bottom-color: #2ecc71;
-        z-index: 2;
-    }
-     .tablinks-chieu.active { 
-        background: linear-gradient(90deg, #3498db 60%, #2980b9 100%);
-        color: #fff; 
-        border-bottom-color: #3498db;
-        z-index: 2;
     }
     .tabcontent { 
         display: none; 
@@ -416,28 +378,6 @@
     }
     summary::-webkit-details-marker, summary::marker { display: none; }
     
-    .sohoi-container {
-        padding: 0 15px;
-    }
-    summary#header-sohoi {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 50px;
-        border-radius: 10px;
-        background: linear-gradient(90deg, #232526 60%, #414345 100%);
-        color: #f1c40f;
-        border-left: 4px solid #f1c40f;
-        border-right: 4px solid #f1c40f;
-        text-shadow: 0 0 12px #f1c40f, 0 2px 8px #000, 0 0 24px #fff;
-        box-shadow: 0 4px 18px 0 #f1c40f33, 0 2px 8px #fff2;
-    }
-    summary#header-sohoi div:first-child {
-        font-size: 1em;
-        font-weight: 700;
-        letter-spacing: 1.5px;
-    }
     .details-content { padding: 12px 15px 16px 15px; border-top: 1px solid #414345; }
     
     .tabcontent details summary {
@@ -456,7 +396,7 @@
     .details-container table { width: 100%; border-collapse: collapse; margin-top: 10px; background: #232526; border-radius: 8px; overflow: hidden; }
     .details-container th, .details-container td { border: 1px solid #414345; padding: 8px 5px; text-align: center; font-size: 0.9em; }
     .details-container th { background: #f1c40f; color: #232526; font-weight: bold; }
-    .details-container tbody tr { transition: background-color 0.2s; }
+    .details-container tbody tr { transition: background-color: 0.2s; }
     .details-container tbody tr:hover { background-color: #f1c40f22; }
     .details-container tbody tr:nth-child(odd) { background: #232526; color: #ecf0f1; }
     .details-container tbody tr:nth-child(even) { background: #414345; color: #ecf0f1; }
@@ -564,337 +504,6 @@
         background: linear-gradient(90deg, #2980b9 0%, #6dd5fa 100%);
     }
 
-    /* === Giao diện cho Modal Chung === */
-    .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.7);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 0.3s, visibility 0.3s;
-    }
-    .modal-overlay.visible {
-        opacity: 1;
-        visibility: visible;
-    }
-    .modal-content {
-        background: #2c3e50;
-        padding: 20px;
-        border-radius: 15px;
-        border-top: 5px solid #f1c40f;
-        width: 95%;
-        max-width: 400px;
-        box-shadow: 0 5px 25px rgba(0,0,0,0.4);
-        transform: scale(0.9);
-        transition: transform 0.3s;
-    }
-    .modal-overlay.visible .modal-content {
-        transform: scale(1);
-    }
-    .modal-content h4 {
-        margin-top: 0;
-        margin-bottom: 20px;
-        color: #f1c40f;
-        text-align: center;
-        font-size: 1.2em;
-        text-transform: uppercase;
-    }
-    .modal-buttons {
-        display: flex;
-        gap: 15px;
-        margin-top: 20px;
-    }
-    .modal-buttons button {
-        flex-grow: 1;
-        padding: 10px;
-        border: none;
-        border-radius: 8px;
-        font-weight: bold;
-        cursor: pointer;
-        font-size: 0.9em;
-        transition: all 0.2s;
-    }
-    .modal-confirm-btn {
-        background: #f1c40f;
-        color: #232526;
-    }
-    .modal-cancel-btn {
-        background: #7f8c8d;
-        color: #fff;
-    }
-    
-    .modal-input {
-        width: 100%;
-        padding: 10px;
-        border-radius: 8px;
-        border: 2px solid #7f8c8d;
-        background-color: #2c3e50;
-        color: #ecf0f1;
-        font-size: 1em;
-        margin-bottom: 15px;
-    }
-    .modal-input:focus {
-        outline: none;
-        border-color: #f1c40f;
-    }
-
-    /* === Giao diện cho Modal Cài đặt Nâng cao === */
-    #advanced-settings-modal .modal-content {
-        background: #232526;
-        border-top-color: #f39c12;
-        color: #f5f6fa;
-    }
-    #advanced-settings-modal h4 {
-        color: #f39c12;
-        text-shadow: 0 0 10px #f39c12;
-    }
-    .adv-modal-tabs {
-        display: flex;
-        border-bottom: 2px solid #414345;
-        margin-bottom: 15px;
-    }
-    .adv-modal-tab {
-        flex-grow: 1;
-        padding: 10px 2px;
-        text-align: center;
-        cursor: pointer;
-        font-weight: bold;
-        color: #7f8c8d;
-        border-bottom: 3px solid transparent;
-        transition: all 0.2s;
-        font-size: 0.75em;
-    }
-    .adv-modal-tab.active {
-        color: #f39c12;
-        border-bottom-color: #f39c12;
-    }
-    .adv-modal-tab-content {
-        display: none;
-    }
-    .adv-modal-tab-content.active {
-        display: block;
-    }
-    .adv-modal-tab-content h5 {
-        text-align: center;
-        color: #f39c12;
-        text-transform: uppercase;
-        margin: 10px 0 15px 0;
-        letter-spacing: 1px;
-        font-size: 0.9em;
-    }
-    
-    /* === Giao diện cho Tab Hệ thống & Reset WiFi === */
-    .actions-list {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-    .action-item {
-        display: flex;
-        align-items: center;
-        background: #2c3e50;
-        border-radius: 8px;
-        padding: 12px;
-        border-left: 4px solid #f39c12;
-        transition: background-color 0.2s;
-    }
-    .action-item:hover {
-        background-color: #34495e;
-    }
-    .action-icon {
-        flex-shrink: 0;
-        margin-right: 15px;
-        color: #f39c12;
-    }
-    .action-icon svg {
-        width: 28px;
-        height: 28px;
-    }
-    .action-text {
-        flex-grow: 1;
-    }
-    .action-text .title {
-        font-weight: bold;
-        font-size: 1em;
-        color: #f5f6fa;
-    }
-    .action-text .description {
-        font-size: 0.8em;
-        color: #bdc3c7;
-    }
-    .action-text .description.connected { color: #2ecc71; }
-    .action-text .description.disconnected { color: #e74c3c; }
-
-    .action-btn {
-        padding: 7px 15px;
-        font-size: 0.8em;
-        font-weight: bold;
-        border-radius: 6px;
-        border: none;
-        cursor: pointer;
-        transition: all 0.2s;
-        background-color: #f39c12;
-        color: #232526;
-    }
-    .action-btn:disabled {
-        background-color: #7f8c8d;
-        cursor: not-allowed;
-    }
-    .action-btn.reset {
-        background-color: #c0392b;
-        color: #fff;
-    }
-    
-    /* === Giao diện cho Quản lý Vệ tinh === */
-    .device-list {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        max-height: 280px;
-        overflow-y: auto;
-        padding: 5px;
-        background: #2c3e50;
-        border-radius: 8px;
-    }
-    .device-item {
-        display: flex;
-        flex-direction: column;
-        padding: 10px;
-        background: #34495e;
-        border-radius: 8px;
-        border-left: 4px solid #f1c40f;
-        gap: 8px;
-    }
-    .device-item-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .device-name {
-        font-weight: bold;
-        font-size: 1em;
-        color: #ecf0f1;
-    }
-    .device-status {
-        font-size: 0.85em;
-        font-weight: bold;
-    }
-    .device-status.connected { color: #2ecc71; }
-    .device-status.disconnected { color: #e74c3c; }
-    
-    .device-info-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 6px;
-        font-size: 0.8em;
-        color: #bdc3c7;
-    }
-    .device-info-grid span {
-        background-color: #2c3e50;
-        padding: 4px 6px;
-        border-radius: 4px;
-    }
-    .device-info-grid .label {
-        font-weight: bold;
-        color: #ecf0f1;
-    }
-    
-    .device-actions {
-        display: flex;
-        gap: 8px;
-    }
-    .device-action-btn {
-        padding: 5px 10px;
-        border: none;
-        border-radius: 5px;
-        color: #fff;
-        font-weight: bold;
-        cursor: pointer;
-        transition: all 0.2s;
-        flex-shrink: 0;
-        font-size: 0.75em;
-        flex-grow: 1;
-    }
-    .device-action-btn:hover {
-        filter: brightness(1.1);
-        transform: scale(1.05);
-    }
-    .add-btn { background-color: #27ae60; }
-    .remove-btn { background-color: #c0392b; }
-    .cancel-btn { background-color: #7f8c8d; }
-
-    .list-placeholder {
-        text-align: center;
-        padding: 20px;
-        color: #7f8c8d;
-        font-size: 0.9em;
-    }
-
-    /* === Giao diện cho Tab OTA === */
-    .ota-device-selection {
-        background-color: #2c3e50;
-        border-radius: 8px;
-        padding: 10px;
-        margin-bottom: 15px;
-    }
-    .ota-device-selection label {
-        display: flex;
-        align-items: center;
-        padding: 8px;
-        cursor: pointer;
-        border-radius: 6px;
-        transition: background-color 0.2s;
-    }
-    .ota-device-selection label:hover {
-        background-color: #34495e;
-    }
-    .ota-device-selection input[type="checkbox"] {
-        margin-right: 10px;
-        width: 18px;
-        height: 18px;
-    }
-    #ota-progress-container {
-        display: none;
-        width: 100%;
-        background-color: #2c3e50;
-        border-radius: 8px;
-        padding: 3px;
-        box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
-        margin-bottom: 10px;
-    }
-    #ota-progress-bar {
-        width: 0%;
-        height: 20px;
-        background: linear-gradient(90deg, #f1c40f, #f39c12);
-        border-radius: 5px;
-        text-align: center;
-        line-height: 20px;
-        color: #232526;
-        font-weight: bold;
-        transition: width 0.3s ease-in-out;
-    }
-    #ota-status-text, #ota-progress-details {
-        text-align: center;
-        color: #bdc3c7;
-        min-height: 18px;
-        font-size: 0.9em;
-        font-style: italic;
-    }
-    #ota-device-status-list {
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-        margin-top: 10px;
-        font-size: 0.85em;
-    }
-
     /* === [MỚI] CSS CHO CẤU TRÚC TAB GỘP === */
     .tablinks-day {
         background: #414345;
@@ -991,77 +600,18 @@
       </div>
       
       <div id="tab-content-wrapper"></div>
-      <div class="divider-yellow"></div>
-      <div class="sohoi-container">
-          <details>
-              <summary id="header-sohoi">
-                  <div>CÀI ĐẶT SỐ HỒI CHUÔNG</div>
-                  <span style="font-size: 0.8em; font-weight: normal; color: #ccc; margin-top: 2px;">(SÁNG - CHIỀU)</span>
-              </summary>
-              <div class="details-content">
-                  <div class="settings-grid">
-                      <div class="setting-item">
-                          <div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13.586V10c0-3.217-2.185-5.927-5-6.758V2h-4v1.242C7.185 4.073 5 6.783 5 10v3.586l-1.707 1.707A.996.996 0 0 0 3 16v2a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-2a.996.996 0 0 0-.293-.707L19 13.586zM19 17H5v-.586l1.707-1.707A.996.996 0 0 0 7 14v-4c0-2.757 2.243-5 5-5s5 2.243 5 5v4c0 .266.105.52.293.707L19 16.414V17zM12 22a2.98 2.98 0 0 0 2.818-2H9.182A2.98 2.98 0 0 0 12 22z"></path></svg></div>
-                          <div class="input-wrapper">
-                              <label for="sohoi_batdau">Bắt đầu buổi học</label>
-                              <div class="unit-input"><input id="sohoi_batdau" type="number" value="6"><span>hồi</span></div>
-                          </div>
-                      </div>
-                      <div class="setting-item">
-                          <div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M13 16.438V7.562a1 1 0 0 0-1.555-.832L8 9.562v4.876l3.445 2.832A1 1 0 0 0 13 16.438zM12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path></svg></div>
-                          <div class="input-wrapper">
-                              <label for="sohoi_vaotiet">Vào tiết</label>
-                              <div class="unit-input"><input id="sohoi_vaotiet" type="number" value="5"><span>hồi</span></div>
-                          </div>
-                      </div>
-                      <div class="setting-item">
-                          <div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M18 5h-2V2H8v3H6c-1.654 0-3 1.346-3 3v6c0 1.654 1.346 3 3 3h1v1c0 .552.447 1 1 1h6c.553 0 1-.448 1-1v-1h1c1.654 0 3-1.346 3-3V8c0-1.654-1.346-3-3-3zm1 9c0 .552-.447 1-1 1H6c-.553 0-1-.448-1-1V8c0-.552.447-1 1-1h12c.553 0 1 .448 1 1v6z"></path></svg></div>
-                          <div class="input-wrapper">
-                              <label for="sohoi_rachoi">Ra chơi</label>
-                              <div class="unit-input"><input id="sohoi_rachoi" type="number" value="3"><span>hồi</span></div>
-                          </div>
-                      </div>
-                      <div class="setting-item">
-                          <div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M14 12V8h-4v4H8l4 4 4-4h-2z"></path></svg></div>
-                          <div class="input-wrapper">
-                              <label for="sohoi_duvao">Dự vào lớp</label>
-                              <div class="unit-input"><input id="sohoi_duvao" type="number" value="2"><span>hồi</span></div>
-                          </div>
-                      </div>
-                      <div class="setting-item">
-                          <div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586z"></path></svg></div>
-                          <div class="input-wrapper">
-                              <label for="sohoi_tg_reo">Thời gian reo (ms)</label>
-                              <div class="unit-input"><input id="sohoi_tg_reo" type="number" value="1000"><span>ms</span></div>
-                          </div>
-                      </div>
-                      <div class="setting-item">
-                          <div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M12 12.586-8.707 9.293l-1.414 1.414L12 15.414l7.121-7.121-1.414-1.414z"></path></svg></div>
-                          <div class="input-wrapper">
-                              <label for="sohoi_tg_nghi">Thời gian nghỉ (ms)</label>
-                              <div class="unit-input"><input id="sohoi_tg_nghi" type="number" value="1000"><span>ms</span></div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </details>
-      </div>
-
+      
       <div class="divider-yellow"></div>
 
       <div class="button-section">
         <button class="modern-btn save-button" onclick="publishUpdate()">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
-            <span>Lưu và gửi cập nhật</span>
+            <span>Lưu và gửi cập nhật Lịch</span>
         </button>
-        <button class="modern-btn test-button" onclick="publishTestBell()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-            <span>Thử Chuông Chung</span>
-        </button>
-        <button class="modern-btn advanced-button" onclick="openAdvancedSettingsModal()">
+        <a href="settings.html" class="modern-btn advanced-button">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 0 2l-.15.08a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l-.22-.38a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1 0-2l.15-.08a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-            <span>Cài đặt nâng cao</span>
-        </button>
+            <span>Cài đặt chung & Hệ thống</span>
+        </a>
         <button class="modern-btn logout-button" onclick="logout()">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
             <span>Đăng xuất</span>
@@ -1071,109 +621,11 @@
     </div>
   </div>
 
-  <div class="modal-overlay" id="advanced-settings-modal">
-    <div class="modal-content">
-        <h4>Cài đặt nâng cao</h4>
-        <div class="adv-modal-tabs">
-            <div class="adv-modal-tab active" onclick="switchAdvTab(event, 'adv-tab-satellites')">Vệ tinh</div>
-            <div class="adv-modal-tab" onclick="switchAdvTab(event, 'adv-tab-system')">Hệ thống</div>
-            <div class="adv-modal-tab" onclick="switchAdvTab(event, 'adv-tab-reset-wifi')">Reset WiFi</div>
-            <div class="adv-modal-tab" onclick="switchAdvTab(event, 'adv-tab-reset-esp')">Reset ESP</div>
-            <div class="adv-modal-tab" onclick="switchAdvTab(event, 'adv-tab-change-pass')">Mật khẩu</div>
-            <div class="adv-modal-tab" onclick="switchAdvTab(event, 'adv-tab-ota')">Cập nhật OTA</div>
-        </div>
-        
-        <div id="adv-tab-satellites" class="adv-modal-tab-content active">
-            <h5>CÁC THIẾT BỊ ĐANG QUẢN LÝ</h5>
-            <div id="managed-devices-list" class="device-list">
-                <p class="list-placeholder">Chưa có thiết bị nào được quản lý.</p>
-            </div>
-            <hr style="margin: 20px 0; background: #414345; height: 1px; opacity: 0.5;">
-            <h5>CÁC THIẾT BỊ ĐÃ PHÁT HIỆN</h5>
-            <div id="discovered-devices-list" class="device-list">
-                <p class="list-placeholder">Đang chờ tín hiệu từ các thiết bị...</p>
-            </div>
-        </div>
-
-        <div id="adv-tab-system" class="adv-modal-tab-content">
-            <div id="system-info-actions-list" class="actions-list">
-                </div>
-        </div>
-
-        <div id="adv-tab-reset-wifi" class="adv-modal-tab-content">
-            <div id="reset-wifi-actions-list" class="actions-list">
-                </div>
-        </div>
-
-        <div id="adv-tab-reset-esp" class="adv-modal-tab-content">
-            <div id="reset-esp-actions-list" class="actions-list">
-                </div>
-        </div>
-
-        <div id="adv-tab-change-pass" class="adv-modal-tab-content">
-            <h5>THAY ĐỔI MẬT KHẨU QUẢN TRỊ</h5>
-            <div class="actions-list" style="gap: 15px; padding-top: 10px;">
-                <input type="password" id="old-admin-password" class="modal-input" placeholder="Mật khẩu cũ..." autocomplete="current-password">
-                <input type="password" id="new-admin-password" class="modal-input" placeholder="Mật khẩu mới..." autocomplete="new-password">
-                <input type="password" id="confirm-admin-password" class="modal-input" placeholder="Xác nhận mật khẩu mới..." autocomplete="new-password">
-                <button class="action-btn" style="width: 100%; height: 40px; font-size: 0.9em;" onclick="handleChangePassword()">Lưu Thay Đổi</button>
-            </div>
-        </div>
-        
-        <div id="adv-tab-ota" class="adv-modal-tab-content">
-            <h5>CẬP NHẬT FIRMWARE (OTA)</h5>
-            <div class="actions-list" style="gap: 15px; padding-top: 10px;">
-                
-                <h5>1. CHỌN THIẾT BỊ CẦN CẬP NHẬT</h5>
-                <div id="ota-device-selection-list" class="ota-device-selection">
-                    <p class="list-placeholder">Đang chờ danh sách thiết bị...</p>
-                </div>
-                
-                <h5>2. CHỌN FILE FIRMWARE (.bin)</h5>
-                <input type="file" id="ota-file-input" accept=".bin" style="display: none;">
-                <button class="action-btn" id="ota-select-file-btn" onclick="document.getElementById('ota-file-input').click();" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 40px; font-size: 0.9em;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                    Chọn File (.bin)
-                </button>
-                <div id="ota-file-name" style="text-align: center; color: #f1c40f; font-weight: bold; min-height: 20px; font-size: 0.9em;">Chưa chọn tệp nào</div>
-
-                <h5>3. BẮT ĐẦU CẬP NHẬT</h5>
-                <div id="ota-progress-container">
-                    <div id="ota-progress-bar">0%</div>
-                </div>
-                <div id="ota-status-text"></div>
-                <div id="ota-progress-details"></div>
-                
-                <div id="ota-device-status-list"></div>
-
-                <button class="action-btn" id="ota-upload-btn" style="width: 100%; height: 40px; font-size: 0.9em; background-color: #27ae60; color: #fff; display: none;" onclick="handleOtaUpload()">Bắt đầu Cập nhật</button>
-            </div>
-        </div>
-
-        <div class="modal-buttons">
-            <button class="modal-cancel-btn" onclick="closeAdvancedSettingsModal()">Đóng</button>
-        </div>
-    </div>
-  </div>
-
-  <div class="modal-overlay" id="password-modal-overlay">
-      <div class="modal-content">
-          <h4 id="password-modal-title">Xác thực quyền Quản trị</h4>
-          <p id="password-modal-description" style="text-align: center; margin-top: -10px; margin-bottom: 20px; color: #bdc3c7; font-size: 0.9em;">Vui lòng nhập mật khẩu để tiếp tục.</p>
-          <input type="password" id="admin-password-input" class="modal-input" placeholder="Mật khẩu quản trị..." autocomplete="current-password">
-          <div class="modal-buttons">
-              <button class="modal-cancel-btn" onclick="closePasswordModal()">Hủy</button>
-              <button class="modal-confirm-btn" onclick="confirmAction()">Xác nhận</button>
-          </div>
-      </div>
-  </div>
-
-
   <script>
     if("true"!==sessionStorage.getItem("isLoggedIn"))window.location.href="login.html";
     
-    let client, serverTime = null, targetDevice = null, targetAction = null, otaInProgress = false;
-    let selectedDay = 't2', selectedSession = 'sang'; // [MỚI] Biến trạng thái cho tab
+    let client, serverTime = null;
+    let selectedDay = 't2', selectedSession = 'sang';
     
     const brokerUrl="wss://366af3ec40124749863257ecd2c62b3e.s1.eu.hivemq.cloud:8884/mqtt";
     const options={username:"ngoctuyka",password:"Tu12345678@",clientId:"WebAppClient_"+parseInt(1e3*Math.random()),reconnectPeriod:2e3,protocolVersion: 4};
@@ -1182,18 +634,7 @@
     const DATA_STATUS_TOPIC = "esp32/bell/data/status";
     const SET_DATA_TOPIC = "esp32/bell/data/set";
     const GET_DATA_TOPIC = "esp32/bell/data/get";
-    const CONTROL_TOPIC = "esp32/bell/control";
-    const SYS_INFO_TOPIC = "esp32/bell/status/sysinfo";
-    const MANAGE_ADD_TOPIC = "esp32/bell/manage/add";
-    const MANAGE_REMOVE_TOPIC = "esp32/bell/manage/remove";
-    const MANAGE_STATUS_TOPIC = "esp32/bell/manage/status";
     const COMMAND_ACK_TOPIC = "esp32/bell/command/ack";
-    const OTA_COMMAND_TOPIC = "esp32/bell/ota/command";
-    const OTA_DATA_TOPIC = "esp32/bell/ota/data";
-    const OTA_STATUS_TOPIC = "esp32/bell/ota/status";
-    const OTA_SATELLITE_COMMAND_TOPIC_PREFIX = "esp32/bell/ota/satellite/command/";
-    const OTA_SATELLITE_DATA_TOPIC_PREFIX = "esp32/bell/ota/satellite/data/";
-    const OTA_SATELLITE_STATUS_TOPIC = "esp32/bell/ota/satellite/status";
 
     function connectToMqtt(){
         console.log("Đang kết nối đến MQTT broker...");
@@ -1208,11 +649,7 @@
             const topicsToSubscribe = [
                 DATA_STATUS_TOPIC, 
                 ONLINE_STATUS_TOPIC, 
-                SYS_INFO_TOPIC, 
-                MANAGE_STATUS_TOPIC, 
-                COMMAND_ACK_TOPIC, 
-                OTA_STATUS_TOPIC,
-                OTA_SATELLITE_STATUS_TOPIC
+                COMMAND_ACK_TOPIC
             ];
             client.subscribe(topicsToSubscribe, {qos:1}, (err)=>{
                 if(err) {
@@ -1244,24 +681,6 @@
                 _load(payloadString);
             }
 
-            if (topic === SYS_INFO_TOPIC) {
-                try {
-                    const info = JSON.parse(payloadString);
-                    renderSystemInfo(info);
-                } catch(e) {
-                    console.error("Lỗi parse JSON thông tin hệ thống:", e);
-                }
-            }
-            
-            if (topic === MANAGE_STATUS_TOPIC) {
-                try {
-                    const data = JSON.parse(payloadString);
-                    renderDeviceLists(data.managed || [], data.discovered || []);
-                } catch(e) {
-                    console.error("Lỗi parse JSON quản lý vệ tinh:", e);
-                }
-            }
-
             if (topic === COMMAND_ACK_TOPIC) {
                 try {
                     const ack = JSON.parse(payloadString);
@@ -1269,39 +688,6 @@
                     showNotification(message, ack.status || 'success');
                 } catch (e) {
                     console.error("Lỗi parse JSON phản hồi lệnh:", e);
-                }
-            }
-            
-            if (topic === OTA_STATUS_TOPIC || topic === OTA_SATELLITE_STATUS_TOPIC) {
-                try {
-                    const status = JSON.parse(payloadString);
-                    const deviceName = status.device || (status.name || 'Unknown');
-                    
-                    let deviceStatusEl = document.getElementById(`ota-status-${deviceName}`);
-                    const statusList = document.getElementById('ota-device-status-list');
-                    if (!deviceStatusEl) {
-                        deviceStatusEl = document.createElement('div');
-                        deviceStatusEl.id = `ota-status-${deviceName}`;
-                        statusList.appendChild(deviceStatusEl);
-                    }
-                    
-                    let progressText = '';
-                    if (status.progress !== undefined) {
-                        progressText = `${status.progress}% - `;
-                    }
-                    deviceStatusEl.textContent = `[${deviceName}]: ${progressText}${status.details}`;
-
-                    if (status.status === 'error') {
-                        deviceStatusEl.style.color = '#e74c3c';
-                    } else if (status.status === 'success') {
-                        deviceStatusEl.style.color = '#2ecc71';
-                    } else if (status.status === 'progress' || status.status === 'start') {
-                        deviceStatusEl.style.color = '#3498db';
-                    } else {
-                        deviceStatusEl.style.color = '#bdc3c7';
-                    }
-                } catch (e) {
-                    console.error("Lỗi parse JSON trạng thái OTA:", e);
                 }
             }
         });
@@ -1336,299 +722,19 @@
         }, 4000);
     }
     
-    function openAdvancedSettingsModal() {
-        document.getElementById('advanced-settings-modal').classList.add('visible');
-        if (document.getElementById('adv-tab-system').classList.contains('active')) {
-            requestSystemInfo();
-        }
-    }
-    function closeAdvancedSettingsModal() {
-        document.getElementById('advanced-settings-modal').classList.remove('visible');
-    }
-    function switchAdvTab(evt, tabName) {
-        document.querySelectorAll('.adv-modal-tab').forEach(tab => tab.classList.remove('active'));
-        document.querySelectorAll('.adv-modal-tab-content').forEach(content => content.classList.remove('active'));
-        evt.currentTarget.classList.add('active');
-        document.getElementById(tabName).classList.add('active');
-        
-        if (tabName === 'adv-tab-system') {
-            requestSystemInfo();
-        }
-    }
-    
-    function renderSystemInfo(info) {
-        const listDiv = document.getElementById('system-info-actions-list');
-        if (!listDiv) return;
-
-        listDiv.innerHTML = ''; 
-
-        const createItem = (icon, title, value, valueClass = '') => {
-            return `
-                <div class="action-item">
-                    <div class="action-icon">${icon}</div>
-                    <div class="action-text">
-                        <div class="title">${title}</div>
-                        <div class="description ${valueClass}">${value}</div>
-                    </div>
-                </div>
-            `;
-        };
-
-        const wifiIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C7.486 2 3.407 3.585 0 6l1.414 1.414C4.195 5.53 7.855 4 12 4s7.805 1.53 10.586 3.414L24 6C20.593 3.585 16.514 2 12 2zm0 4c-3.145 0-6.195 1.229-8.485 3.414L5.414 11.31C7.21 9.898 9.51 9 12 9s4.79 0.898 6.586 2.31l1.899-1.898C18.195 7.229 15.145 6 12 6zm0 5c-1.854 0-3.58.718-4.828 1.968L9.07 14.864C9.945 14.18 10.94 13.8 12 13.8s2.055 0.38 2.93 1.064l1.898-1.898C15.58 11.718 13.854 11 12 11zm0 4.2c-0.828 0-1.5 0.672-1.5 1.5s0.672 1.5 1.5 1.5 1.5-0.672 1.5-1.5-0.672-1.5-1.5-1.5z"></path></svg>';
-        const ipIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm-1.999 14.413-3.713-3.713 1.414-1.414 2.299 2.299 4.949-4.95 1.414 1.414-6.363 6.364z"></path></svg>';
-        const rtcIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586z"></path></svg>';
-        const lcdIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20 3H4c-1.103 0-2 .897-2 2v11c0 1.103.897 2 2 2h3l-1 2v1h12v-1l-1-2h3c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2zM4 14V5h16l.002 9H4z"></path></svg>';
-        const flashIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"></path></svg>';
-        const ramIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 5h16v2H4zm0 4h16v2H4zm0 4h16v2H4zm0 4h16v2H4z"></path></svg>';
-
-        listDiv.innerHTML += createItem(wifiIcon, 'Tên WiFi (SSID)', info.ssid || 'N/A');
-        listDiv.innerHTML += createItem(ipIcon, 'Địa chỉ IP', info.ip || 'N/A');
-        listDiv.innerHTML += createItem(rtcIcon, 'Module RTC', info.rtc ? 'Đã kết nối' : 'Không tìm thấy', info.rtc ? 'description connected' : 'description disconnected');
-        listDiv.innerHTML += createItem(lcdIcon, 'Màn hình LCD', info.lcd ? 'Đã kết nối' : 'Không tìm thấy', info.lcd ? 'description connected' : 'description disconnected');
-        listDiv.innerHTML += createItem(flashIcon, 'Bộ nhớ Flash', `${info.flash_usage || 'N/A'} % (${info.running_partition || ''})`);
-        
-        listDiv.innerHTML += createItem(ramIcon, 'RAM trong (SRAM)', `${info.sram_usage_percent || 'N/A'} % (Còn trống ${info.sram_free_kb || 'N/A'} KB)`);
-        listDiv.innerHTML += createItem(ramIcon, 'RAM ngoài (PSRAM)', `${info.psram_usage_percent || 'N/A'} % (Còn trống ${info.psram_free_mb || 'N/A'} MB)`);
-    }
-
-    function requestSystemInfo() {
-        if (client && client.connected) {
-            client.publish(CONTROL_TOPIC, "GET_SYS_INFO", {qos: 1});
-        } else {
-            showNotification("Chưa kết nối đến máy chủ!", 'error');
-        }
-    }
-
-    function openPasswordModal(deviceName, action) {
-        targetDevice = deviceName;
-        targetAction = action;
-        const titleEl = document.getElementById('password-modal-title');
-        const descEl = document.getElementById('password-modal-description');
-
-        if (action === 'wifi') {
-            titleEl.textContent = `Reset WiFi cho ${deviceName}`;
-            descEl.textContent = `Hành động này sẽ xóa cấu hình WiFi đã lưu trên ${deviceName}.`;
-        } else if (action === 'restart') {
-            titleEl.textContent = `Khởi động lại ${deviceName}`;
-            descEl.textContent = `Hành động này sẽ khởi động lại thiết bị ${deviceName}.`;
-        }
-
-        document.getElementById('password-modal-overlay').classList.add('visible');
-        document.getElementById('admin-password-input').focus();
-    }
-
-    function closePasswordModal() {
-        document.getElementById('password-modal-overlay').classList.remove('visible');
-        document.getElementById('admin-password-input').value = '';
-        targetDevice = null;
-        targetAction = null;
-    }
-    
-    function confirmAction() {
-        const password = document.getElementById('admin-password-input').value;
-        if (!password) {
-            showNotification('Vui lòng nhập mật khẩu!', 'error');
-            return;
-        }
-        if (!targetDevice || !targetAction) {
-            console.error("Lỗi: Không có thiết bị hoặc hành động nào được chọn.");
-            closePasswordModal();
-            return;
-        }
-
-        let payload = {
-            target: targetDevice,
-            admin_pass: password
-        };
-        let notificationText = '';
-
-        if (targetAction === 'wifi') {
-            payload.command = "RESET_WIFI";
-            notificationText = `Đã gửi lệnh Reset WiFi đến ${targetDevice}...`;
-        } else if (targetAction === 'restart') {
-            payload.command = "RESTART_ESP";
-            notificationText = `Đã gửi lệnh khởi động lại đến ${targetDevice}...`;
-        } else {
-            console.error("Hành động không xác định:", targetAction);
-            closePasswordModal();
-            return;
-        }
-
-        if (client && client.connected) {
-            client.publish(CONTROL_TOPIC, JSON.stringify(payload), { qos: 1 });
-            showNotification(notificationText);
-        } else {
-            showNotification("Chưa kết nối đến máy chủ!", 'error');
-        }
-        closePasswordModal();
-    }
-
-    function handleChangePassword() {
-        const oldPass = document.getElementById('old-admin-password').value;
-        const newPass = document.getElementById('new-admin-password').value;
-        const confirmPass = document.getElementById('confirm-admin-password').value;
-
-        if (!oldPass || !newPass || !confirmPass) {
-            showNotification('Vui lòng điền đầy đủ thông tin!', 'error');
-            return;
-        }
-        if (newPass !== confirmPass) {
-            showNotification('Mật khẩu mới không khớp!', 'error');
-            return;
-        }
-        if (newPass.length < 8) {
-            showNotification('Mật khẩu mới phải có ít nhất 8 ký tự!', 'error');
-            return;
-        }
-
-        if (client && client.connected) {
-            const payload = {
-                command: "CHANGE_PASSWORD",
-                old_pass: oldPass,
-                new_pass: newPass
-            };
-            client.publish(CONTROL_TOPIC, JSON.stringify(payload), { qos: 1 });
-            showNotification("Đã gửi yêu cầu thay đổi mật khẩu...");
-            document.getElementById('old-admin-password').value = '';
-            document.getElementById('new-admin-password').value = '';
-            document.getElementById('confirm-admin-password').value = '';
-        } else {
-            showNotification("Chưa kết nối đến máy chủ!", 'error');
-        }
-    }
-
-    function addSatellite(deviceName) {
-        if (client && client.connected) {
-            client.publish(MANAGE_ADD_TOPIC, deviceName, { qos: 1 });
-        } else {
-            showNotification("Chưa kết nối đến máy chủ!", 'error');
-        }
-    }
-    function removeSatellite(deviceName) {
-        if (confirm(`Bạn có chắc muốn ngừng quản lý thiết bị "${deviceName}" không?`)) {
-            if (client && client.connected) {
-                client.publish(MANAGE_REMOVE_TOPIC, deviceName, { qos: 1 });
-            } else {
-                showNotification("Chưa kết nối đến máy chủ!", 'error');
-            }
-        }
-    }
-    
-    function renderDeviceLists(managed, discovered) {
-        const managedListDiv = document.getElementById('managed-devices-list');
-        const discoveredListDiv = document.getElementById('discovered-devices-list');
-        const resetWifiListDiv = document.getElementById('reset-wifi-actions-list');
-        const resetEspListDiv = document.getElementById('reset-esp-actions-list');
-        const otaDeviceListDiv = document.getElementById('ota-device-selection-list');
-
-        managedListDiv.innerHTML = '';
-        discoveredListDiv.innerHTML = '';
-        resetWifiListDiv.innerHTML = '';
-        resetEspListDiv.innerHTML = '';
-        otaDeviceListDiv.innerHTML = '';
-
-        if (managed.length === 0) {
-            managedListDiv.innerHTML = '<p class="list-placeholder">Chưa có thiết bị nào được quản lý.</p>';
-        } else {
-            managed.forEach(dev => {
-                const item = document.createElement('div');
-                item.className = 'device-item';
-                const statusClass = dev.online ? 'connected' : 'disconnected';
-                const statusText = dev.online ? 'Online' : 'Offline';
-                const rssiText = dev.rssi ? `${dev.rssi} dBm` : 'N/A';
-                const uptimeText = dev.uptime || 'N/A';
-                const ipText = dev.ip || 'N/A';
-                item.innerHTML = `
-                    <div class="device-item-header">
-                        <span class="device-name">${dev.name}</span>
-                        <span class="device-status ${statusClass}">${statusText}</span>
-                    </div>
-                    <div class="device-info-grid">
-                        <span><span class="label">IP:</span> ${ipText}</span>
-                        <span><span class="label">Sóng WiFi:</span> ${rssiText}</span>
-                        <span style="grid-column: 1 / -1;"><span class="label">Uptime:</span> ${uptimeText}</span>
-                    </div>
-                    <div class="device-actions">
-                        <button class="device-action-btn cancel-btn" onclick="removeSatellite('${dev.name}')">Hủy</button>
-                    </div>
-                `;
-                managedListDiv.appendChild(item);
-            });
-        }
-
-        if (discovered.length === 0) {
-            discoveredListDiv.innerHTML = '<p class="list-placeholder">Không phát hiện thiết bị mới nào.</p>';
-        } else {
-            discovered.forEach(dev => {
-                const item = document.createElement('div');
-                item.className = 'device-item';
-                item.style.flexDirection = 'row';
-                item.style.justifyContent = 'space-between';
-                item.innerHTML = `
-                    <div class="device-info">
-                        <span class="device-name">${dev.name}</span>
-                        <div class="device-info-grid" style="grid-template-columns: 1fr; font-size: 0.8em;">
-                           <span><span class="label">IP:</span> ${dev.ip || 'N/A'}</span>
-                        </div>
-                    </div>
-                    <button class="device-action-btn add-btn" onclick="addSatellite('${dev.name}')">Thêm</button>
-                `;
-                discoveredListDiv.appendChild(item);
-            });
-        }
-        
-        const allDevices = [{ name: 'ESP32-MayChu', type: 'Máy Chủ' }, ...managed.map(d => ({...d, type: 'Vệ tinh'}))];
-
-        const createOtaDeviceCheckbox = (deviceName, deviceType) => {
-            return `
-                <label>
-                    <input type="checkbox" class="ota-target-checkbox" value="${deviceName}">
-                    <span>${deviceName} <em style="color:#bdc3c7; font-size: 0.9em;">(${deviceType})</em></span>
-                </label>
-            `;
-        };
-
-        if(allDevices.length > 0) {
-            allDevices.forEach(dev => {
-                otaDeviceListDiv.innerHTML += createOtaDeviceCheckbox(dev.name, dev.type);
-
-                resetWifiListDiv.innerHTML += `
-                    <div class="action-item">
-                        <div class="action-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 13h-2v-2h2v2zm0-4h-2V7h2v2z"></path></svg>
-                        </div>
-                        <div class="action-text">
-                            <div class="title">${dev.name}</div>
-                            <div class="description">Xóa cấu hình WiFi của thiết bị ${dev.type} này.</div>
-                        </div>
-                        <button class="action-btn reset" onclick="openPasswordModal('${dev.name}', 'wifi')">Reset WiFi</button>
-                    </div>
-                `;
-                
-                resetEspListDiv.innerHTML += `
-                    <div class="action-item">
-                         <div class="action-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 2.5a1 1 0 1 0-2 0v2.4a6.5 6.5 0 1 0 9.9 7.4 1 1 0 1 0-1.8-1a4.5 4.5 0 1 1-6.6-5.9V8a1 1 0 1 0 2 0V2.5z"></path></svg>
-                        </div>
-                        <div class="action-text">
-                            <div class="title">${dev.name}</div>
-                            <div class="description">Khởi động lại thiết bị ${dev.type} này.</div>
-                        </div>
-                        <button class="action-btn reset" style="background-color: #e67e22;" onclick="openPasswordModal('${dev.name}', 'restart')">Restart</button>
-                    </div>
-                `;
-            });
-        } else {
-            otaDeviceListDiv.innerHTML = '<p class="list-placeholder">Không có thiết bị nào.</p>';
-        }
-    }
-    
     function _load(e){try{const t=JSON.parse(e);t.schedule&&t.epoch&&(setTime(t.epoch),populateForm(t))}catch(t){console.error("Lỗi parse JSON từ MQTT:",t)}}
     
     function publishUpdate(){
         if(!client||!client.connected) return showNotification("Chưa kết nối máy chủ!", 'error');
         try {
             const scheduleData = gatherDataFromForm();
+            // Lấy dữ liệu sohoi từ sessionStorage (nếu có) để gộp vào
+            const storedSohоi = sessionStorage.getItem('sohoi_settings');
+            if (storedSohоi) {
+                scheduleData.sohoi = JSON.parse(storedSohоi);
+                sessionStorage.removeItem('sohoi_settings'); // Xóa sau khi dùng
+            }
+
             const payload = {
                 schedule: scheduleData
             };
@@ -1641,16 +747,6 @@
         }
     }
     
-    function publishTestBell(){
-        if(client&&client.connected) {
-            const payload = { command: "TEST_BELL" };
-            client.publish(CONTROL_TOPIC, JSON.stringify(payload), {qos:1});
-            showNotification("Đã gửi lệnh thử chuông chung...");
-        } else {
-            showNotification("Chưa kết nối máy chủ!", 'error');
-        }
-    }
-
     function logout(){sessionStorage.removeItem("isLoggedIn"),window.location.href="login.html"}
     function setTime(e){isNaN(e)||e<1e5?(console.log("Invalid epoch received, clock not set:",e),serverTime=null):(serverTime=new Date(1e3*e),document.getElementById("date").innerHTML=serverTime.toLocaleDateString("vi-VN",{weekday:"long",year:"numeric",month:"long",day:"numeric",timeZone:"Asia/Ho_Chi_Minh"}),updateLocalClock())}
     function updateLocalClock(){serverTime&&(serverTime.setSeconds(serverTime.getSeconds()+1),document.getElementById("clock").innerHTML=serverTime.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit",timeZone:"Asia/Ho_Chi_Minh",hour12:!1}))}
@@ -1664,7 +760,6 @@
         }
     }
 
-    // [ĐÃ SỬA] Hàm điều khiển logic ẩn/hiện và làm mờ các mục cài đặt
     function toggleScheduleActivation(dayId) {
         const isEnabled = document.getElementById(`enable_${dayId}`).checked;
         const enableItem = document.getElementById(`toggle_item_enable_${dayId}`);
@@ -1706,8 +801,7 @@
             inputWrapper.style.display = checkbox.checked ? 'flex' : 'none';
         }
     }
-
-    // [ĐÃ SỬA] Cập nhật hàm createDayContent để sử dụng giao diện mới
+    
     const createDayContent = (e, t, o) => {
         const isMondayMorning = (e === 't2_sang');
         
@@ -1798,15 +892,13 @@
         contentWrapper.innerHTML += createDayContent(`${e.id}_chieu`, e.name, "chieu");
     });
     
-    // [ĐÃ SỬA] Cập nhật hàm populateForm để gọi hàm toggleScheduleActivation
     function populateForm(e){
         const t=e.schedule?e.schedule:e;
         if(t&&t.sohoi&&t.lich){
             console.log("Bat dau cap nhat form voi du lieu:",t);
-            ["batdau","vaotiet","rachoi","duvao", "tg_reo", "tg_nghi"].forEach(e=>{
-                const o=document.getElementById(`sohoi_${e}`);
-                o&&(o.value=t.sohoi[e]||"")
-            });
+            // Lưu trữ dữ liệu sohoi để trang settings có thể truy cập
+            sessionStorage.setItem('sohoi_settings', JSON.stringify(t.sohoi));
+
             ["sang","chieu"].forEach(e=>{
                 days.forEach(o=>{
                     const n=t.lich?.[e]?.[o.id];
@@ -1837,7 +929,6 @@
                             toggleDuVao(dayId);
                         }
                         
-                        // Cập nhật trạng thái UI sau khi điền dữ liệu
                         toggleScheduleActivation(dayId);
                         updatePreviewTable(dayId);
                     }
@@ -1849,10 +940,8 @@
     }
 
     function gatherDataFromForm(){
-        const e={sohoi:{},lich:{sang:{},chieu:{}}};
-        ["batdau","vaotiet","rachoi","duvao", "tg_reo", "tg_nghi"].forEach(t=>{
-            e.sohoi[t]=parseInt(document.getElementById(`sohoi_${t}`).value)||0
-        });
+        const e={lich:{sang:{},chieu:{}}};
+        // Không còn thu thập sohoi ở trang này
         ["sang","chieu"].forEach(t=>{
             days.forEach(o=>{
                 const dayId = `${o.id}_${t}`;
@@ -1880,7 +969,6 @@
         return e;
     }
 
-    // [ĐÃ SỬA] Bỏ hàm openDay(), thay bằng 3 hàm mới
     function selectDay(evt, day) {
         selectedDay = day;
         document.querySelectorAll('.tablinks-day').forEach(btn => btn.classList.remove('active'));
@@ -1926,15 +1014,12 @@
     let schedule = [];
     let currentTime = startTime;
 
-    // *** BƯỚC 1: XỬ LÝ SỰ KIỆN ĐẦU BUỔI VÀ TIẾT 1 (LOGIC ĐÃ SỬA) ***
     if (hasSpecial) {
         if (flagCeremonyTime > 0) {
-            // === LOGIC ĐẶC BIỆT CHO NGÀY CÓ CHÀO CỜ (SÁNG THỨ 2) ===
             schedule.push({ time: currentTime, description: "Chào cờ / SHCN" });
             currentTime += flagCeremonyTime;
-            schedule.push({ time: currentTime, description: "Vào tiết 1" }); // Vào thẳng tiết 1
+            schedule.push({ time: currentTime, description: "Vào tiết 1" });
         } else if (classActivityTime > 0) {
-            // === LOGIC CŨ CHO NGÀY CÓ SINH HOẠT CHỦ NHIỆM (SÁNG THỨ 3) ===
             schedule.push({ time: currentTime, description: "Chào cờ / SHCN" });
             currentTime += classActivityTime;
             if (prepareTime > 0) {
@@ -1943,15 +1028,12 @@
             }
             schedule.push({ time: currentTime, description: "Vào tiết 1" });
         } else {
-            // Trường hợp tick "Có sự kiện" nhưng không nhập thời gian
             schedule.push({ time: currentTime, description: "Vào tiết 1" });
         }
     } else {
-        // === LOGIC CHO NGÀY BÌNH THƯỜNG (KHÔNG CÓ SỰ KIỆN ĐẶC BIỆT) ===
         schedule.push({ time: currentTime, description: "Vào tiết 1" });
     }
 
-    // *** BƯỚC 2: VÒNG LẶP CHO CÁC TIẾT CÒN LẠI - KHÔNG ĐỔI ***
     for (let i = 1; i < lessonCount; i++) {
         currentTime += lessonTime;
         if (breakTime > 0) {
@@ -1965,13 +1047,11 @@
         schedule.push({ time: currentTime, description: `Vào tiết ${i + 1}` });
     }
 
-    // *** BƯỚC 3: XỬ LÝ CHUÔNG RA VỀ - KHÔNG ĐỔI ***
     if (lessonCount > 0 && breakTime > 0) {
         currentTime += lessonTime;
         schedule.push({ time: currentTime, description: "Ra về" });
     }
     
-    // Sắp xếp và trả về
     const uniqueSchedule = Array.from(new Map(schedule.map(item => [item.time, item])).values());
     return uniqueSchedule.map(item => ({ ...item, time: minuteToTime(item.time) })).sort((a, b) => timeToMinute(a.time) - timeToMinute(b.time));
 }
@@ -1980,7 +1060,7 @@
     
     function copyAfternoonSchedule(sourceDayId) {
         const sourceDayName = document.querySelector(`.tablinks-day[onclick*="'${sourceDayId.replace('_chieu', '')}'"]`).innerText;
-        if (!confirm(`Bạn có chắc muốn sao chép lịch của Thứ ${sourceDayName} (chiều) đến TẤT CẢ các ngày còn lại của buổi chiều không?`)) return;
+        if (!confirm(`Bạn có chắc muốn sao chép lịch của ${sourceDayName} (chiều) đến TẤT CẢ các ngày còn lại của buổi chiều không?`)) return;
 
         const sourceData = {
             enabled: document.getElementById(`enable_${sourceDayId}`).checked,
@@ -2017,7 +1097,7 @@
 
     function copyMorningSchedule(sourceDayId) {
         const sourceDayName = document.querySelector(`.tablinks-day[onclick*="'${sourceDayId.replace('_sang', '')}'"]`).innerText;
-        if (!confirm(`Bạn có chắc muốn sao chép lịch của Thứ ${sourceDayName} (sáng) đến các ngày còn lại (T3-CN) không?`)) return;
+        if (!confirm(`Bạn có chắc muốn sao chép lịch của ${sourceDayName} (sáng) đến các ngày còn lại (T3-CN) không?`)) return;
 
         const sourceData = {
             enabled: document.getElementById(`enable_${sourceDayId}`).checked,
@@ -2054,168 +1134,37 @@
         showNotification('Sao chép thành công! Hãy nhấn "Lưu và gửi cập nhật" để áp dụng.',"success");
     }
 
-    function resetOtaUi(hideProgress = false) {
-        otaInProgress = false;
-        const uploadBtn = document.getElementById('ota-upload-btn');
-        document.getElementById('ota-select-file-btn').disabled = false;
-        uploadBtn.disabled = false;
-        uploadBtn.textContent = 'Bắt đầu Cập nhật';
-        uploadBtn.style.backgroundColor = '#27ae60';
-
-        if (hideProgress) {
-            document.getElementById('ota-progress-container').style.display = 'none';
-        }
-    }
-
-    function handleOtaUpload() {
-        if (otaInProgress) {
-            showNotification("Quá trình cập nhật đang diễn ra!", 'info');
-            return;
-        }
-        if (!client || !client.connected) return showNotification("Chưa kết nối máy chủ!", 'error');
-        
-        const fileInput = document.getElementById('ota-file-input');
-        const file = fileInput.files[0];
-        const selectedDevices = Array.from(document.querySelectorAll('.ota-target-checkbox:checked')).map(cb => cb.value);
-
-        if (!file) {
-            return showNotification("Vui lòng chọn một file firmware (.bin)!", 'error');
-        }
-        if (selectedDevices.length === 0) {
-            return showNotification("Vui lòng chọn ít nhất một thiết bị để cập nhật!", 'error');
-        }
-
-        otaInProgress = true;
-        const selectBtn = document.getElementById('ota-select-file-btn');
-        const uploadBtn = document.getElementById('ota-upload-btn');
-        const progressContainer = document.getElementById('ota-progress-container');
-        const progressBar = document.getElementById('ota-progress-bar');
-        const statusText = document.getElementById('ota-status-text');
-        const progressDetails = document.getElementById('ota-progress-details');
-        const deviceStatusList = document.getElementById('ota-device-status-list');
-
-        // Khóa UI
-        selectBtn.disabled = true;
-        uploadBtn.disabled = true;
-        uploadBtn.textContent = 'Đang cập nhật...';
-        uploadBtn.style.backgroundColor = '#7f8c8d';
-        progressContainer.style.display = 'block';
-        progressBar.style.width = '0%';
-        progressBar.textContent = '0%';
-        statusText.textContent = 'Đang đọc file...';
-        progressDetails.textContent = '';
-        deviceStatusList.innerHTML = ''; // Xóa trạng thái cũ
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const fileData = e.target.result;
-            const fileSize = fileData.byteLength;
-            const CHUNK_SIZE = 256;
-            let offset = 0;
-            
-            showNotification(`Bắt đầu OTA cho ${selectedDevices.length} thiết bị...`, 'info');
-            
-            // 1. Gửi lệnh START cho tất cả thiết bị
-            statusText.textContent = 'Gửi lệnh bắt đầu...';
-            for (const deviceName of selectedDevices) {
-                const isMaster = (deviceName === 'ESP32-MayChu');
-                const commandTopic = isMaster ? OTA_COMMAND_TOPIC : OTA_SATELLITE_COMMAND_TOPIC_PREFIX + deviceName;
-                client.publish(commandTopic, JSON.stringify({ action: "START", size: fileSize }), { qos: 1 });
-            }
-
-            function sendChunk() {
-                if (!otaInProgress || offset >= fileSize) {
-                    if(otaInProgress) {
-                        statusText.textContent = 'Hoàn tất gửi file, đang chờ xác nhận...';
-                        for (const deviceName of selectedDevices) {
-                            const isMaster = (deviceName === 'ESP32-MayChu');
-                            const commandTopic = isMaster ? OTA_COMMAND_TOPIC : OTA_SATELLITE_COMMAND_TOPIC_PREFIX + deviceName;
-                            client.publish(commandTopic, JSON.stringify({ action: "END" }), { qos: 1 });
-                        }
-                        progressBar.style.width = '100%';
-                    }
-                    return;
-                }
-
-                const chunk = fileData.slice(offset, offset + CHUNK_SIZE);
-                
-                for (const deviceName of selectedDevices) {
-                    const isMaster = (deviceName === 'ESP32-MayChu');
-                    const dataTopic = isMaster ? OTA_DATA_TOPIC : OTA_SATELLITE_DATA_TOPIC_PREFIX + deviceName;
-                    client.publish(dataTopic, new Uint8Array(chunk), { qos: 1 });
-                }
-                
-                offset += chunk.byteLength;
-                const progress = Math.min(100, Math.round((offset / fileSize) * 100));
-                progressBar.style.width = `${progress}%`;
-                progressBar.textContent = `${progress}%`;
-                statusText.textContent = `Đang gửi... ${Math.round(offset/1024)}/${Math.round(fileSize/1024)} KB`;
-                
-                setTimeout(sendChunk, 5);
-            }
-            
-            setTimeout(sendChunk, 1000);
-        };
-
-        reader.onerror = function() {
-            showNotification("Lỗi khi đọc file!", 'error');
-            resetOtaUi(true);
-        };
-
-        reader.readAsArrayBuffer(file);
-    }
-
     function initializeTabs() {
-    // [SỬA ĐỔI] Thêm logic tự động chọn ngày hiện tại
-    const dayMap = ['cn', 't2', 't3', 't4', 't5', 't6', 't7'];
-    const today = new Date();
-    const currentDayId = dayMap[today.getDay()];
+        const dayMap = ['cn', 't2', 't3', 't4', 't5', 't6', 't7'];
+        const today = new Date();
+        const currentDayId = dayMap[today.getDay()];
 
-    // Cập nhật biến trạng thái toàn cục
-    selectedDay = currentDayId;
+        selectedDay = currentDayId;
 
-    // Tìm và kích hoạt nút của ngày hiện tại
-    const todayButton = document.querySelector(`.tablinks-day[onclick*="'${currentDayId}'"]`);
-    if (todayButton) {
-        // Xóa active cũ nếu có để tránh có 2 nút được chọn
-        document.querySelectorAll('.tablinks-day').forEach(btn => btn.classList.remove('active'));
-        todayButton.classList.add('active');
-    } else {
-        // Nếu không tìm thấy (dự phòng), kích hoạt nút đầu tiên
-        document.querySelector('.tablinks-day').classList.add('active');
+        const todayButton = document.querySelector(`.tablinks-day[onclick*="'${currentDayId}'"]`);
+        if (todayButton) {
+            document.querySelectorAll('.tablinks-day').forEach(btn => btn.classList.remove('active'));
+            todayButton.classList.add('active');
+        } else {
+            document.querySelector('.tablinks-day').classList.add('active');
+        }
+
+        document.querySelector(`.tablinks-session[onclick*="'${selectedSession}'"]`).classList.add('active');
+
+        showActiveTab();
     }
 
-    // Kích hoạt buổi mặc định (buổi sáng)
-    document.querySelector(`.tablinks-session[onclick*="'${selectedSession}'"]`).classList.add('active');
-
-    // Hiển thị nội dung tab tương ứng
-    showActiveTab();
-}
     window.onload = function() { 
         connectToMqtt();
         setInterval(updateLocalClock, 1000);
-        
-        document.getElementById('admin-password-input').addEventListener('keyup', function(event) {
-            if (event.key === "Enter") {
-                event.preventDefault();
-                document.querySelector('#password-modal-overlay .modal-confirm-btn').click();
-            }
-        });
+        initializeTabs(); 
 
-        document.getElementById('ota-file-input').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            const uploadBtn = document.getElementById('ota-upload-btn');
-            const fileNameDiv = document.getElementById('ota-file-name');
-            if (file) {
-                fileNameDiv.textContent = file.name;
-                uploadBtn.style.display = 'block';
-            } else {
-                fileNameDiv.textContent = 'Chưa chọn tệp nào';
-                uploadBtn.style.display = 'none';
-            }
-        });
-        
-        initializeTabs(); // [MỚI] Gọi hàm để khởi tạo tab
+        const notificationFromSettings = sessionStorage.getItem('notification');
+        if (notificationFromSettings) {
+            const { message, type } = JSON.parse(notificationFromSettings);
+            showNotification(message, type);
+            sessionStorage.removeItem('notification');
+        }
     };
   </script>
 </body>
