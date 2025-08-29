@@ -18,28 +18,13 @@
         --accent-color: #f39c12;
         --accent-color-alt: #f1c40f;
         --border-color: #414345;
+        --border-radius: 18px;
         --font-main: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
         --font-size-base: 15px;
         --text-shadow-accent: 0 0 12px var(--accent-color), 0 2px 8px #000;
         --box-shadow-accent-hover: 0 8px 24px var(--accent-color-alt-alpha-55);
         --success-color: #2ecc71;
         --error-color: #e74c3c;
-    }
-
-    /* Chế độ Sáng */
-    body.theme-light {
-        --bg-grad-start: #e9eef3;
-        --bg-grad-end: #f8f9fa;
-        --content-bg: #ffffff;
-        --content-bg-alt: #f1f3f5;
-        --text-primary: #212529;
-        --text-secondary: #5a6268;
-        --text-light: #6c757d;
-        --accent-color: #007bff;
-        --accent-color-alt: #0069d9;
-        --border-color: #dee2e6;
-        --text-shadow-accent: 0 1px 2px rgba(0, 0, 0, 0.1);
-        --box-shadow-accent-hover: 0 6px 18px rgba(0, 123, 255, 0.3);
     }
     
     /* --- CÀI ĐẶT CHUNG & SỬA LỖI TRÀN KHUNG --- */
@@ -50,15 +35,25 @@
         color: var(--text-primary);
         min-height: 100vh; margin: 0;
         font-size: var(--font-size-base);
+        transition: background 0.3s, color 0.3s;
     }
     #main { margin: 24px auto; width: 380px; max-width: 98vw; }
 
-    /* --- KHUNG NỘI DUNG CHÍNH --- */
+    /* --- KHUNG NỘI DUNG CHÍNH & BO GÓC TỰ ĐỘNG --- */
     #content {
         background: var(--content-bg);
-        border: none; width: 100%; float: left; border-radius: 18px;
+        border: none; width: 100%; float: left; border-radius: var(--border-radius);
         padding-bottom: 24px; box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+        transition: background 0.3s, border-radius 0.3s;
     }
+    .modal-content, .modern-btn, details, .setting-item, .toggle-action-item, .tablinks-day, .tablinks-session, .modal-input, .device-item, .ota-device-selection, .preset-btn {
+        border-radius: calc(var(--border-radius) / 2);
+    }
+    summary#header-sohoi, .modal-buttons button, .action-btn {
+        border-radius: calc(var(--border-radius) / 2.5);
+    }
+    .notification, #ota-progress-bar { border-radius: calc(var(--border-radius) / 2.5); }
+
 
     /* === KHU VỰC THÔNG BÁO PHẢN HỒI === */
     #notification-area {
@@ -67,7 +62,7 @@
         width: 90%; max-width: 360px;
     }
     .notification {
-        padding: 10px 15px; border-radius: 8px; color: #fff; font-weight: bold; text-align: center;
+        padding: 10px 15px; color: #fff; font-weight: bold; text-align: center;
         box-shadow: 0 4px 12px rgba(0,0,0,0.3); opacity: 0; transform: translateY(-20px);
         transition: opacity 0.3s, transform 0.3s; margin-bottom: 10px; font-size: 0.9em;
     }
@@ -78,19 +73,17 @@
 
     /* --- TIÊU ĐỀ & MÀU SẮC NỔI BẬT --- */
     h2 {
-        font-size: 1.6em; margin-top: 20px; margin-bottom: 10px; text-align: center;
-        color: var(--accent-color);
+        font-size: 1.6em; margin: 20px 0 10px 0; text-align: center; color: var(--accent-color);
         text-shadow: 0 4px 12px var(--accent-color-alpha-18), 0 2px 4px rgba(0,0,0,0.08);
         letter-spacing: 1px; font-weight: 800;
     }
-    
-    hr { border: none; height: 1px; background: linear-gradient(90deg, var(--accent-color-alt) 0%, #e0eafc 100%); margin: 28px 15px; border-radius: 2px; opacity: 0.5; }
+    hr { border: none; height: 1px; background: linear-gradient(90deg, var(--accent-color-alt) 0%, #e0eafc 100%); margin: 28px 15px; opacity: 0.5; }
 
     /* --- THANH TRẠNG THÁI --- */
     .status-bar { 
         padding: 5px 15px; margin: 0 15px 14px 15px; text-align: center; font-weight: bold;
-        border-radius: 8px; transition: all 0.5s; font-size: 0.7em;
-        text-transform: uppercase; letter-spacing: 0.7px; box-shadow: 0 2px 8px rgba(52, 152, 219, 0.10); color: #ecf0f1;
+        transition: all 0.5s; font-size: 0.7em; text-transform: uppercase; letter-spacing: 0.7px; 
+        box-shadow: 0 2px 8px rgba(52, 152, 219, 0.10); color: #ecf0f1;
     }
     .status-connected { background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%); color: #222; }
     .status-disconnected { background: linear-gradient(90deg, #ff5858 0%, #f09819 100%); color: #fff; }
@@ -100,7 +93,7 @@
     .button-section { display: flex; flex-direction: column; gap: 10px; padding: 0 15px; margin-top: 24px; }
     .modern-btn {
         display: flex; align-items: center; justify-content: center; height: 45px; padding: 0 15px;
-        border: none; border-radius: 10px; font-size: 0.9em; font-weight: 700; letter-spacing: 1px;
+        border: none; font-size: 0.9em; font-weight: 700; letter-spacing: 1px;
         transition: all 0.2s ease-out; cursor: pointer; outline: none; position: relative;
         overflow: hidden; z-index: 1; text-transform: uppercase; width: 100%; text-decoration: none;
     }
@@ -132,16 +125,15 @@
     }
     .back-button:hover { box-shadow: 0 8px 24px var(--success-color-alpha-55); }
     
-    /* --- KHU VỰC CÀI ĐẶT (DETAILS) --- */
+    /* --- CÀI ĐẶT SỐ HỒI --- */
     details {
-        border: 1px solid var(--border-color); border-radius: 10px; margin-bottom: 12px;
+        border: 1px solid var(--border-color); margin-bottom: 12px;
         background: var(--content-bg-alt); box-shadow: 0 2px 8px rgba(0,0,0, 0.1);
         overflow: hidden; transition: box-shadow 0.2s;
     }
     .sohoi-container { padding: 0 15px; }
     summary#header-sohoi {
-        display: flex; flex-direction: column; align-items: center; justify-content: center;
-        height: 50px; border-radius: 10px;
+        display: flex; flex-direction: column; align-items: center; justify-content: center; height: 50px;
         background: linear-gradient(90deg, #232526 60%, #414345 100%); color: var(--accent-color-alt);
         border-left: 4px solid var(--accent-color-alt); border-right: 4px solid var(--accent-color-alt);
         text-shadow: var(--text-shadow-accent), 0 0 24px #fff;
@@ -150,18 +142,14 @@
     }
     summary#header-sohoi div:first-child { font-size: 1em; font-weight: 700; letter-spacing: 1.5px; }
     .details-content { padding: 12px 15px 16px 15px; border-top: 1px solid var(--border-color); }
-    
     .divider-yellow {
         width: 90%; height: 2px; background: linear-gradient(90deg, var(--accent-color-alt) 0%, #fff200 100%);
-        border-radius: 2px; margin: 24px auto 18px auto; box-shadow: 0 2px 8px var(--accent-color-alt-alpha-55);
+        margin: 24px auto 18px auto; box-shadow: 0 2px 8px var(--accent-color-alt-alpha-55);
     }
-
-    /* --- GIAO DIỆN LƯỚI CHO CÀI ĐẶT SỐ HỒI --- */
     .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 8px 0; }
     .setting-item {
         background: var(--content-bg-alt); border: 1px solid var(--border-color);
-        border-radius: 8px; padding: 8px; display: flex; align-items: center;
-        transition: all 0.2s ease-in-out;
+        padding: 8px; display: flex; align-items: center; transition: all 0.2s ease-in-out;
     }
     .setting-item:hover { border-color: var(--accent-color-alt); transform: translateY(-1px); }
     .setting-item-icon { flex-shrink: 0; margin-right: 10px; color: var(--accent-color-alt); }
@@ -172,7 +160,7 @@
     .unit-input input { width: 100%; margin-right: 8px; padding: 8px; font-size: 0.9em; }
     .unit-input span { font-size: 0.9em; color: var(--text-secondary); }
     
-    /* === Giao diện cho Modal Chung === */
+    /* === GIAO DIỆN MODAL CHUNG & NÂNG CAO === */
     .modal-overlay {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
         background: rgba(0,0,0,0.7); display: flex; align-items: center;
@@ -181,56 +169,28 @@
     }
     .modal-overlay.visible { opacity: 1; visibility: visible; }
     .modal-content {
-        background: var(--content-bg); padding: 20px; border-radius: 15px;
+        background: var(--content-bg); padding: 20px;
         border-top: 5px solid var(--accent-color-alt); width: 95%; max-width: 400px;
         box-shadow: 0 5px 25px rgba(0,0,0,0.4); transform: scale(0.9); transition: transform 0.3s;
     }
     .modal-overlay.visible .modal-content { transform: scale(1); }
-    .modal-content h4 {
-        margin-top: 0; margin-bottom: 20px; color: var(--accent-color-alt);
-        text-align: center; font-size: 1.2em; text-transform: uppercase;
-    }
+    .modal-content h4 { margin: 0 0 20px 0; color: var(--accent-color-alt); text-align: center; font-size: 1.2em; text-transform: uppercase; }
     .modal-buttons { display: flex; gap: 15px; margin-top: 20px; }
-    .modal-buttons button {
-        flex-grow: 1; padding: 10px; border: none; border-radius: 8px;
-        font-weight: bold; cursor: pointer; font-size: 0.9em; transition: all 0.2s;
-    }
+    .modal-buttons button { flex-grow: 1; padding: 10px; border: none; font-weight: bold; cursor: pointer; font-size: 0.9em; transition: all 0.2s; }
     .modal-confirm-btn { background: var(--accent-color-alt); color: var(--content-bg-alt); }
     .modal-cancel-btn { background: #7f8c8d; color: #fff; }
-    
-    .modal-input {
-        width: 100%; padding: 10px; border-radius: 8px;
-        border: 2px solid #7f8c8d; background-color: var(--content-bg);
-        color: var(--text-primary); font-size: 1em; margin-bottom: 15px;
-    }
+    .modal-input { width: 100%; padding: 10px; border: 2px solid #7f8c8d; background-color: var(--content-bg); color: var(--text-primary); font-size: 1em; margin-bottom: 15px; }
     .modal-input:focus { outline: none; border-color: var(--accent-color-alt); }
-
-    /* === Giao diện cho Modal Cài đặt Nâng cao === */
-    #advanced-settings-modal .modal-content {
-        background: var(--content-bg-alt); border-top-color: var(--accent-color); color: var(--text-primary);
-    }
+    #advanced-settings-modal .modal-content { background: var(--content-bg-alt); border-top-color: var(--accent-color); color: var(--text-primary); }
     #advanced-settings-modal h4 { color: var(--accent-color); text-shadow: 0 0 10px var(--accent-color); }
-    .adv-modal-tabs { display: flex; border-bottom: 2px solid var(--border-color); margin-bottom: 15px; }
-    .adv-modal-tab {
-        flex-grow: 1; padding: 10px 2px; text-align: center; cursor: pointer;
-        font-weight: bold; color: #7f8c8d; border-bottom: 3px solid transparent;
-        transition: all 0.2s; font-size: 0.75em;
-    }
+    .adv-modal-tabs { display: flex; border-bottom: 2px solid var(--border-color); margin-bottom: 15px; flex-wrap: wrap; }
+    .adv-modal-tab { flex-grow: 1; padding: 10px 2px; text-align: center; cursor: pointer; font-weight: bold; color: #7f8c8d; border-bottom: 3px solid transparent; transition: all 0.2s; font-size: 0.75em; min-width: 60px; }
     .adv-modal-tab.active { color: var(--accent-color); border-bottom-color: var(--accent-color); }
     .adv-modal-tab-content { display: none; }
     .adv-modal-tab-content.active { display: block; }
-    .adv-modal-tab-content h5 {
-        text-align: center; color: var(--accent-color); text-transform: uppercase;
-        margin: 10px 0 15px 0; letter-spacing: 1px; font-size: 0.9em;
-    }
-    
-    /* === Giao diện cho Tab Hệ thống & Reset WiFi === */
+    .adv-modal-tab-content h5 { text-align: center; color: var(--accent-color); text-transform: uppercase; margin: 10px 0 15px 0; letter-spacing: 1px; font-size: 0.9em; }
     .actions-list { display: flex; flex-direction: column; gap: 10px; }
-    .action-item {
-        display: flex; align-items: center; background: var(--content-bg);
-        border-radius: 8px; padding: 12px; border-left: 4px solid var(--accent-color);
-        transition: background-color 0.2s;
-    }
+    .action-item { display: flex; align-items: center; background: var(--content-bg); padding: 12px; border-left: 4px solid var(--accent-color); transition: background-color 0.2s; }
     .action-item:hover { background-color: #34495e; }
     .action-icon { flex-shrink: 0; margin-right: 15px; color: var(--accent-color); }
     .action-icon svg { width: 28px; height: 28px; }
@@ -239,74 +199,45 @@
     .action-text .description { font-size: 0.8em; color: var(--text-secondary); }
     .action-text .description.connected { color: var(--success-color); }
     .action-text .description.disconnected { color: var(--error-color); }
-
-    .action-btn {
-        padding: 7px 15px; font-size: 0.8em; font-weight: bold; border-radius: 6px;
-        border: none; cursor: pointer; transition: all 0.2s;
-        background-color: var(--accent-color); color: var(--content-bg-alt);
-    }
+    .action-btn { padding: 7px 15px; font-size: 0.8em; font-weight: bold; border: none; cursor: pointer; transition: all 0.2s; background-color: var(--accent-color); color: var(--content-bg-alt); }
     .action-btn:disabled { background-color: #7f8c8d; cursor: not-allowed; }
     .action-btn.reset { background-color: #c0392b; color: #fff; }
     
-    /* === Giao diện cho Quản lý Vệ tinh === */
-    .device-list {
-        display: flex; flex-direction: column; gap: 10px; max-height: 280px;
-        overflow-y: auto; padding: 5px; background: var(--content-bg); border-radius: 8px;
-    }
-    .device-item {
-        display: flex; flex-direction: column; padding: 10px; background: #34495e;
-        border-radius: 8px; border-left: 4px solid var(--accent-color-alt); gap: 8px;
-    }
+    /* === CÁC TAB NÂNG CAO KHÁC === */
+    .device-list { display: flex; flex-direction: column; gap: 10px; max-height: 280px; overflow-y: auto; padding: 5px; background: var(--content-bg); }
+    .device-item { display: flex; flex-direction: column; padding: 10px; background: #34495e; border-left: 4px solid var(--accent-color-alt); gap: 8px; }
     .device-item-header { display: flex; justify-content: space-between; align-items: center; }
     .device-name { font-weight: bold; font-size: 1em; color: var(--text-primary); }
     .device-status { font-size: 0.85em; font-weight: bold; }
-    .device-status.connected { color: var(--success-color); }
-    .device-status.disconnected { color: var(--error-color); }
-    .device-info-grid {
-        display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
-        font-size: 0.8em; color: var(--text-secondary);
-    }
-    .device-info-grid span { background-color: var(--content-bg); padding: 4px 6px; border-radius: 4px; }
+    .device-status.connected { color: var(--success-color); } .device-status.disconnected { color: var(--error-color); }
+    .device-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.8em; color: var(--text-secondary); }
+    .device-info-grid span { background-color: var(--content-bg); padding: 4px 6px; }
     .device-info-grid .label { font-weight: bold; color: var(--text-primary); }
     .device-actions { display: flex; gap: 8px; }
-    .device-action-btn {
-        padding: 5px 10px; border: none; border-radius: 5px; color: #fff;
-        font-weight: bold; cursor: pointer; transition: all 0.2s; flex-shrink: 0;
-        font-size: 0.75em; flex-grow: 1;
-    }
+    .device-action-btn { padding: 5px 10px; border: none; color: #fff; font-weight: bold; cursor: pointer; transition: all 0.2s; flex-shrink: 0; font-size: 0.75em; flex-grow: 1; }
     .device-action-btn:hover { filter: brightness(1.1); transform: scale(1.05); }
-    .add-btn { background-color: #27ae60; } .remove-btn { background-color: #c0392b; }
-    .cancel-btn { background-color: #7f8c8d; }
+    .add-btn { background-color: #27ae60; } .remove-btn { background-color: #c0392b; } .cancel-btn { background-color: #7f8c8d; }
     .list-placeholder { text-align: center; padding: 20px; color: #7f8c8d; font-size: 0.9em; }
-
-    /* === Giao diện cho Tab OTA === */
-    .ota-device-selection { background-color: var(--content-bg); border-radius: 8px; padding: 10px; margin-bottom: 15px; }
-    .ota-device-selection label { display: flex; align-items: center; padding: 8px; cursor: pointer; border-radius: 6px; transition: background-color 0.2s; }
+    .ota-device-selection { background-color: var(--content-bg); padding: 10px; margin-bottom: 15px; }
+    .ota-device-selection label { display: flex; align-items: center; padding: 8px; cursor: pointer; transition: background-color 0.2s; }
     .ota-device-selection label:hover { background-color: #34495e; }
     .ota-device-selection input[type="checkbox"] { margin-right: 10px; width: 18px; height: 18px; }
-    #ota-progress-container {
-        display: none; width: 100%; background-color: var(--content-bg); border-radius: 8px;
-        padding: 3px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.2); margin-bottom: 10px;
-    }
-    #ota-progress-bar {
-        width: 0%; height: 20px; background: linear-gradient(90deg, var(--accent-color-alt), var(--accent-color));
-        border-radius: 5px; text-align: center; line-height: 20px; color: var(--content-bg-alt);
-        font-weight: bold; transition: width 0.3s ease-in-out;
-    }
+    #ota-progress-container { display: none; width: 100%; background-color: var(--content-bg); padding: 3px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.2); margin-bottom: 10px; }
+    #ota-progress-bar { width: 0%; height: 20px; background: linear-gradient(90deg, var(--accent-color-alt), var(--accent-color)); text-align: center; line-height: 20px; color: var(--content-bg-alt); font-weight: bold; transition: width 0.3s ease-in-out; }
     #ota-status-text, #ota-progress-details { text-align: center; color: var(--text-secondary); min-height: 18px; font-size: 0.9em; font-style: italic; }
     #ota-device-status-list { display: flex; flex-direction: column; gap: 5px; margin-top: 10px; font-size: 0.85em; }
 
-    /* --- [MỚI] GIAO DIỆN CHO TAB GIAO DIỆN --- */
-    .theme-settings-container { display: flex; flex-direction: column; gap: 20px; }
+    /* --- GIAO DIỆN NÂNG CAO CHO TAB GIAO DIỆN --- */
+    .theme-settings-container { display: flex; flex-direction: column; gap: 15px; }
     .theme-setting-row { display: flex; flex-direction: column; gap: 8px; }
-    .theme-label { font-weight: bold; color: var(--text-secondary); font-size: 0.9em; }
+    .theme-label { font-weight: bold; color: var(--text-secondary); font-size: 0.9em; margin-bottom: 4px; }
+    .theme-presets { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .preset-btn { padding: 10px; border: 2px solid var(--border-color); background-color: var(--content-bg); color: var(--text-primary); font-weight: bold; cursor: pointer; transition: all 0.2s; text-align: center; font-size: 0.85em; }
+    .preset-btn.active, .preset-btn:hover { border-color: var(--accent-color); color: var(--accent-color); }
     .theme-options { display: flex; gap: 10px; align-items: center; }
-    .theme-options label { display: flex; align-items: center; gap: 5px; cursor: pointer; }
-    input[type="color"] { border: none; background: none; width: 40px; height: 40px; padding: 0; cursor: pointer; border-radius: 8px; }
-    select, input[type="range"] {
-      width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--border-color);
-      background-color: var(--content-bg); color: var(--text-primary); font-family: var(--font-main);
-    }
+    .color-picker-wrapper { border: 1px solid var(--border-color); padding: 5px; background: var(--content-bg-alt); }
+    input[type="color"] { border: none; background: none; width: 40px; height: 30px; padding: 0; cursor: pointer; }
+    select, input[type="range"] { width: 100%; padding: 8px; border: 1px solid var(--border-color); background-color: var(--content-bg); color: var(--text-primary); font-family: var(--font-main); }
     .theme-actions { display: flex; gap: 10px; margin-top: 15px; }
     .theme-actions button { flex-grow: 1; }
   </style>
@@ -452,12 +383,10 @@
         <div id="adv-tab-ota" class="adv-modal-tab-content">
             <h5>CẬP NHẬT FIRMWARE (OTA)</h5>
             <div class="actions-list" style="gap: 15px; padding-top: 10px;">
-                
                 <h5>1. CHỌN THIẾT BỊ CẦN CẬP NHẬT</h5>
                 <div id="ota-device-selection-list" class="ota-device-selection">
                     <p class="list-placeholder">Đang chờ danh sách thiết bị...</p>
                 </div>
-                
                 <h5>2. CHỌN FILE FIRMWARE (.bin)</h5>
                 <input type="file" id="ota-file-input" accept=".bin" style="display: none;">
                 <button class="action-btn" id="ota-select-file-btn" onclick="document.getElementById('ota-file-input').click();" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 40px; font-size: 0.9em;">
@@ -465,16 +394,9 @@
                     Chọn File (.bin)
                 </button>
                 <div id="ota-file-name" style="text-align: center; color: var(--accent-color-alt); font-weight: bold; min-height: 20px; font-size: 0.9em;">Chưa chọn tệp nào</div>
-
                 <h5>3. BẮT ĐẦU CẬP NHẬT</h5>
-                <div id="ota-progress-container">
-                    <div id="ota-progress-bar">0%</div>
-                </div>
-                <div id="ota-status-text"></div>
-                <div id="ota-progress-details"></div>
-                
-                <div id="ota-device-status-list"></div>
-
+                <div id="ota-progress-container"> <div id="ota-progress-bar">0%</div> </div>
+                <div id="ota-status-text"></div> <div id="ota-progress-details"></div> <div id="ota-device-status-list"></div>
                 <button class="action-btn" id="ota-upload-btn" style="width: 100%; height: 40px; font-size: 0.9em; background-color: #27ae60; color: #fff; display: none;" onclick="handleOtaUpload()">Bắt đầu Cập nhật</button>
             </div>
         </div>
@@ -483,16 +405,18 @@
             <h5>TÙY CHỈNH GIAO DIỆN</h5>
             <div class="theme-settings-container">
                 <div class="theme-setting-row">
-                    <label class="theme-label">Chế độ</label>
-                    <div class="theme-options">
-                        <label><input type="radio" name="theme_mode" value="dark" checked> Tối</label>
-                        <label><input type="radio" name="theme_mode" value="light"> Sáng</label>
+                    <label class="theme-label">Chủ đề cài sẵn</label>
+                    <div class="theme-presets">
+                        <button class="preset-btn" data-theme="default">Mặc định</button>
+                        <button class="preset-btn" data-theme="light">Ánh sáng</button>
+                        <button class="preset-btn" data-theme="ocean">Xanh biển</button>
+                        <button class="preset-btn" data-theme="classic">Cổ điển</button>
                     </div>
                 </div>
                 <div class="theme-setting-row">
                     <label class="theme-label" for="theme_accent_color">Màu sắc chủ đạo</label>
-                    <div class="theme-options">
-                        <input type="color" id="theme_accent_color" value="#f39c12">
+                    <div class="theme-options color-picker-wrapper">
+                        <input type="color" id="theme_accent_color">
                     </div>
                 </div>
                 <div class="theme-setting-row">
@@ -506,13 +430,11 @@
                     </select>
                 </div>
                 <div class="theme-setting-row">
-                    <label class="theme-label" for="theme_font_size">Cỡ chữ cơ bản (<span id="font-size-value">15</span>px)</label>
-                    <input type="range" id="theme_font_size" min="12" max="18" value="15" step="1">
+                    <label class="theme-label" for="theme_border_radius">Độ bo góc (<span id="border-radius-value">18</span>px)</label>
+                    <input type="range" id="theme_border_radius" min="0" max="30" value="18" step="1">
                 </div>
                 <div class="theme-actions">
-                    <button class="action-btn" onclick="handleApplyTheme()">Áp dụng thử</button>
-                    <button class="action-btn" style="background-color: #27ae60;" onclick="handleSaveTheme()">Lưu</button>
-                    <button class="action-btn reset" onclick="handleResetTheme()">Mặc định</button>
+                    <button class="action-btn" style="background-color: #27ae60;" onclick="handleSaveTheme()">Lưu Giao Diện</button>
                 </div>
             </div>
         </div>
@@ -535,39 +457,59 @@
       </div>
   </div>
 
-
   <script>
     if("true"!==sessionStorage.getItem("isLoggedIn"))window.location.href="login.html";
     
-    // --- [MỚI] LOGIC XỬ LÝ GIAO DIỆN ---
+    // --- LOGIC XỬ LÝ GIAO DIỆN NÂNG CAO ---
+    const themes = {
+        default: {
+            bgGradStart: '#3a4750', bgGradEnd: '#4a627a', contentBg: '#2c3e50', contentBgAlt: '#232526',
+            textPrimary: '#f5f6fa', textSecondary: '#bdc3c7', accentColor: '#f39c12', borderColor: '#414345',
+        },
+        light: {
+            bgGradStart: '#f8f9fa', bgGradEnd: '#e9ecef', contentBg: '#ffffff', contentBgAlt: '#f1f3f5',
+            textPrimary: '#212529', textSecondary: '#6c757d', accentColor: '#007bff', borderColor: '#dee2e6',
+        },
+        ocean: {
+            bgGradStart: '#0f2027', bgGradEnd: '#203a43', contentBg: '#2c5364', contentBgAlt: '#1a3a4a',
+            textPrimary: '#e0e0e0', textSecondary: '#b0bec5', accentColor: '#1488cc', borderColor: '#547888',
+        },
+        classic: {
+            bgGradStart: '#d7c7a5', bgGradEnd: '#c3b38a', contentBg: '#ede4ce', contentBgAlt: '#f5f0e0',
+            textPrimary: '#4b3f2e', textSecondary: '#6f5f4a', accentColor: '#8a5a44', borderColor: '#b8a684',
+        }
+    };
+
     const defaultThemeSettings = {
-        mode: 'dark',
-        accentColor: '#f39c12',
+        preset: 'default',
         fontFamily: "'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif",
-        fontSize: '15px'
+        fontSize: '15px',
+        borderRadius: '18px',
+        accentColorOverride: null
     };
 
     function hexToRgb(hex) {
         let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-        return result ? {
-            r: parseInt(result[1], 16),
-            g: parseInt(result[2], 16),
-            b: parseInt(result[3], 16)
-        } : null;
+        return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : null;
     }
     
     function applyTheme(settings) {
-        document.body.classList.remove('theme-light', 'theme-dark');
-        document.body.classList.add(`theme-${settings.mode}`);
-        
+        const theme = themes[settings.preset] || themes.default;
         const root = document.documentElement;
-        root.style.setProperty('--accent-color', settings.accentColor);
-        root.style.setProperty('--accent-color-alt', settings.accentColor); // Giữ 2 màu giống nhau cho đơn giản
+        
+        Object.keys(theme).forEach(key => {
+            let cssVarName = '--' + key.replace(/([A-Z])/g, '-$1').toLowerCase();
+            root.style.setProperty(cssVarName, theme[key]);
+        });
+        
+        const accentColor = settings.accentColorOverride || theme.accentColor;
+        root.style.setProperty('--accent-color', accentColor);
+        root.style.setProperty('--accent-color-alt', accentColor);
         root.style.setProperty('--font-main', settings.fontFamily);
         root.style.setProperty('--font-size-base', settings.fontSize);
+        root.style.setProperty('--border-radius', settings.borderRadius);
 
-        // Tạo các biến màu alpha tự động
-        const rgb = hexToRgb(settings.accentColor);
+        const rgb = hexToRgb(accentColor);
         if(rgb) {
           root.style.setProperty('--accent-color-alpha-18', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.18)`);
           root.style.setProperty('--accent-color-alt-alpha-33', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.33)`);
@@ -578,69 +520,83 @@
     function loadThemeSettings() {
         try {
             const savedSettings = localStorage.getItem('themeSettings');
-            return savedSettings ? JSON.parse(savedSettings) : defaultThemeSettings;
-        } catch (e) {
-            console.error("Lỗi khi tải cài đặt giao diện:", e);
-            return defaultThemeSettings;
-        }
+            return savedSettings ? { ...defaultThemeSettings, ...JSON.parse(savedSettings) } : defaultThemeSettings;
+        } catch (e) { console.error("Lỗi khi tải cài đặt giao diện:", e); return defaultThemeSettings; }
     }
 
-    function saveThemeSettings(settings) {
-        localStorage.setItem('themeSettings', JSON.stringify(settings));
-    }
+    function saveThemeSettings(settings) { localStorage.setItem('themeSettings', JSON.stringify(settings)); }
 
-    function initThemeEditor() {
-        const settings = loadThemeSettings();
-        document.querySelector(`input[name="theme_mode"][value="${settings.mode}"]`).checked = true;
-        document.getElementById('theme_accent_color').value = settings.accentColor;
+    function updateThemeUI(settings) {
+        const theme = themes[settings.preset] || themes.default;
+        document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.theme === settings.preset));
+        document.getElementById('theme_accent_color').value = settings.accentColorOverride || theme.accentColor;
         document.getElementById('theme_font_family').value = settings.fontFamily;
-        const fontSize = parseInt(settings.fontSize, 10);
-        document.getElementById('theme_font_size').value = fontSize;
-        document.getElementById('font-size-value').textContent = fontSize;
+        const radius = parseInt(settings.borderRadius, 10);
+        const radiusSlider = document.getElementById('theme_border_radius');
+        radiusSlider.value = radius;
+        document.getElementById('border-radius-value').textContent = radius;
     }
 
-    function handleApplyTheme() {
-        const settings = {
-            mode: document.querySelector('input[name="theme_mode"]:checked').value,
-            accentColor: document.getElementById('theme_accent_color').value,
+    function getSettingsFromUI() {
+        const activePreset = document.querySelector('.preset-btn.active')?.dataset.theme || 'default';
+        const accentColor = document.getElementById('theme_accent_color').value;
+        const baseAccentColor = themes[activePreset].accentColor;
+        return {
+            preset: activePreset,
             fontFamily: document.getElementById('theme_font_family').value,
-            fontSize: `${document.getElementById('theme_font_size').value}px`
+            fontSize: `15px`,
+            borderRadius: `${document.getElementById('theme_border_radius').value}px`,
+            accentColorOverride: accentColor.toLowerCase() !== baseAccentColor.toLowerCase() ? accentColor : null
         };
-        applyTheme(settings);
     }
     
     function handleSaveTheme() {
-        const settings = {
-            mode: document.querySelector('input[name="theme_mode"]:checked').value,
-            accentColor: document.getElementById('theme_accent_color').value,
-            fontFamily: document.getElementById('theme_font_family').value,
-            fontSize: `${document.getElementById('theme_font_size').value}px`
-        };
+        const settings = getSettingsFromUI();
         saveThemeSettings(settings);
         applyTheme(settings);
         showNotification('Đã lưu cài đặt giao diện!', 'success');
     }
 
-    function handleResetTheme() {
-        saveThemeSettings(defaultThemeSettings);
-        applyTheme(defaultThemeSettings);
-        initThemeEditor();
-        showNotification('Đã đặt lại giao diện về mặc định.', 'info');
+    function initThemeSystem() {
+        const settings = loadThemeSettings();
+        applyTheme(settings);
+        if(document.getElementById('adv-tab-theme')) {
+            updateThemeUI(settings);
+            document.querySelectorAll('.preset-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    const presetName = btn.dataset.theme;
+                    const currentSettings = getSettingsFromUI();
+                    currentSettings.preset = presetName;
+                    currentSettings.accentColorOverride = null;
+                    applyTheme(currentSettings);
+                    updateThemeUI(currentSettings);
+                });
+            });
+            ['theme_accent_color', 'theme_font_family', 'theme_border_radius'].forEach(id => {
+                document.getElementById(id).addEventListener('input', () => {
+                    const settings = getSettingsFromUI();
+                    applyTheme(settings);
+                    if(id === 'theme_border_radius') {
+                        document.getElementById('border-radius-value').textContent = document.getElementById(id).value;
+                    }
+                });
+            });
+        }
     }
     // --- KẾT THÚC LOGIC GIAO DIỆN ---
 
     let client, targetDevice = null, targetAction = null, otaInProgress = false;
-    
     const brokerUrl="wss://366af3ec40124749863257ecd2c62b3e.s1.eu.hivemq.cloud:8884/mqtt";
     const options={username:"ngoctuyka",password:"Tu12345678@",clientId:"WebAppClient_Settings_"+parseInt(1e3*Math.random()),reconnectPeriod:2e3,protocolVersion: 4};
-    
-    const ONLINE_STATUS_TOPIC = "esp32/bell/status/online";
     const CONTROL_TOPIC = "esp32/bell/control";
+    const COMMAND_ACK_TOPIC = "esp32/bell/command/ack";
+    const ONLINE_STATUS_TOPIC = "esp32/bell/status/online";
     const SYS_INFO_TOPIC = "esp32/bell/status/sysinfo";
+    const MANAGE_STATUS_TOPIC = "esp32/bell/manage/status";
     const MANAGE_ADD_TOPIC = "esp32/bell/manage/add";
     const MANAGE_REMOVE_TOPIC = "esp32/bell/manage/remove";
-    const MANAGE_STATUS_TOPIC = "esp32/bell/manage/status";
-    const COMMAND_ACK_TOPIC = "esp32/bell/command/ack";
     const OTA_COMMAND_TOPIC = "esp32/bell/ota/command";
     const OTA_DATA_TOPIC = "esp32/bell/ota/data";
     const OTA_STATUS_TOPIC = "esp32/bell/ota/status";
@@ -653,399 +609,149 @@
         const statusDiv = document.getElementById("status");
         statusDiv.textContent="Đang kết nối...";
         statusDiv.className="status-bar status-connecting";
-        
         client=mqtt.connect(brokerUrl,options);
-        
         client.on("connect",()=>{
             console.log("Đã kết nối thành công đến MQTT broker!");
-            const topicsToSubscribe = [
-                ONLINE_STATUS_TOPIC, 
-                SYS_INFO_TOPIC, 
-                MANAGE_STATUS_TOPIC, 
-                COMMAND_ACK_TOPIC, 
-                OTA_STATUS_TOPIC,
-                OTA_SATELLITE_STATUS_TOPIC
-            ];
-            client.subscribe(topicsToSubscribe, {qos:1}, (err)=>{
-                if(!err) console.log("Đăng ký nhận các topic thành công!");
-            });
+            client.subscribe([ONLINE_STATUS_TOPIC, SYS_INFO_TOPIC, MANAGE_STATUS_TOPIC, COMMAND_ACK_TOPIC, OTA_STATUS_TOPIC, OTA_SATELLITE_STATUS_TOPIC], {qos:1}, (err)=>{ if(!err) console.log("Đăng ký nhận các topic thành công!"); });
         });
-        
         client.on("message",(topic, payload)=>{
             const payloadString = payload.toString();
-            
             if (topic === ONLINE_STATUS_TOPIC) {
-                if (payloadString === 'online') {
-                    statusDiv.textContent = "Thiết bị đang hoạt động";
-                    statusDiv.className = "status-bar status-connected";
-                } else {
-                    statusDiv.textContent = "Thiết bị ngoại tuyến";
-                    statusDiv.className = "status-bar status-disconnected";
-                }
+                statusDiv.textContent = payloadString === 'online' ? "Thiết bị đang hoạt động" : "Thiết bị ngoại tuyến";
+                statusDiv.className = payloadString === 'online' ? "status-bar status-connected" : "status-bar status-disconnected";
             }
-
-            if (topic === SYS_INFO_TOPIC) {
-                try {
-                    const info = JSON.parse(payloadString);
-                    renderSystemInfo(info);
-                } catch(e) { console.error("Lỗi parse JSON thông tin hệ thống:", e); }
-            }
-            
-            if (topic === MANAGE_STATUS_TOPIC) {
-                try {
-                    const data = JSON.parse(payloadString);
-                    renderDeviceLists(data.managed || [], data.discovered || []);
-                } catch(e) { console.error("Lỗi parse JSON quản lý vệ tinh:", e); }
-            }
-
-            if (topic === COMMAND_ACK_TOPIC) {
-                try {
-                    const ack = JSON.parse(payloadString);
-                    const message = `[${ack.name}] ${ack.message}`;
-                    showNotification(message, ack.status || 'success');
-                } catch (e) { console.error("Lỗi parse JSON phản hồi lệnh:", e); }
-            }
-            
-            if (topic === OTA_STATUS_TOPIC || topic === OTA_SATELLITE_STATUS_TOPIC) {
-                try {
-                    const status = JSON.parse(payloadString);
-                    const deviceName = status.device || (status.name || 'Unknown');
-                    
-                    let deviceStatusEl = document.getElementById(`ota-status-${deviceName}`);
-                    const statusList = document.getElementById('ota-device-status-list');
-                    if (!deviceStatusEl) {
-                        deviceStatusEl = document.createElement('div');
-                        deviceStatusEl.id = `ota-status-${deviceName}`;
-                        statusList.appendChild(deviceStatusEl);
-                    }
-                    
-                    let progressText = '';
-                    if (status.progress !== undefined) {
-                        progressText = `${status.progress}% - `;
-                    }
-                    deviceStatusEl.textContent = `[${deviceName}]: ${progressText}${status.details}`;
-
-                    if (status.status === 'error') deviceStatusEl.style.color = 'var(--error-color)';
-                    else if (status.status === 'success') deviceStatusEl.style.color = 'var(--success-color)';
-                    else if (status.status === 'progress' || status.status === 'start') deviceStatusEl.style.color = '#3498db';
-                    else deviceStatusEl.style.color = 'var(--text-secondary)';
-                } catch (e) { console.error("Lỗi parse JSON trạng thái OTA:", e); }
-            }
+            if (topic === SYS_INFO_TOPIC) try { renderSystemInfo(JSON.parse(payloadString)); } catch(e) { console.error("Lỗi parse JSON SYS_INFO:", e); }
+            if (topic === MANAGE_STATUS_TOPIC) try { const d=JSON.parse(payloadString); renderDeviceLists(d.managed||[], d.discovered||[]); } catch(e) { console.error("Lỗi parse JSON MANAGE_STATUS:", e); }
+            if (topic === COMMAND_ACK_TOPIC) try { const a=JSON.parse(payloadString); showNotification(`[${a.name}] ${a.message}`, a.status||'success'); } catch (e) { console.error("Lỗi parse JSON ACK:", e); }
+            if (topic === OTA_STATUS_TOPIC || topic === OTA_SATELLITE_STATUS_TOPIC) try {
+                const s = JSON.parse(payloadString), name = s.device||s.name||'Unknown';
+                let el=document.getElementById(`ota-status-${name}`), list=document.getElementById('ota-device-status-list');
+                if(!el){ el=document.createElement('div'); el.id=`ota-status-${name}`; list.appendChild(el); }
+                el.textContent = `[${name}]: ${s.progress!==undefined?`${s.progress}% - `:''}${s.details}`;
+                if(s.status==='error')el.style.color='var(--error-color)'; else if(s.status==='success')el.style.color='var(--success-color)'; else if(s.status==='progress'||s.status==='start')el.style.color='#3498db'; else el.style.color='var(--text-secondary)';
+            } catch(e) { console.error("Lỗi parse JSON OTA_STATUS:", e); }
         });
-        
         client.on("error", e => console.error("Lỗi kết nối MQTT:", e));
-        
         client.on("close",()=>{
-            console.log("Mất kết nối MQTT. Đang thử kết nối lại...");
-            statusDiv.textContent = "Mất kết nối máy chủ";
-            statusDiv.className = "status-bar status-disconnected";
+            console.log("Mất kết nối MQTT."); statusDiv.textContent = "Mất kết nối máy chủ"; statusDiv.className = "status-bar status-disconnected";
         });
     }
 
-    // Các hàm JS cũ không thay đổi, chỉ di chuyển xuống dưới...
-    // ... (toàn bộ các hàm JS cũ của bạn được giữ nguyên ở đây) ...
-    // ...
     function showNotification(message, type = 'success') {
         const area = document.getElementById('notification-area');
         const notif = document.createElement('div');
-        notif.className = `notification ${type}`;
-        notif.textContent = message;
+        notif.className = `notification ${type}`; notif.textContent = message;
         area.appendChild(notif);
         setTimeout(() => { notif.classList.add('show'); }, 10);
-        setTimeout(() => {
-            notif.classList.remove('show');
-            setTimeout(() => { if(area.contains(notif)) area.removeChild(notif); }, 300);
-        }, 4000);
+        setTimeout(() => { notif.classList.remove('show'); setTimeout(() => { if(area.contains(notif)) area.removeChild(notif); }, 300); }, 4000);
     }
     
     function populateSohоiForm() {
-        const storedSohоi = sessionStorage.getItem('sohoi_settings');
-        if (storedSohоi) {
-            const t = JSON.parse(storedSohоi);
-            ["batdau","vaotiet","rachoi","duvao", "tg_reo", "tg_nghi"].forEach(e=>{
-                const o=document.getElementById(`sohoi_${e}`);
-                if(o) o.value = t[e] || "";
-            });
-        }
+        const stored = sessionStorage.getItem('sohoi_settings');
+        if (stored) { const t = JSON.parse(stored); ["batdau","vaotiet","rachoi","duvao","tg_reo","tg_nghi"].forEach(e=>{ const o=document.getElementById(`sohoi_${e}`); if(o) o.value=t[e]||""; }); }
     }
-
     function publishSohоiUpdate() {
         if(!client||!client.connected) return showNotification("Chưa kết nối máy chủ!", 'error');
-        const sohoiData = {};
-        ["batdau","vaotiet","rachoi","duvao", "tg_reo", "tg_nghi"].forEach(t=>{
-            sohoiData[t]=parseInt(document.getElementById(`sohoi_${t}`).value)||0
-        });
-        
-        sessionStorage.setItem('sohoi_settings', JSON.stringify(sohoiData));
-        sessionStorage.setItem('notification', JSON.stringify({
-            message: 'Đã lưu cài đặt số hồi. Quay về trang lịch và nhấn "Lưu và gửi cập nhật" để áp dụng cho thiết bị.',
-            type: 'info'
-        }));
-        
+        const data={}; ["batdau","vaotiet","rachoi","duvao","tg_reo","tg_nghi"].forEach(t=>{data[t]=parseInt(document.getElementById(`sohoi_${t}`).value)||0});
+        sessionStorage.setItem('sohoi_settings', JSON.stringify(data));
+        sessionStorage.setItem('notification', JSON.stringify({ message: 'Đã lưu cài đặt số hồi. Quay về trang lịch và nhấn "Lưu và gửi cập nhật" để áp dụng.', type: 'info' }));
         showNotification("Đã lưu tạm cài đặt số hồi!");
     }
-
     function publishTestBell(){
-        if(client&&client.connected) {
-            const payload = { command: "TEST_BELL" };
-            client.publish(CONTROL_TOPIC, JSON.stringify(payload), {qos:1});
-            showNotification("Đã gửi lệnh thử chuông chung...");
-        } else {
-            showNotification("Chưa kết nối máy chủ!", 'error');
-        }
+        if(client&&client.connected) { client.publish(CONTROL_TOPIC, JSON.stringify({ command: "TEST_BELL" }), {qos:1}); showNotification("Đã gửi lệnh thử chuông chung..."); } 
+        else { showNotification("Chưa kết nối máy chủ!", 'error'); }
     }
-
-    function openAdvancedSettingsModal() {
-        document.getElementById('advanced-settings-modal').classList.add('visible');
-        if (document.getElementById('adv-tab-system').classList.contains('active')) {
-            requestSystemInfo();
-        }
-        if (document.getElementById('adv-tab-theme').classList.contains('active')) {
-            initThemeEditor();
-        }
-    }
+    function openAdvancedSettingsModal() { document.getElementById('advanced-settings-modal').classList.add('visible'); if(document.querySelector('#adv-tab-system.active')) requestSystemInfo(); if(document.querySelector('#adv-tab-theme.active')) initThemeSystem(); }
     function closeAdvancedSettingsModal() { document.getElementById('advanced-settings-modal').classList.remove('visible'); }
     function switchAdvTab(evt, tabName) {
-        document.querySelectorAll('.adv-modal-tab').forEach(tab => tab.classList.remove('active'));
-        document.querySelectorAll('.adv-modal-tab-content').forEach(content => content.classList.remove('active'));
-        evt.currentTarget.classList.add('active');
-        document.getElementById(tabName).classList.add('active');
-        if (tabName === 'adv-tab-system') requestSystemInfo();
-        if (tabName === 'adv-tab-theme') initThemeEditor();
+        document.querySelectorAll('.adv-modal-tab, .adv-modal-tab-content').forEach(el => el.classList.remove('active'));
+        evt.currentTarget.classList.add('active'); document.getElementById(tabName).classList.add('active');
+        if (tabName === 'adv-tab-system') requestSystemInfo(); if (tabName === 'adv-tab-theme') initThemeSystem();
     }
-    
-    // ... (Các hàm JS cũ khác của ông) ...
     function renderSystemInfo(info) {
-        const listDiv = document.getElementById('system-info-actions-list');
-        if (!listDiv) return;
-
-        listDiv.innerHTML = ''; 
-
-        const createItem = (icon, title, value, valueClass = '') => {
-            return `
-                <div class="action-item">
-                    <div class="action-icon">${icon}</div>
-                    <div class="action-text">
-                        <div class="title">${title}</div>
-                        <div class="description ${valueClass}">${value}</div>
-                    </div>
-                </div>
-            `;
-        };
-
-        const wifiIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C7.486 2 3.407 3.585 0 6l1.414 1.414C4.195 5.53 7.855 4 12 4s7.805 1.53 10.586 3.414L24 6C20.593 3.585 16.514 2 12 2zm0 4c-3.145 0-6.195 1.229-8.485 3.414L5.414 11.31C7.21 9.898 9.51 9 12 9s4.79 0.898 6.586 2.31l1.899-1.898C18.195 7.229 15.145 6 12 6zm0 5c-1.854 0-3.58.718-4.828 1.968L9.07 14.864C9.945 14.18 10.94 13.8 12 13.8s2.055 0.38 2.93 1.064l1.898-1.898C15.58 11.718 13.854 11 12 11zm0 4.2c-0.828 0-1.5 0.672-1.5 1.5s0.672 1.5 1.5 1.5 1.5-0.672 1.5-1.5-0.672-1.5-1.5-1.5z"></path></svg>';
-        const ipIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm-1.999 14.413-3.713-3.713 1.414-1.414 2.299 2.299 4.949-4.95 1.414 1.414-6.363 6.364z"></path></svg>';
-        const rtcIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586z"></path></svg>';
-        const lcdIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20 3H4c-1.103 0-2 .897-2 2v11c0 1.103.897 2 2 2h3l-1 2v1h12v-1l-1-2h3c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2zM4 14V5h16l.002 9H4z"></path></svg>';
-        const flashIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"></path></svg>';
-        const ramIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 5h16v2H4zm0 4h16v2H4zm0 4h16v2H4zm0 4h16v2H4z"></path></svg>';
-
-        listDiv.innerHTML += createItem(wifiIcon, 'Tên WiFi (SSID)', info.ssid || 'N/A');
-        listDiv.innerHTML += createItem(ipIcon, 'Địa chỉ IP', info.ip || 'N/A');
-        listDiv.innerHTML += createItem(rtcIcon, 'Module RTC', info.rtc ? 'Đã kết nối' : 'Không tìm thấy', info.rtc ? 'description connected' : 'description disconnected');
-        listDiv.innerHTML += createItem(lcdIcon, 'Màn hình LCD', info.lcd ? 'Đã kết nối' : 'Không tìm thấy', info.lcd ? 'description connected' : 'description disconnected');
-        listDiv.innerHTML += createItem(flashIcon, 'Bộ nhớ Flash', `${info.flash_usage || 'N/A'} % (${info.running_partition || ''})`);
-        
-        listDiv.innerHTML += createItem(ramIcon, 'RAM trong (SRAM)', `${info.sram_usage_percent || 'N/A'} % (Còn trống ${info.sram_free_kb || 'N/A'} KB)`);
-        listDiv.innerHTML += createItem(ramIcon, 'RAM ngoài (PSRAM)', `${info.psram_usage_percent || 'N/A'} % (Còn trống ${info.psram_free_mb || 'N/A'} MB)`);
+        const list=document.getElementById('system-info-actions-list'); if(!list)return; list.innerHTML='';
+        const i=(c,t,v,cl='')=>`<div class="action-item"><div class="action-icon">${c}</div><div class="action-text"><div class="title">${t}</div><div class="description ${cl}">${v}</div></div></div>`;
+        const icons={wifi:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C7.486 2 3.407 3.585 0 6l1.414 1.414C4.195 5.53 7.855 4 12 4s7.805 1.53 10.586 3.414L24 6C20.593 3.585 16.514 2 12 2zm0 4c-3.145 0-6.195 1.229-8.485 3.414L5.414 11.31C7.21 9.898 9.51 9 12 9s4.79 0.898 6.586 2.31l1.899-1.898C18.195 7.229 15.145 6 12 6zm0 5c-1.854 0-3.58.718-4.828 1.968L9.07 14.864C9.945 14.18 10.94 13.8 12 13.8s2.055 0.38 2.93 1.064l1.898-1.898C15.58 11.718 13.854 11 12 11zm0 4.2c-0.828 0-1.5 0.672-1.5 1.5s0.672 1.5 1.5 1.5 1.5-0.672 1.5-1.5-0.672-1.5-1.5-1.5z"></path></svg>',ip:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm-1.999 14.413-3.713-3.713 1.414-1.414 2.299 2.299 4.949-4.95 1.414 1.414-6.363 6.364z"></path></svg>',rtc:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586z"></path></svg>',lcd:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20 3H4c-1.103 0-2 .897-2 2v11c0 1.103.897 2 2 2h3l-1 2v1h12v-1l-1-2h3c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2zM4 14V5h16l.002 9H4z"></path></svg>',flash:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"></path></svg>',ram:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 5h16v2H4zm0 4h16v2H4zm0 4h16v2H4zm0 4h16v2H4z"></path></svg>'};
+        list.innerHTML+=i(icons.wifi,'Tên WiFi (SSID)',info.ssid||'N/A'); list.innerHTML+=i(icons.ip,'Địa chỉ IP',info.ip||'N/A');
+        list.innerHTML+=i(icons.rtc,'Module RTC',info.rtc?'Đã kết nối':'Không tìm thấy',info.rtc?'connected':'disconnected');
+        list.innerHTML+=i(icons.lcd,'Màn hình LCD',info.lcd?'Đã kết nối':'Không tìm thấy',info.lcd?'connected':'disconnected');
+        list.innerHTML+=i(icons.flash,'Bộ nhớ Flash',`${info.flash_usage||'N/A'} % (${info.running_partition||''})`);
+        list.innerHTML+=i(icons.ram,'RAM trong (SRAM)',`${info.sram_usage_percent||'N/A'} % (Còn trống ${info.sram_free_kb||'N/A'} KB)`);
+        list.innerHTML+=i(icons.ram,'RAM ngoài (PSRAM)',`${info.psram_usage_percent||'N/A'} % (Còn trống ${info.psram_free_mb||'N/A'} MB)`);
     }
-    function requestSystemInfo() {
-        if (client && client.connected) client.publish(CONTROL_TOPIC, "GET_SYS_INFO", {qos: 1});
-        else showNotification("Chưa kết nối đến máy chủ!", 'error');
+    function requestSystemInfo() { if (client&&client.connected) client.publish(CONTROL_TOPIC, "GET_SYS_INFO", {qos:1}); else showNotification("Chưa kết nối!",'error'); }
+    function openPasswordModal(device, action) {
+        targetDevice=device; targetAction=action;
+        const title=document.getElementById('password-modal-title'), desc=document.getElementById('password-modal-description');
+        if(action==='wifi'){title.textContent=`Reset WiFi cho ${device}`; desc.textContent=`Xóa cấu hình WiFi đã lưu trên ${device}.`;}
+        else if(action==='restart'){title.textContent=`Khởi động lại ${device}`; desc.textContent=`Khởi động lại thiết bị ${device}.`;}
+        document.getElementById('password-modal-overlay').classList.add('visible'); document.getElementById('admin-password-input').focus();
     }
-    function openPasswordModal(deviceName, action) {
-        targetDevice = deviceName;
-        targetAction = action;
-        const titleEl = document.getElementById('password-modal-title');
-        const descEl = document.getElementById('password-modal-description');
-        if (action === 'wifi') {
-            titleEl.textContent = `Reset WiFi cho ${deviceName}`;
-            descEl.textContent = `Hành động này sẽ xóa cấu hình WiFi đã lưu trên ${deviceName}.`;
-        } else if (action === 'restart') {
-            titleEl.textContent = `Khởi động lại ${deviceName}`;
-            descEl.textContent = `Hành động này sẽ khởi động lại thiết bị ${deviceName}.`;
-        }
-        document.getElementById('password-modal-overlay').classList.add('visible');
-        document.getElementById('admin-password-input').focus();
-    }
-    function closePasswordModal() {
-        document.getElementById('password-modal-overlay').classList.remove('visible');
-        document.getElementById('admin-password-input').value = '';
-        targetDevice = null; targetAction = null;
-    }
+    function closePasswordModal() { document.getElementById('password-modal-overlay').classList.remove('visible'); document.getElementById('admin-password-input').value=''; targetDevice=null; targetAction=null; }
     function confirmAction() {
-        const password = document.getElementById('admin-password-input').value;
-        if (!password) return showNotification('Vui lòng nhập mật khẩu!', 'error');
-        if (!targetDevice || !targetAction) return closePasswordModal();
-        let payload = { target: targetDevice, admin_pass: password };
-        let notificationText = '';
-        if (targetAction === 'wifi') {
-            payload.command = "RESET_WIFI";
-            notificationText = `Đã gửi lệnh Reset WiFi đến ${targetDevice}...`;
-        } else if (targetAction === 'restart') {
-            payload.command = "RESTART_ESP";
-            notificationText = `Đã gửi lệnh khởi động lại đến ${targetDevice}...`;
-        } else return closePasswordModal();
-        if (client && client.connected) {
-            client.publish(CONTROL_TOPIC, JSON.stringify(payload), { qos: 1 });
-            showNotification(notificationText);
-        } else showNotification("Chưa kết nối đến máy chủ!", 'error');
-        closePasswordModal();
+        const pass=document.getElementById('admin-password-input').value; if(!pass)return showNotification('Vui lòng nhập mật khẩu!','error');
+        if(!targetDevice||!targetAction)return closePasswordModal();
+        let payload={target:targetDevice, admin_pass:pass}, text='';
+        if(targetAction==='wifi'){payload.command="RESET_WIFI"; text=`Đã gửi lệnh Reset WiFi đến ${targetDevice}...`;}
+        else if(targetAction==='restart'){payload.command="RESTART_ESP"; text=`Đã gửi lệnh khởi động lại đến ${targetDevice}...`;}
+        else return closePasswordModal();
+        if(client&&client.connected){client.publish(CONTROL_TOPIC, JSON.stringify(payload), {qos:1}); showNotification(text);}
+        else showNotification("Chưa kết nối!",'error'); closePasswordModal();
     }
     function handleChangePassword() {
-        const oldPass = document.getElementById('old-admin-password').value;
-        const newPass = document.getElementById('new-admin-password').value;
-        const confirmPass = document.getElementById('confirm-admin-password').value;
-        if (!oldPass || !newPass || !confirmPass) return showNotification('Vui lòng điền đầy đủ thông tin!', 'error');
-        if (newPass !== confirmPass) return showNotification('Mật khẩu mới không khớp!', 'error');
-        if (newPass.length < 8) return showNotification('Mật khẩu mới phải có ít nhất 8 ký tự!', 'error');
-        if (client && client.connected) {
-            const payload = { command: "CHANGE_PASSWORD", old_pass: oldPass, new_pass: newPass };
-            client.publish(CONTROL_TOPIC, JSON.stringify(payload), { qos: 1 });
-            showNotification("Đã gửi yêu cầu thay đổi mật khẩu...");
-            document.getElementById('old-admin-password').value = '';
-            document.getElementById('new-admin-password').value = '';
-            document.getElementById('confirm-admin-password').value = '';
-        } else showNotification("Chưa kết nối đến máy chủ!", 'error');
+        const oldP=document.getElementById('old-admin-password').value, newP=document.getElementById('new-admin-password').value, confP=document.getElementById('confirm-admin-password').value;
+        if(!oldP||!newP||!confP)return showNotification('Vui lòng điền đủ thông tin!','error');
+        if(newP!==confP)return showNotification('Mật khẩu mới không khớp!','error');
+        if(newP.length<8)return showNotification('Mật khẩu mới phải có ít nhất 8 ký tự!','error');
+        if(client&&client.connected){ const p={command:"CHANGE_PASSWORD",old_pass:oldP,new_pass:newP}; client.publish(CONTROL_TOPIC,JSON.stringify(p),{qos:1}); showNotification("Đã gửi yêu cầu thay đổi mật khẩu..."); document.getElementById('old-admin-password').value=''; document.getElementById('new-admin-password').value=''; document.getElementById('confirm-admin-password').value=''; }
+        else showNotification("Chưa kết nối!",'error');
     }
-    function addSatellite(deviceName) {
-        if (client && client.connected) client.publish(MANAGE_ADD_TOPIC, deviceName, { qos: 1 });
-        else showNotification("Chưa kết nối đến máy chủ!", 'error');
-    }
-    function removeSatellite(deviceName) {
-        if (confirm(`Bạn có chắc muốn ngừng quản lý thiết bị "${deviceName}" không?`)) {
-            if (client && client.connected) client.publish(MANAGE_REMOVE_TOPIC, deviceName, { qos: 1 });
-            else showNotification("Chưa kết nối đến máy chủ!", 'error');
-        }
-    }
+    function addSatellite(name){if(client&&client.connected)client.publish(MANAGE_ADD_TOPIC,name,{qos:1});else showNotification("Chưa kết nối!",'error');}
+    function removeSatellite(name){if(confirm(`Bạn có chắc muốn ngừng quản lý "${name}"?`)){if(client&&client.connected)client.publish(MANAGE_REMOVE_TOPIC,name,{qos:1});else showNotification("Chưa kết nối!",'error');}}
     function renderDeviceLists(managed, discovered) {
-        const managedListDiv = document.getElementById('managed-devices-list');
-        const discoveredListDiv = document.getElementById('discovered-devices-list');
-        const resetWifiListDiv = document.getElementById('reset-wifi-actions-list');
-        const resetEspListDiv = document.getElementById('reset-esp-actions-list');
-        const otaDeviceListDiv = document.getElementById('ota-device-selection-list');
-        managedListDiv.innerHTML = ''; discoveredListDiv.innerHTML = ''; resetWifiListDiv.innerHTML = ''; resetEspListDiv.innerHTML = ''; otaDeviceListDiv.innerHTML = '';
-        if (managed.length === 0) managedListDiv.innerHTML = '<p class="list-placeholder">Chưa có thiết bị nào được quản lý.</p>';
-        else {
-            managed.forEach(dev => {
-                const item = document.createElement('div');
-                item.className = 'device-item';
-                const statusClass = dev.online ? 'connected' : 'disconnected';
-                const statusText = dev.online ? 'Online' : 'Offline';
-                item.innerHTML = `
-                    <div class="device-item-header"><span class="device-name">${dev.name}</span><span class="device-status ${statusClass}">${statusText}</span></div>
-                    <div class="device-info-grid"><span><span class="label">IP:</span> ${dev.ip || 'N/A'}</span><span><span class="label">Sóng WiFi:</span> ${dev.rssi ? `${dev.rssi} dBm` : 'N/A'}</span><span style="grid-column: 1 / -1;"><span class="label">Uptime:</span> ${dev.uptime || 'N/A'}</span></div>
-                    <div class="device-actions"><button class="device-action-btn cancel-btn" onclick="removeSatellite('${dev.name}')">Hủy</button></div>`;
-                managedListDiv.appendChild(item);
-            });
-        }
-        if (discovered.length === 0) discoveredListDiv.innerHTML = '<p class="list-placeholder">Không phát hiện thiết bị mới nào.</p>';
-        else {
-            discovered.forEach(dev => {
-                const item = document.createElement('div');
-                item.className = 'device-item'; item.style.flexDirection = 'row'; item.style.justifyContent = 'space-between';
-                item.innerHTML = `<div class="device-info"><span class="device-name">${dev.name}</span><div class="device-info-grid" style="grid-template-columns: 1fr; font-size: 0.8em;"><span><span class="label">IP:</span> ${dev.ip || 'N/A'}</span></div></div><button class="device-action-btn add-btn" onclick="addSatellite('${dev.name}')">Thêm</button>`;
-                discoveredListDiv.appendChild(item);
-            });
-        }
-        const allDevices = [{ name: 'ESP32-MayChu', type: 'Máy Chủ' }, ...managed.map(d => ({...d, type: 'Vệ tinh'}))];
-        if(allDevices.length > 0) {
-            allDevices.forEach(dev => {
-                otaDeviceListDiv.innerHTML += `<label><input type="checkbox" class="ota-target-checkbox" value="${dev.name}"><span>${dev.name} <em style="color:var(--text-secondary); font-size: 0.9em;">(${dev.type})</em></span></label>`;
-                resetWifiListDiv.innerHTML += `<div class="action-item"><div class="action-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 13h-2v-2h2v2zm0-4h-2V7h2v2z"></path></svg></div><div class="action-text"><div class="title">${dev.name}</div><div class="description">Xóa cấu hình WiFi của thiết bị ${dev.type} này.</div></div><button class="action-btn reset" onclick="openPasswordModal('${dev.name}', 'wifi')">Reset WiFi</button></div>`;
-                resetEspListDiv.innerHTML += `<div class="action-item"><div class="action-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 2.5a1 1 0 1 0-2 0v2.4a6.5 6.5 0 1 0 9.9 7.4 1 1 0 1 0-1.8-1a4.5 4.5 0 1 1-6.6-5.9V8a1 1 0 1 0 2 0V2.5z"></path></svg></div><div class="action-text"><div class="title">${dev.name}</div><div class="description">Khởi động lại thiết bị ${dev.type} này.</div></div><button class="action-btn reset" style="background-color: #e67e22;" onclick="openPasswordModal('${dev.name}', 'restart')">Restart</button></div>`;
-            });
-        } else otaDeviceListDiv.innerHTML = '<p class="list-placeholder">Không có thiết bị nào.</p>';
-    }
-    function resetOtaUi(hideProgress = false) {
-        otaInProgress = false;
-        const uploadBtn = document.getElementById('ota-upload-btn');
-        document.getElementById('ota-select-file-btn').disabled = false;
-        uploadBtn.disabled = false;
-        uploadBtn.textContent = 'Bắt đầu Cập nhật';
-        uploadBtn.style.backgroundColor = '#27ae60';
-        if (hideProgress) document.getElementById('ota-progress-container').style.display = 'none';
+        const mList=document.getElementById('managed-devices-list'),dList=document.getElementById('discovered-devices-list'),rwList=document.getElementById('reset-wifi-actions-list'),reList=document.getElementById('reset-esp-actions-list'),otaList=document.getElementById('ota-device-selection-list');
+        [mList,dList,rwList,reList,otaList].forEach(l=>l.innerHTML='');
+        if(managed.length===0)mList.innerHTML='<p class="list-placeholder">Chưa có thiết bị nào được quản lý.</p>';
+        else managed.forEach(d=>{const i=document.createElement('div');i.className='device-item';const sC=d.online?'connected':'disconnected',sT=d.online?'Online':'Offline';i.innerHTML=`<div class="device-item-header"><span class="device-name">${d.name}</span><span class="device-status ${sC}">${sT}</span></div><div class="device-info-grid"><span><span class="label">IP:</span> ${d.ip||'N/A'}</span><span><span class="label">Sóng:</span> ${d.rssi?`${d.rssi}dBm`:'N/A'}</span><span style="grid-column:1/-1;"><span class="label">Uptime:</span> ${d.uptime||'N/A'}</span></div><div class="device-actions"><button class="device-action-btn cancel-btn" onclick="removeSatellite('${d.name}')">Hủy</button></div>`;mList.appendChild(i);});
+        if(discovered.length===0)dList.innerHTML='<p class="list-placeholder">Không phát hiện thiết bị mới.</p>';
+        else discovered.forEach(d=>{const i=document.createElement('div');i.className='device-item';i.style.flexDirection='row';i.style.justifyContent='space-between';i.innerHTML=`<div class="device-info"><span class="device-name">${d.name}</span><div class="device-info-grid" style="grid-template-columns:1fr;font-size:0.8em;"><span><span class="label">IP:</span> ${d.ip||'N/A'}</span></div></div><button class="device-action-btn add-btn" onclick="addSatellite('${d.name}')">Thêm</button>`;dList.appendChild(i);});
+        const allDevs=[{name:'ESP32-MayChu',type:'Máy Chủ'},...managed.map(d=>({...d,type:'Vệ tinh'}))];
+        if(allDevs.length>0){allDevs.forEach(d=>{otaList.innerHTML+=`<label><input type="checkbox" class="ota-target-checkbox" value="${d.name}"><span>${d.name} <em style="color:var(--text-secondary);font-size:0.9em;">(${d.type})</em></span></label>`;rwList.innerHTML+=`<div class="action-item"><div class="action-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 13h-2v-2h2v2zm0-4h-2V7h2v2z"></path></svg></div><div class="action-text"><div class="title">${d.name}</div><div class="description">Xóa WiFi của ${d.type}.</div></div><button class="action-btn reset" onclick="openPasswordModal('${d.name}','wifi')">Reset</button></div>`;reList.innerHTML+=`<div class="action-item"><div class="action-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 2.5a1 1 0 1 0-2 0v2.4a6.5 6.5 0 1 0 9.9 7.4 1 1 0 1 0-1.8-1a4.5 4.5 0 1 1-6.6-5.9V8a1 1 0 1 0 2 0V2.5z"></path></svg></div><div class="action-text"><div class="title">${d.name}</div><div class="description">Khởi động lại ${d.type}.</div></div><button class="action-btn reset" style="background-color:#e67e22;" onclick="openPasswordModal('${d.name}','restart')">Restart</button></div>`;});}
+        else otaList.innerHTML='<p class="list-placeholder">Không có thiết bị nào.</p>';
     }
     function handleOtaUpload() {
-        if (otaInProgress) return showNotification("Quá trình cập nhật đang diễn ra!", 'info');
-        if (!client || !client.connected) return showNotification("Chưa kết nối máy chủ!", 'error');
-        const fileInput = document.getElementById('ota-file-input');
-        const file = fileInput.files[0];
-        const selectedDevices = Array.from(document.querySelectorAll('.ota-target-checkbox:checked')).map(cb => cb.value);
-        if (!file) return showNotification("Vui lòng chọn một file firmware (.bin)!", 'error');
-        if (selectedDevices.length === 0) return showNotification("Vui lòng chọn ít nhất một thiết bị để cập nhật!", 'error');
-        otaInProgress = true;
-        const selectBtn = document.getElementById('ota-select-file-btn'), uploadBtn = document.getElementById('ota-upload-btn'), progressContainer = document.getElementById('ota-progress-container'), progressBar = document.getElementById('ota-progress-bar'), statusText = document.getElementById('ota-status-text'), deviceStatusList = document.getElementById('ota-device-status-list');
-        selectBtn.disabled = true; uploadBtn.disabled = true; uploadBtn.textContent = 'Đang cập nhật...'; uploadBtn.style.backgroundColor = '#7f8c8d'; progressContainer.style.display = 'block'; progressBar.style.width = '0%'; progressBar.textContent = '0%'; statusText.textContent = 'Đang đọc file...'; deviceStatusList.innerHTML = '';
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const fileData = e.target.result, fileSize = fileData.byteLength, CHUNK_SIZE = 256; let offset = 0;
-            showNotification(`Bắt đầu OTA cho ${selectedDevices.length} thiết bị...`, 'info');
-            statusText.textContent = 'Gửi lệnh bắt đầu...';
-            for (const deviceName of selectedDevices) {
-                const isMaster = (deviceName === 'ESP32-MayChu');
-                const commandTopic = isMaster ? OTA_COMMAND_TOPIC : OTA_SATELLITE_COMMAND_TOPIC_PREFIX + deviceName;
-                client.publish(commandTopic, JSON.stringify({ action: "START", size: fileSize }), { qos: 1 });
-            }
-            function sendChunk() {
-                if (!otaInProgress || offset >= fileSize) {
-                    if(otaInProgress) {
-                        statusText.textContent = 'Hoàn tất gửi file, đang chờ xác nhận...';
-                        for (const deviceName of selectedDevices) {
-                            const isMaster = (deviceName === 'ESP32-MayChu');
-                            const commandTopic = isMaster ? OTA_COMMAND_TOPIC : OTA_SATELLITE_COMMAND_TOPIC_PREFIX + deviceName;
-                            client.publish(commandTopic, JSON.stringify({ action: "END" }), { qos: 1 });
-                        }
-                        progressBar.style.width = '100%';
-                    }
+        if(otaInProgress)return showNotification("Đang cập nhật!","info"); if(!client||!client.connected)return showNotification("Chưa kết nối!",'error');
+        const fileInput=document.getElementById('ota-file-input'),file=fileInput.files[0],selected=Array.from(document.querySelectorAll('.ota-target-checkbox:checked')).map(cb=>cb.value);
+        if(!file)return showNotification("Vui lòng chọn file firmware!","error"); if(selected.length===0)return showNotification("Vui lòng chọn thiết bị!","error");
+        otaInProgress=true; const selBtn=document.getElementById('ota-select-file-btn'),upBtn=document.getElementById('ota-upload-btn'),progCont=document.getElementById('ota-progress-container'),progBar=document.getElementById('ota-progress-bar'),statTxt=document.getElementById('ota-status-text'),devList=document.getElementById('ota-device-status-list');
+        selBtn.disabled=true;upBtn.disabled=true;upBtn.textContent='Đang cập nhật...';upBtn.style.backgroundColor='#7f8c8d';progCont.style.display='block';progBar.style.width='0%';progBar.textContent='0%';statTxt.textContent='Đang đọc file...';devList.innerHTML='';
+        const reader=new FileReader();
+        reader.onload=function(e){
+            const data=e.target.result, size=data.byteLength, CHUNK_SIZE=256; let offset=0;
+            showNotification(`Bắt đầu OTA cho ${selected.length} thiết bị...`,'info'); statTxt.textContent='Gửi lệnh bắt đầu...';
+            for(const name of selected){const isMaster=(name==='ESP32-MayChu'),topic=isMaster?OTA_COMMAND_TOPIC:OTA_SATELLITE_COMMAND_TOPIC_PREFIX+name;client.publish(topic,JSON.stringify({action:"START",size:size}),{qos:1});}
+            function sendChunk(){
+                if(!otaInProgress||offset>=size){
+                    if(otaInProgress){statTxt.textContent='Hoàn tất gửi file, chờ xác nhận...'; for(const name of selected){const isMaster=(name==='ESP32-MayChu'),topic=isMaster?OTA_COMMAND_TOPIC:OTA_SATELLITE_COMMAND_TOPIC_PREFIX+name;client.publish(topic,JSON.stringify({action:"END"}),{qos:1});} progBar.style.width='100%';}
                     return;
                 }
-                const chunk = fileData.slice(offset, offset + CHUNK_SIZE);
-                for (const deviceName of selectedDevices) {
-                    const isMaster = (deviceName === 'ESP32-MayChu');
-                    const dataTopic = isMaster ? OTA_DATA_TOPIC : OTA_SATELLITE_DATA_TOPIC_PREFIX + deviceName;
-                    client.publish(dataTopic, new Uint8Array(chunk), { qos: 1 });
-                }
-                offset += chunk.byteLength;
-                const progress = Math.min(100, Math.round((offset / fileSize) * 100));
-                progressBar.style.width = `${progress}%`; progressBar.textContent = `${progress}%`; statusText.textContent = `Đang gửi... ${Math.round(offset/1024)}/${Math.round(fileSize/1024)} KB`;
-                setTimeout(sendChunk, 5);
+                const chunk=data.slice(offset,offset+CHUNK_SIZE);
+                for(const name of selected){const isMaster=(name==='ESP32-MayChu'),topic=isMaster?OTA_DATA_TOPIC:OTA_SATELLITE_DATA_TOPIC_PREFIX+name;client.publish(topic,new Uint8Array(chunk),{qos:1});}
+                offset+=chunk.byteLength; const progress=Math.min(100,Math.round((offset/size)*100)); progBar.style.width=`${progress}%`;progBar.textContent=`${progress}%`;statTxt.textContent=`Đang gửi... ${Math.round(offset/1024)}/${Math.round(size/1024)}KB`;
+                setTimeout(sendChunk,5);
             }
-            setTimeout(sendChunk, 1000);
+            setTimeout(sendChunk,1000);
         };
-        reader.onerror = function() { showNotification("Lỗi khi đọc file!", 'error'); resetOtaUi(true); };
-        reader.readAsArrayBuffer(file);
+        reader.onerror=function(){showNotification("Lỗi đọc file!","error");}; reader.readAsArrayBuffer(file);
     }
     
     window.onload = function() { 
-        applyTheme(loadThemeSettings()); // Áp dụng giao diện khi tải trang
+        initThemeSystem(); 
         connectToMqtt();
         populateSohоiForm();
         
-        document.getElementById('admin-password-input').addEventListener('keyup', function(event) {
-            if (event.key === "Enter") {
-                event.preventDefault();
-                document.querySelector('#password-modal-overlay .modal-confirm-btn').click();
-            }
-        });
-
-        document.getElementById('ota-file-input').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            const uploadBtn = document.getElementById('ota-upload-btn');
-            const fileNameDiv = document.getElementById('ota-file-name');
-            if (file) {
-                fileNameDiv.textContent = file.name;
-                uploadBtn.style.display = 'block';
-            } else {
-                fileNameDiv.textContent = 'Chưa chọn tệp nào';
-                uploadBtn.style.display = 'none';
-            }
-        });
-
-        // [MỚI] Event listener cho thanh trượt cỡ chữ
-        document.getElementById('theme_font_size').addEventListener('input', function(event) {
-            document.getElementById('font-size-value').textContent = event.target.value;
-        });
+        document.getElementById('admin-password-input').addEventListener('keyup', (event)=>{ if(event.key==="Enter"){event.preventDefault(); document.querySelector('#password-modal-overlay .modal-confirm-btn').click();}});
+        document.getElementById('ota-file-input').addEventListener('change', (event)=>{ const file=event.target.files[0],btn=document.getElementById('ota-upload-btn'),nameDiv=document.getElementById('ota-file-name'); if(file){nameDiv.textContent=file.name;btn.style.display='block';}else{nameDiv.textContent='Chưa chọn tệp nào';btn.style.display='none';}});
     };
   </script>
 </body>
