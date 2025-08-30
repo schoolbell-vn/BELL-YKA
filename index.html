@@ -20,7 +20,10 @@
         --border-color: #414345;
         --font-main: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
         --font-size-base: 15px;
-        --font-weight-base: 400; /* BIẾN MỚI */
+        --font-weight-base: 400;
+        --font-style-base: normal; /* BIẾN MỚI: Kiểu chữ */
+        --text-bg-primary: transparent; /* BIẾN MỚI: Màu nền chữ chính */
+        --text-bg-secondary: transparent; /* BIẾN MỚI: Màu nền chữ phụ */
         --text-shadow-accent: 0 0 12px var(--accent-color), 0 2px 8px #000;
         --box-shadow-accent-hover: 0 8px 24px var(--accent-color-alt-alpha-55);
         --success-color: #2ecc71;
@@ -35,9 +38,26 @@
         color: var(--text-primary);
         min-height: 100vh; margin: 0;
         font-size: var(--font-size-base);
-        font-weight: var(--font-weight-base); /* Áp dụng độ đậm */
+        font-weight: var(--font-weight-base);
+        font-style: var(--font-style-base); /* Áp dụng kiểu chữ */
     }
     #main { margin: 24px auto; width: 380px; max-width: 98vw; }
+
+    /* ÁP DỤNG MÀU NỀN CHO CÁC THÀNH PHẦN CHỮ */
+    h2, h3, .modern-btn span, .tablinks-day, .tablinks-session, .setting-item label, summary, .notification {
+        background-color: var(--text-bg-primary);
+        padding: 2px 5px;
+        border-radius: 4px;
+        display: inline-block; /* Giúp background vừa với chữ */
+    }
+     .session-subtitle, .date-display, .details-container td, .unit-input span {
+        background-color: var(--text-bg-secondary);
+        padding: 1px 4px;
+        border-radius: 3px;
+        display: inline-block;
+    }
+    .modern-btn span { display: initial; } /* Reset cho nút bấm */
+
 
     /* --- KHUNG NỘI DUNG CHÍNH --- */
     #content {
@@ -348,7 +368,7 @@
   <script>
     if("true"!==sessionStorage.getItem("isLoggedIn"))window.location.href="login.html";
 
-    // --- [ĐÃ ĐỒNG BỘ] LOGIC XỬ LÝ GIAO DIỆN TỪ SETTINGS.HTML ---
+    // --- [ĐÃ CẬP NHẬT] LOGIC XỬ LÝ GIAO DIỆN TỪ SETTINGS.HTML ---
     const themes = {
         default: {
             bgGradStart: '#3a4750', bgGradEnd: '#4a627a', contentBg: '#2c3e50', contentBgAlt: '#232526',
@@ -373,8 +393,11 @@
         fontFamily: "'Roboto', sans-serif",
         fontSize: '15px',
         fontWeight: '400',
+        fontStyle: 'normal',
         borderRadius: '18px',
-        colorOverrides: null
+        colorOverrides: null,
+        textBgColorPrimary: 'transparent',
+        textBgColorSecondary: 'transparent'
     };
 
     function hexToRgb(hex) {
@@ -383,13 +406,15 @@
     }
     
     function loadGoogleFont(fontFamily) {
+        if (!fontFamily) return;
         const fontName = fontFamily.split(',')[0].replace(/'/g, '').replace(/\s/g, '+');
+        if (!fontName || fontName.toLowerCase() === 'system-ui') return;
         const fontId = `google-font-${fontName}`;
         if (document.getElementById(fontId)) return;
         const link = document.createElement('link');
         link.id = fontId;
         link.rel = 'stylesheet';
-        link.href = `https://fonts.googleapis.com/css2?family=${fontName}:wght@300;400;700&display=swap`;
+        link.href = `https://fonts.googleapis.com/css2?family=${fontName}:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap`;
         document.head.appendChild(link);
     }
 
@@ -417,7 +442,9 @@
         root.style.setProperty('--font-main', settings.fontFamily);
         root.style.setProperty('--font-size-base', settings.fontSize);
         root.style.setProperty('--font-weight-base', settings.fontWeight);
-        // Lưu ý: trang index.html không có tùy chỉnh bo góc, nên không cần set biến --border-radius
+        root.style.setProperty('--font-style-base', settings.fontStyle);
+        root.style.setProperty('--text-bg-primary', settings.textBgColorPrimary || 'transparent');
+        root.style.setProperty('--text-bg-secondary', settings.textBgColorSecondary || 'transparent');
 
         const rgb = hexToRgb(accentColor);
         if(rgb) {
