@@ -173,11 +173,9 @@
         background: var(--content-bg); padding: 20px;
         border-top: 5px solid var(--accent-color-alt); width: 95%; max-width: 400px;
         box-shadow: 0 5px 25px rgba(0,0,0,0.4); transform: scale(0.9); transition: transform 0.3s;
-        
-        /* [SỬA LỖI] Giúp modal cuộn trên mobile */
         display: flex;
         flex-direction: column;
-        max-height: 90vh; /* Giới hạn chiều cao tổng thể của modal */
+        max-height: 90vh;
     }
     .modal-overlay.visible .modal-content { transform: scale(1); }
     .modal-content h4 { margin: 0 0 20px 0; color: var(--accent-color-alt); text-align: center; font-size: 1.2em; text-transform: uppercase; }
@@ -192,15 +190,12 @@
     .adv-modal-tabs { display: flex; border-bottom: 2px solid var(--border-color); margin-bottom: 15px; flex-wrap: wrap; }
     .adv-modal-tab { flex-grow: 1; padding: 10px 2px; text-align: center; cursor: pointer; font-weight: bold; color: #7f8c8d; border-bottom: 3px solid transparent; transition: all 0.2s; font-size: 0.75em; min-width: 60px; }
     .adv-modal-tab.active { color: var(--accent-color); border-bottom-color: var(--accent-color); }
-    
-    /* [SỬA LỖI] Class mới cho vùng nội dung có thể cuộn */
     .adv-modal-scroll-content {
-        flex-grow: 1; /* Cho phép co giãn để lấp đầy không gian còn lại */
-        overflow-y: auto; /* Thêm thanh cuộn dọc khi nội dung dài hơn */
-        min-height: 100px; /* Đảm bảo nó không bị xẹp quá nhỏ */
-        padding-right: 5px; /* Thêm chút khoảng trống cho thanh cuộn */
+        flex-grow: 1;
+        overflow-y: auto;
+        min-height: 100px;
+        padding-right: 5px;
     }
-
     .adv-modal-tab-content { display: none; }
     .adv-modal-tab-content.active { display: block; }
     .adv-modal-tab-content h5 { text-align: center; color: var(--accent-color); text-transform: uppercase; margin: 10px 0 15px 0; letter-spacing: 1px; font-size: 0.9em; }
@@ -433,27 +428,27 @@
                     <div class="theme-setting-row">
                         <label class="theme-label">Bảng màu tùy chỉnh</label>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                            <div class="theme-options color-picker-wrapper">
+                            <div class="color-picker-wrapper">
                                 <label for="theme_accent_color" style="font-size:0.8em; margin-right: 5px;">Màu chủ đạo:</label>
                                 <input type="color" id="theme_accent_color">
                             </div>
-                            <div class="theme-options color-picker-wrapper">
+                            <div class="color-picker-wrapper">
                                 <label for="theme_bg_grad_start" style="font-size:0.8em; margin-right: 5px;">Nền (Bắt đầu):</label>
                                 <input type="color" id="theme_bg_grad_start">
                             </div>
-                             <div class="theme-options color-picker-wrapper">
+                             <div class="color-picker-wrapper">
                                 <label for="theme_bg_grad_end" style="font-size:0.8em; margin-right: 5px;">Nền (Kết thúc):</label>
                                 <input type="color" id="theme_bg_grad_end">
                             </div>
-                            <div class="theme-options color-picker-wrapper">
+                            <div class="color-picker-wrapper">
                                 <label for="theme_content_bg" style="font-size:0.8em; margin-right: 5px;">Nền Nội dung:</label>
                                 <input type="color" id="theme_content_bg">
                             </div>
-                            <div class="theme-options color-picker-wrapper">
+                            <div class="color-picker-wrapper">
                                 <label for="theme_text_primary" style="font-size:0.8em; margin-right: 5px;">Chữ chính:</label>
                                 <input type="color" id="theme_text_primary">
                             </div>
-                            <div class="theme-options color-picker-wrapper">
+                            <div class="color-picker-wrapper">
                                 <label for="theme_text_secondary" style="font-size:0.8em; margin-right: 5px;">Chữ phụ:</label>
                                 <input type="color" id="theme_text_secondary">
                             </div>
@@ -487,6 +482,52 @@
                         <label class="theme-label" for="theme_border_radius">Độ bo góc (<span id="border-radius-value">18</span>px)</label>
                         <input type="range" id="theme_border_radius" min="0" max="30" value="18" step="1">
                     </div>
+
+                    <div class="theme-setting-row">
+                        <details>
+                            <summary style="font-weight: bold; cursor: pointer; color: var(--accent-color);">
+                                ▼ Tùy chỉnh Nút Nâng cao
+                            </summary>
+                            <div style="padding-top: 15px; display: flex; flex-direction: column; gap: 15px;">
+                                <div>
+                                    <label class="theme-label" style="font-size: 1em;">1. Nút Lưu (Chính)</label>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 5px;">
+                                        <div class="color-picker-wrapper">
+                                            <label for="btn_save_bg" style="font-size:0.8em;">Nền:</label>
+                                            <input type="color" id="btn_save_bg">
+                                        </div>
+                                        <div class="color-picker-wrapper">
+                                            <label for="btn_save_text" style="font-size:0.8em;">Chữ:</label>
+                                            <input type="color" id="btn_save_text">
+                                        </div>
+                                        <div class="color-picker-wrapper" style="grid-column: 1 / -1;">
+                                            <label for="btn_save_border" style="font-size:0.8em;">Viền:</label>
+                                            <input type="color" id="btn_save_border">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="theme-label" style="font-size: 1em;">2. Nút Thử Chuông / Phụ</label>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 5px;">
+                                        <div class="color-picker-wrapper">
+                                            <label for="btn_test_bg" style="font-size:0.8em;">Nền:</label>
+                                            <input type="color" id="btn_test_bg">
+                                        </div>
+                                        <div class="color-picker-wrapper">
+                                            <label for="btn_test_text" style="font-size:0.8em;">Chữ:</label>
+                                            <input type="color" id="btn_test_text">
+                                        </div>
+                                        <div class="color-picker-wrapper" style="grid-column: 1 / -1;">
+                                            <label for="btn_test_border" style="font-size:0.8em;">Viền:</label>
+                                            <input type="color" id="btn_test_border">
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="action-btn" style="background-color: #7f8c8d;" onclick="resetButtonStyles()">Reset màu các nút</button>
+                            </div>
+                        </details>
+                    </div>
+                    
                     <div class="theme-actions">
                         <button class="action-btn" style="background-color: #27ae60;" onclick="handleSaveTheme()">Lưu Giao Diện</button>
                     </div>
@@ -542,7 +583,8 @@
         fontSize: '15px',
         fontWeight: '400',
         borderRadius: '18px',
-        colorOverrides: null
+        colorOverrides: null,
+        buttonStyles: {} // Thêm mục mới để lưu style của nút
     };
 
     let initialThemeSettings = null; 
@@ -561,6 +603,40 @@
         link.rel = 'stylesheet';
         link.href = `https://fonts.googleapis.com/css2?family=${fontName}:wght@300;400;700&display=swap`;
         document.head.appendChild(link);
+    }
+
+    function applyButtonStyles(settings) {
+        if (!settings || !settings.buttonStyles) return;
+        for (const [key, styles] of Object.entries(settings.buttonStyles)) {
+            const buttons = document.querySelectorAll(`.${key}`);
+            buttons.forEach(button => {
+                // Chỉ áp dụng style nếu màu khác màu mặc định (#000000)
+                if (styles.bg && styles.bg !== '#000000') {
+                    button.style.background = styles.bg;
+                }
+                if (styles.text && styles.text !== '#000000') {
+                    button.style.color = styles.text;
+                    button.style.textShadow = `0 0 8px ${styles.text}`;
+                }
+                if (styles.border && styles.border !== '#000000') {
+                    button.style.borderLeftColor = styles.border;
+                    button.style.borderRightColor = styles.border;
+                }
+            });
+        }
+    }
+
+    function resetButtonStyles() {
+        if (confirm("Ông có chắc muốn xóa tất cả tùy chỉnh màu của các nút không?")) {
+            ['btn_save_bg', 'btn_save_text', 'btn_save_border', 'btn_test_bg', 'btn_test_text', 'btn_test_border'].forEach(id => {
+                 document.getElementById(id).value = '#000000';
+            });
+            const settings = getSettingsFromUI();
+            settings.buttonStyles = {};
+            saveThemeSettings(settings);
+            applyTheme(settings);
+            showNotification("Đã reset màu các nút.", "info");
+        }
     }
 
     function applyTheme(settings) {
@@ -595,6 +671,7 @@
           root.style.setProperty('--accent-color-alt-alpha-33', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.33)`);
           root.style.setProperty('--accent-color-alt-alpha-55', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.55)`);
         }
+        applyButtonStyles(settings);
     }
 
     function loadThemeSettings() {
@@ -630,6 +707,18 @@
         const radiusSlider = document.getElementById('theme_border_radius');
         radiusSlider.value = radius;
         document.getElementById('border-radius-value').textContent = radius;
+
+        if (settings.buttonStyles) {
+            const saveBtnStyles = settings.buttonStyles['save-button'] || {};
+            document.getElementById('btn_save_bg').value = saveBtnStyles.bg || '#000000';
+            document.getElementById('btn_save_text').value = saveBtnStyles.text || '#000000';
+            document.getElementById('btn_save_border').value = saveBtnStyles.border || '#000000';
+            
+            const testBtnStyles = settings.buttonStyles['test-button'] || {};
+            document.getElementById('btn_test_bg').value = testBtnStyles.bg || '#000000';
+            document.getElementById('btn_test_text').value = testBtnStyles.text || '#000000';
+            document.getElementById('btn_test_border').value = testBtnStyles.border || '#000000';
+        }
     }
 
     function getSettingsFromUI() {
@@ -642,13 +731,26 @@
             textPrimary: document.getElementById('theme_text_primary').value,
             textSecondary: document.getElementById('theme_text_secondary').value
         };
+        const buttonStyles = {
+            'save-button': {
+                bg: document.getElementById('btn_save_bg').value,
+                text: document.getElementById('btn_save_text').value,
+                border: document.getElementById('btn_save_border').value
+            },
+            'test-button': {
+                bg: document.getElementById('btn_test_bg').value,
+                text: document.getElementById('btn_test_text').value,
+                border: document.getElementById('btn_test_border').value
+            }
+        };
         return {
             preset: activePreset,
             fontFamily: document.getElementById('theme_font_family').value,
             fontWeight: document.getElementById('theme_font_weight').value,
             fontSize: `${document.getElementById('theme_font_size').value}px`,
             borderRadius: `${document.getElementById('theme_border_radius').value}px`,
-            colorOverrides: colorOverrides
+            colorOverrides: colorOverrides,
+            buttonStyles: buttonStyles
         };
     }
     
@@ -681,7 +783,11 @@
                     updateThemeUI(newSettings);
                 });
             });
-            ['theme_accent_color', 'theme_bg_grad_start', 'theme_bg_grad_end', 'theme_content_bg', 'theme_text_primary', 'theme_text_secondary', 'theme_font_family', 'theme_border_radius', 'theme_font_size', 'theme_font_weight'].forEach(id => {
+            [
+                'theme_accent_color', 'theme_bg_grad_start', 'theme_bg_grad_end', 'theme_content_bg', 'theme_text_primary', 'theme_text_secondary', 
+                'theme_font_family', 'theme_border_radius', 'theme_font_size', 'theme_font_weight',
+                'btn_save_bg', 'btn_save_text', 'btn_save_border', 'btn_test_bg', 'btn_test_text', 'btn_test_border'
+            ].forEach(id => {
                 const element = document.getElementById(id);
                 if (element) {
                     element.addEventListener('input', () => {
@@ -775,7 +881,6 @@
         else { showNotification("Chưa kết nối máy chủ!", 'error'); }
     }
     
-    // [LOGIC ĐÃ SỬA LỖI]
     function openAdvancedSettingsModal() { 
         document.getElementById('advanced-settings-modal').classList.add('visible'); 
         if(document.querySelector('#adv-tab-system.active')) requestSystemInfo(); 
