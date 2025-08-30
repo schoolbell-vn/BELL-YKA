@@ -21,6 +21,7 @@
         --border-radius: 18px;
         --font-main: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
         --font-size-base: 15px;
+        --font-weight-base: 400; /* BIẾN MỚI: Độ đậm font */
         --text-shadow-accent: 0 0 12px var(--accent-color), 0 2px 8px #000;
         --box-shadow-accent-hover: 0 8px 24px var(--accent-color-alt-alpha-55);
         --success-color: #2ecc71;
@@ -35,6 +36,7 @@
         color: var(--text-primary);
         min-height: 100vh; margin: 0;
         font-size: var(--font-size-base);
+        font-weight: var(--font-weight-base); /* Áp dụng độ đậm */
         transition: background 0.3s, color 0.3s;
     }
     #main { margin: 24px auto; width: 380px; max-width: 98vw; }
@@ -235,7 +237,7 @@
     .preset-btn { padding: 10px; border: 2px solid var(--border-color); background-color: var(--content-bg); color: var(--text-primary); font-weight: bold; cursor: pointer; transition: all 0.2s; text-align: center; font-size: 0.85em; }
     .preset-btn.active, .preset-btn:hover { border-color: var(--accent-color); color: var(--accent-color); }
     .theme-options { display: flex; gap: 10px; align-items: center; }
-    .color-picker-wrapper { border: 1px solid var(--border-color); padding: 5px; background: var(--content-bg-alt); }
+    .color-picker-wrapper { border: 1px solid var(--border-color); padding: 5px; background: var(--content-bg-alt); display: flex; align-items: center; justify-content: space-between; }
     input[type="color"] { border: none; background: none; width: 40px; height: 30px; padding: 0; cursor: pointer; }
     select, input[type="range"] { width: 100%; padding: 8px; border: 1px solid var(--border-color); background-color: var(--content-bg); color: var(--text-primary); font-family: var(--font-main); }
     .theme-actions { display: flex; gap: 10px; margin-top: 15px; }
@@ -248,7 +250,7 @@
   <div id="main">
     <div id="content">
       <div style="text-align: center; padding: 15px 0 10px 0;">
-        <h2 style="margin: 0; padding: 0;">CÀI ĐẶT CHUNG & HỆ THỐNG</h2>
+        <h2 style="margin: 0; padding: 0;">CÀI ĐẶT CHUNG</h2>
       </div>
       
       <div id="status" class="status-bar status-connecting">Đang kết nối...</div>
@@ -413,21 +415,59 @@
                         <button class="preset-btn" data-theme="classic">Cổ điển</button>
                     </div>
                 </div>
+                
                 <div class="theme-setting-row">
-                    <label class="theme-label" for="theme_accent_color">Màu sắc chủ đạo</label>
-                    <div class="theme-options color-picker-wrapper">
-                        <input type="color" id="theme_accent_color">
+                    <label class="theme-label">Bảng màu tùy chỉnh</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div class="theme-options color-picker-wrapper">
+                            <label for="theme_accent_color" style="font-size:0.8em; margin-right: 5px;">Màu chủ đạo:</label>
+                            <input type="color" id="theme_accent_color">
+                        </div>
+                        <div class="theme-options color-picker-wrapper">
+                            <label for="theme_bg_grad_start" style="font-size:0.8em; margin-right: 5px;">Nền (Bắt đầu):</label>
+                            <input type="color" id="theme_bg_grad_start">
+                        </div>
+                         <div class="theme-options color-picker-wrapper">
+                            <label for="theme_bg_grad_end" style="font-size:0.8em; margin-right: 5px;">Nền (Kết thúc):</label>
+                            <input type="color" id="theme_bg_grad_end">
+                        </div>
+                        <div class="theme-options color-picker-wrapper">
+                            <label for="theme_content_bg" style="font-size:0.8em; margin-right: 5px;">Nền Nội dung:</label>
+                            <input type="color" id="theme_content_bg">
+                        </div>
+                        <div class="theme-options color-picker-wrapper">
+                            <label for="theme_text_primary" style="font-size:0.8em; margin-right: 5px;">Chữ chính:</label>
+                            <input type="color" id="theme_text_primary">
+                        </div>
+                        <div class="theme-options color-picker-wrapper">
+                            <label for="theme_text_secondary" style="font-size:0.8em; margin-right: 5px;">Chữ phụ:</label>
+                            <input type="color" id="theme_text_secondary">
+                        </div>
                     </div>
                 </div>
+
                 <div class="theme-setting-row">
                     <label class="theme-label" for="theme_font_family">Font chữ</label>
                     <select id="theme_font_family">
-                        <option value="'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif">Mặc định (Segoe UI)</option>
-                        <option value="Arial, sans-serif">Arial</option>
-                        <option value="'Courier New', Courier, monospace">Courier New</option>
-                        <option value="'Times New Roman', Times, serif">Times New Roman</option>
-                        <option value="Verdana, sans-serif">Verdana</option>
+                        <option value="'Roboto', sans-serif">Roboto</option>
+                        <option value="'Open Sans', sans-serif">Open Sans</option>
+                        <option value="'Montserrat', sans-serif">Montserrat</option>
+                        <option value="'Source Sans Pro', sans-serif">Source Sans Pro</option>
+                        <option value="'Be Vietnam Pro', sans-serif">Be Vietnam Pro</option>
+                        <option value="'Nunito', sans-serif">Nunito</option>
                     </select>
+                </div>
+                <div class="theme-setting-row">
+                    <label class="theme-label" for="theme_font_weight">Độ đậm</label>
+                    <select id="theme_font_weight">
+                        <option value="300">Mỏng (Light)</option>
+                        <option value="400" selected>Thường (Regular)</option>
+                        <option value="700">Đậm (Bold)</option>
+                    </select>
+                </div>
+                <div class="theme-setting-row">
+                    <label class="theme-label" for="theme_font_size">Cỡ chữ (<span id="font-size-value">15</span>px)</label>
+                    <input type="range" id="theme_font_size" min="12" max="18" value="15" step="1">
                 </div>
                 <div class="theme-setting-row">
                     <label class="theme-label" for="theme_border_radius">Độ bo góc (<span id="border-radius-value">18</span>px)</label>
@@ -460,7 +500,7 @@
   <script>
     if("true"!==sessionStorage.getItem("isLoggedIn"))window.location.href="login.html";
     
-    // --- LOGIC XỬ LÝ GIAO DIỆN NÂNG CAO ---
+    // --- [ĐÃ CẬP NHẬT] LOGIC XỬ LÝ GIAO DIỆN NÂNG CAO ---
     const themes = {
         default: {
             bgGradStart: '#3a4750', bgGradEnd: '#4a627a', contentBg: '#2c3e50', contentBgAlt: '#232526',
@@ -482,10 +522,11 @@
 
     const defaultThemeSettings = {
         preset: 'default',
-        fontFamily: "'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif",
+        fontFamily: "'Roboto', sans-serif",
         fontSize: '15px',
+        fontWeight: '400',
         borderRadius: '18px',
-        accentColorOverride: null
+        colorOverrides: null
     };
 
     function hexToRgb(hex) {
@@ -493,7 +534,19 @@
         return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : null;
     }
     
+    function loadGoogleFont(fontFamily) {
+        const fontName = fontFamily.split(',')[0].replace(/'/g, '').replace(/\s/g, '+');
+        const fontId = `google-font-${fontName}`;
+        if (document.getElementById(fontId)) return;
+        const link = document.createElement('link');
+        link.id = fontId;
+        link.rel = 'stylesheet';
+        link.href = `https://fonts.googleapis.com/css2?family=${fontName}:wght@300;400;700&display=swap`;
+        document.head.appendChild(link);
+    }
+
     function applyTheme(settings) {
+        loadGoogleFont(settings.fontFamily);
         const theme = themes[settings.preset] || themes.default;
         const root = document.documentElement;
         
@@ -502,11 +555,20 @@
             root.style.setProperty(cssVarName, theme[key]);
         });
         
-        const accentColor = settings.accentColorOverride || theme.accentColor;
+        if (settings.colorOverrides) {
+            Object.keys(settings.colorOverrides).forEach(key => {
+                let cssVarName = '--' + key.replace(/([A-Z])/g, '-$1').toLowerCase();
+                root.style.setProperty(cssVarName, settings.colorOverrides[key]);
+            });
+        }
+        
+        const accentColor = (settings.colorOverrides && settings.colorOverrides.accentColor) ? settings.colorOverrides.accentColor : theme.accentColor;
         root.style.setProperty('--accent-color', accentColor);
         root.style.setProperty('--accent-color-alt', accentColor);
+        
         root.style.setProperty('--font-main', settings.fontFamily);
         root.style.setProperty('--font-size-base', settings.fontSize);
+        root.style.setProperty('--font-weight-base', settings.fontWeight);
         root.style.setProperty('--border-radius', settings.borderRadius);
 
         const rgb = hexToRgb(accentColor);
@@ -529,8 +591,23 @@
     function updateThemeUI(settings) {
         const theme = themes[settings.preset] || themes.default;
         document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.theme === settings.preset));
-        document.getElementById('theme_accent_color').value = settings.accentColorOverride || theme.accentColor;
+        
+        const colors = { ...theme, ...settings.colorOverrides };
+        document.getElementById('theme_accent_color').value = colors.accentColor;
+        document.getElementById('theme_bg_grad_start').value = colors.bgGradStart;
+        document.getElementById('theme_bg_grad_end').value = colors.bgGradEnd;
+        document.getElementById('theme_content_bg').value = colors.contentBg;
+        document.getElementById('theme_text_primary').value = colors.textPrimary;
+        document.getElementById('theme_text_secondary').value = colors.textSecondary;
+        
         document.getElementById('theme_font_family').value = settings.fontFamily;
+        document.getElementById('theme_font_weight').value = settings.fontWeight || '400';
+        
+        const fontSize = parseInt(settings.fontSize, 10);
+        const fontSizeSlider = document.getElementById('theme_font_size');
+        fontSizeSlider.value = fontSize;
+        document.getElementById('font-size-value').textContent = fontSize;
+
         const radius = parseInt(settings.borderRadius, 10);
         const radiusSlider = document.getElementById('theme_border_radius');
         radiusSlider.value = radius;
@@ -539,14 +616,21 @@
 
     function getSettingsFromUI() {
         const activePreset = document.querySelector('.preset-btn.active')?.dataset.theme || 'default';
-        const accentColor = document.getElementById('theme_accent_color').value;
-        const baseAccentColor = themes[activePreset].accentColor;
+        const colorOverrides = {
+            accentColor: document.getElementById('theme_accent_color').value,
+            bgGradStart: document.getElementById('theme_bg_grad_start').value,
+            bgGradEnd: document.getElementById('theme_bg_grad_end').value,
+            contentBg: document.getElementById('theme_content_bg').value,
+            textPrimary: document.getElementById('theme_text_primary').value,
+            textSecondary: document.getElementById('theme_text_secondary').value
+        };
         return {
             preset: activePreset,
             fontFamily: document.getElementById('theme_font_family').value,
-            fontSize: `15px`,
+            fontWeight: document.getElementById('theme_font_weight').value,
+            fontSize: `${document.getElementById('theme_font_size').value}px`,
             borderRadius: `${document.getElementById('theme_border_radius').value}px`,
-            accentColorOverride: accentColor.toLowerCase() !== baseAccentColor.toLowerCase() ? accentColor : null
+            colorOverrides: colorOverrides
         };
     }
     
@@ -559,7 +643,9 @@
 
     function initThemeSystem() {
         const settings = loadThemeSettings();
+        loadGoogleFont(settings.fontFamily);
         applyTheme(settings);
+        
         if(document.getElementById('adv-tab-theme')) {
             updateThemeUI(settings);
             document.querySelectorAll('.preset-btn').forEach(btn => {
@@ -567,21 +653,30 @@
                     document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     const presetName = btn.dataset.theme;
-                    const currentSettings = getSettingsFromUI();
-                    currentSettings.preset = presetName;
-                    currentSettings.accentColorOverride = null;
-                    applyTheme(currentSettings);
-                    updateThemeUI(currentSettings);
+                    let newSettings = getSettingsFromUI();
+                    newSettings.preset = presetName;
+                    
+                    // Khi đổi preset, reset màu về mặc định của preset đó
+                    newSettings.colorOverrides = themes[presetName];
+                    
+                    applyTheme(newSettings);
+                    updateThemeUI(newSettings);
                 });
             });
-            ['theme_accent_color', 'theme_font_family', 'theme_border_radius'].forEach(id => {
-                document.getElementById(id).addEventListener('input', () => {
-                    const settings = getSettingsFromUI();
-                    applyTheme(settings);
-                    if(id === 'theme_border_radius') {
-                        document.getElementById('border-radius-value').textContent = document.getElementById(id).value;
-                    }
-                });
+            ['theme_accent_color', 'theme_bg_grad_start', 'theme_bg_grad_end', 'theme_content_bg', 'theme_text_primary', 'theme_text_secondary', 'theme_font_family', 'theme_border_radius', 'theme_font_size', 'theme_font_weight'].forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.addEventListener('input', () => {
+                        const settings = getSettingsFromUI();
+                        applyTheme(settings);
+                        if(id === 'theme_border_radius') {
+                            document.getElementById('border-radius-value').textContent = element.value;
+                        }
+                        if(id === 'theme_font_size') {
+                            document.getElementById('font-size-value').textContent = element.value;
+                        }
+                    });
+                }
             });
         }
     }
