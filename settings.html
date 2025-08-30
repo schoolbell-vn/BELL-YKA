@@ -530,7 +530,7 @@
         colorOverrides: null
     };
 
-    let initialThemeSettings = null; // BIẾN MỚI: Lưu trạng thái giao diện ban đầu
+    let initialThemeSettings = null; 
 
     function hexToRgb(hex) {
         let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -641,7 +641,7 @@
         const settings = getSettingsFromUI();
         saveThemeSettings(settings);
         applyTheme(settings);
-        initialThemeSettings = settings; // Cập nhật trạng thái đã lưu
+        initialThemeSettings = settings; 
         showNotification('Đã lưu cài đặt giao diện!', 'success');
     }
 
@@ -760,39 +760,29 @@
         else { showNotification("Chưa kết nối máy chủ!", 'error'); }
     }
     
-    // [CẬP NHẬT] Các hàm xử lý đóng/mở Modal
+    // [LOGIC ĐÃ SỬA LỖI]
     function openAdvancedSettingsModal() { 
         document.getElementById('advanced-settings-modal').classList.add('visible'); 
         if(document.querySelector('#adv-tab-system.active')) requestSystemInfo(); 
         
-        // Khởi tạo tab giao diện và lưu trạng thái ban đầu
-        if(document.querySelector('#adv-tab-theme')) {
-            initThemeSystem();
-            initialThemeSettings = getSettingsFromUI();
-        }
+        initThemeSystem();
+        initialThemeSettings = getSettingsFromUI();
     }
     function closeAdvancedSettingsModal() { 
         document.getElementById('advanced-settings-modal').classList.remove('visible'); 
-        // Reset lại giao diện về trạng thái đã lưu, phòng trường hợp người dùng không lưu thay đổi
         applyTheme(loadThemeSettings());
     }
     
-    // [HÀM MỚI] Lưu và đóng
     function saveAndCloseAdvancedSettingsModal() {
-        if(document.querySelector('#adv-tab-theme.active')) {
-            handleSaveTheme();
-        }
+        handleSaveTheme(); // Luôn lưu cài đặt giao diện
         closeAdvancedSettingsModal();
     }
 
-    // [HÀM MỚI] Xử lý đóng thông minh
     function handleCloseAdvancedSettingsModal() {
-        if (document.querySelector('#adv-tab-theme.active')) {
-            const currentSettings = getSettingsFromUI();
-            if (JSON.stringify(currentSettings) !== JSON.stringify(initialThemeSettings)) {
-                if (confirm("Bạn có thay đổi chưa lưu. Bạn có muốn lưu lại không?")) {
-                    handleSaveTheme();
-                }
+        const currentSettings = getSettingsFromUI();
+        if (JSON.stringify(currentSettings) !== JSON.stringify(initialThemeSettings)) {
+            if (confirm("Bạn có thay đổi giao diện chưa lưu. Bạn có muốn lưu lại không?")) {
+                handleSaveTheme();
             }
         }
         closeAdvancedSettingsModal();
@@ -804,7 +794,6 @@
         if (tabName === 'adv-tab-system') requestSystemInfo(); 
         if (tabName === 'adv-tab-theme') {
             initThemeSystem();
-            initialThemeSettings = getSettingsFromUI(); // Lưu trạng thái khi chuyển tab
         }
     }
     function renderSystemInfo(info) {
