@@ -20,26 +20,11 @@
         --border-color: #414345;
         --font-main: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
         --font-size-base: 15px;
+        --font-weight-base: 400; /* BIẾN MỚI */
         --text-shadow-accent: 0 0 12px var(--accent-color), 0 2px 8px #000;
         --box-shadow-accent-hover: 0 8px 24px var(--accent-color-alt-alpha-55);
         --success-color: #2ecc71;
         --error-color: #e74c3c;
-    }
-
-    /* Chế độ Sáng */
-    body.theme-light {
-        --bg-grad-start: #e9eef3;
-        --bg-grad-end: #f8f9fa;
-        --content-bg: #ffffff;
-        --content-bg-alt: #f1f3f5;
-        --text-primary: #212529;
-        --text-secondary: #5a6268;
-        --text-light: #6c757d;
-        --accent-color: #007bff;
-        --accent-color-alt: #0069d9;
-        --border-color: #dee2e6;
-        --text-shadow-accent: 0 1px 2px rgba(0, 0, 0, 0.1);
-        --box-shadow-accent-hover: 0 6px 18px rgba(0, 123, 255, 0.3);
     }
 
     /* --- CÀI ĐẶT CHUNG & SỬA LỖI TRÀN KHUNG --- */
@@ -50,6 +35,7 @@
         color: var(--text-primary);
         min-height: 100vh; margin: 0;
         font-size: var(--font-size-base);
+        font-weight: var(--font-weight-base); /* Áp dụng độ đậm */
     }
     #main { margin: 24px auto; width: 380px; max-width: 98vw; }
 
@@ -362,34 +348,78 @@
   <script>
     if("true"!==sessionStorage.getItem("isLoggedIn"))window.location.href="login.html";
 
-    // --- [MỚI] LOGIC XỬ LÝ GIAO DIỆN ---
-    const defaultThemeSettings = {
-        mode: 'dark',
-        accentColor: '#f39c12',
-        fontFamily: "'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif",
-        fontSize: '15px'
+    // --- [ĐÃ ĐỒNG BỘ] LOGIC XỬ LÝ GIAO DIỆN TỪ SETTINGS.HTML ---
+    const themes = {
+        default: {
+            bgGradStart: '#3a4750', bgGradEnd: '#4a627a', contentBg: '#2c3e50', contentBgAlt: '#232526',
+            textPrimary: '#f5f6fa', textSecondary: '#bdc3c7', accentColor: '#f39c12', borderColor: '#414345',
+        },
+        light: {
+            bgGradStart: '#f8f9fa', bgGradEnd: '#e9ecef', contentBg: '#ffffff', contentBgAlt: '#f1f3f5',
+            textPrimary: '#212529', textSecondary: '#6c757d', accentColor: '#007bff', borderColor: '#dee2e6',
+        },
+        ocean: {
+            bgGradStart: '#0f2027', bgGradEnd: '#203a43', contentBg: '#2c5364', contentBgAlt: '#1a3a4a',
+            textPrimary: '#e0e0e0', textSecondary: '#b0bec5', accentColor: '#1488cc', borderColor: '#547888',
+        },
+        classic: {
+            bgGradStart: '#d7c7a5', bgGradEnd: '#c3b38a', contentBg: '#ede4ce', contentBgAlt: '#f5f0e0',
+            textPrimary: '#4b3f2e', textSecondary: '#6f5f4a', accentColor: '#8a5a44', borderColor: '#b8a684',
+        }
     };
-    
+
+    const defaultThemeSettings = {
+        preset: 'default',
+        fontFamily: "'Roboto', sans-serif",
+        fontSize: '15px',
+        fontWeight: '400',
+        borderRadius: '18px',
+        colorOverrides: null
+    };
+
     function hexToRgb(hex) {
         let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-        return result ? {
-            r: parseInt(result[1], 16),
-            g: parseInt(result[2], 16),
-            b: parseInt(result[3], 16)
-        } : null;
+        return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : null;
+    }
+    
+    function loadGoogleFont(fontFamily) {
+        const fontName = fontFamily.split(',')[0].replace(/'/g, '').replace(/\s/g, '+');
+        const fontId = `google-font-${fontName}`;
+        if (document.getElementById(fontId)) return;
+        const link = document.createElement('link');
+        link.id = fontId;
+        link.rel = 'stylesheet';
+        link.href = `https://fonts.googleapis.com/css2?family=${fontName}:wght@300;400;700&display=swap`;
+        document.head.appendChild(link);
     }
 
     function applyTheme(settings) {
-        document.body.classList.remove('theme-light', 'theme-dark');
-        document.body.classList.add(`theme-${settings.mode}`);
-        
+        loadGoogleFont(settings.fontFamily);
+        const theme = themes[settings.preset] || themes.default;
         const root = document.documentElement;
-        root.style.setProperty('--accent-color', settings.accentColor);
-        root.style.setProperty('--accent-color-alt', settings.accentColor);
+        
+        Object.keys(theme).forEach(key => {
+            let cssVarName = '--' + key.replace(/([A-Z])/g, '-$1').toLowerCase();
+            root.style.setProperty(cssVarName, theme[key]);
+        });
+        
+        if (settings.colorOverrides) {
+            Object.keys(settings.colorOverrides).forEach(key => {
+                let cssVarName = '--' + key.replace(/([A-Z])/g, '-$1').toLowerCase();
+                root.style.setProperty(cssVarName, settings.colorOverrides[key]);
+            });
+        }
+        
+        const accentColor = (settings.colorOverrides && settings.colorOverrides.accentColor) ? settings.colorOverrides.accentColor : theme.accentColor;
+        root.style.setProperty('--accent-color', accentColor);
+        root.style.setProperty('--accent-color-alt', accentColor);
+        
         root.style.setProperty('--font-main', settings.fontFamily);
         root.style.setProperty('--font-size-base', settings.fontSize);
+        root.style.setProperty('--font-weight-base', settings.fontWeight);
+        // Lưu ý: trang index.html không có tùy chỉnh bo góc, nên không cần set biến --border-radius
 
-        const rgb = hexToRgb(settings.accentColor);
+        const rgb = hexToRgb(accentColor);
         if(rgb) {
           root.style.setProperty('--accent-color-alpha-18', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.18)`);
           root.style.setProperty('--accent-color-alt-alpha-10', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.1)`);
@@ -402,7 +432,7 @@
     function loadThemeSettings() {
         try {
             const savedSettings = localStorage.getItem('themeSettings');
-            return savedSettings ? JSON.parse(savedSettings) : defaultThemeSettings;
+            return savedSettings ? { ...defaultThemeSettings, ...JSON.parse(savedSettings) } : defaultThemeSettings;
         } catch (e) {
             console.error("Lỗi khi tải cài đặt giao diện:", e);
             return defaultThemeSettings;
@@ -422,8 +452,6 @@
     const GET_DATA_TOPIC = "esp32/bell/data/get";
     const COMMAND_ACK_TOPIC = "esp32/bell/command/ack";
 
-    // ... (Toàn bộ các hàm JS cũ của ông được giữ nguyên ở đây) ...
-    // ...
     function connectToMqtt(){
         console.log("Đang kết nối đến MQTT broker...");
         const schoolNameStatus = document.getElementById("school-name-status");
@@ -874,7 +902,7 @@
     }
 
     window.onload = function() { 
-        applyTheme(loadThemeSettings()); // Áp dụng giao diện khi tải trang
+        applyTheme(loadThemeSettings());
         connectToMqtt();
         setInterval(updateLocalClock, 1000);
         initializeTabs(); 
