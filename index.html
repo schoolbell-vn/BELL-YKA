@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <title id="page-title">Hẹn Giờ Chuông Báo - Lịch Học</title>
+  <title>Hẹn Giờ Chuông Báo - Lịch Học</title>
   <meta name="viewport" content="width=device-width,user-scalable=0" charset="utf-8">
   <script src="https://unpkg.com/mqtt/dist/mqtt.min.js" type="text/javascript"></script>
   
@@ -21,9 +21,9 @@
         --font-main: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
         --font-size-base: 15px;
         --font-weight-base: 400;
-        --font-style-base: normal;
-        --text-bg-primary: transparent;
-        --text-bg-secondary: transparent;
+        --font-style-base: normal; /* BIẾN MỚI: Kiểu chữ */
+        --text-bg-primary: transparent; /* BIẾN MỚI: Màu nền chữ chính */
+        --text-bg-secondary: transparent; /* BIẾN MỚI: Màu nền chữ phụ */
         --text-shadow-accent: 0 0 12px var(--accent-color), 0 2px 8px #000;
         --box-shadow-accent-hover: 0 8px 24px var(--accent-color-alt-alpha-55);
         --success-color: #2ecc71;
@@ -39,16 +39,16 @@
         min-height: 100vh; margin: 0;
         font-size: var(--font-size-base);
         font-weight: var(--font-weight-base);
-        font-style: var(--font-style-base);
+        font-style: var(--font-style-base); /* Áp dụng kiểu chữ */
     }
     #main { margin: 24px auto; width: 380px; max-width: 98vw; }
 
-    /* ÁP DỤNG MÀU NỀN CHUNG */
+    /* ÁP DỤNG MÀU NỀN CHO CÁC THÀNH PHẦN CHỮ */
     h2, h3, .modern-btn span, .tablinks-day, .tablinks-session, .setting-item label, summary, .notification {
         background-color: var(--text-bg-primary);
         padding: 2px 5px;
         border-radius: 4px;
-        display: inline-block;
+        display: inline-block; /* Giúp background vừa với chữ */
     }
      .session-subtitle, .date-display, .details-container td, .unit-input span {
         background-color: var(--text-bg-secondary);
@@ -56,7 +56,7 @@
         border-radius: 3px;
         display: inline-block;
     }
-    .modern-btn span { display: initial; }
+    .modern-btn span { display: initial; } /* Reset cho nút bấm */
 
 
     /* --- KHUNG NỘI DUNG CHÍNH --- */
@@ -103,7 +103,6 @@
      #school-name-status {
         margin: 5px 0 15px 0; padding: 0; font-size: 1.1em; font-weight: bold;
         text-shadow: 0 2px 8px #000; letter-spacing: 1.2px; transition: color 0.5s ease;
-        display: inline-block;
     }
     .status-color-connected { color: #43e97b; }
     .status-color-disconnected { color: #ff5858; }
@@ -317,7 +316,7 @@
   <div id="main">
     <div id="content">
       <div style="text-align: center; padding: 15px 0 5px 0;">
-        <h2 id="app-title" style="margin: 0; padding: 0;">CHUÔNG BÁO TỰ ĐỘNG</h2>
+        <h2 style="margin: 0; padding: 0;">CHUÔNG BÁO TỰ ĐỘNG</h2>
         <p id="school-name-status">THPT YÊN KHÁNH A</p>
       </div>
       <div class="clock-container" id="clock-wrapper" style="display: none;">
@@ -325,7 +324,7 @@
         <div id="date" class="date-display">Đang chờ đồng bộ...</div>
       </div>
       
-      <h3 id="schedule-settings-header" style="text-align: center; font-size: 1.15em; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-primary); background: none; border: none; box-shadow: none; margin-bottom: 10px; margin-top: 5px;">
+      <h3 style="text-align: center; font-size: 1.15em; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-primary); background: none; border: none; box-shadow: none; margin-bottom: 10px; margin-top: 5px;">
         CÀI ĐẶT LỊCH HỌC
       </h3>
       
@@ -351,11 +350,11 @@
       <div class="button-section">
         <button class="modern-btn save-button" onclick="publishUpdate()">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
-            <span id="btn-text-save-schedule">Lưu và gửi cập nhật Lịch</span>
+            <span>Lưu và gửi cập nhật Lịch</span>
         </button>
         <a href="settings.html" class="modern-btn advanced-button">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 0 2l-.15.08a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l-.22-.38a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1 0-2l.15-.08a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-            <span id="btn-text-general-settings">Cài đặt chung & Hệ thống</span>
+            <span>Cài đặt chung & Hệ thống</span>
         </a>
         <button class="modern-btn logout-button" onclick="logout()">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
@@ -466,41 +465,7 @@
             return defaultThemeSettings;
         }
     }
-    
-    // --- [MỚI] LOGIC TÙY CHỈNH NHÃN CHỮ ---
-    function applyCustomLabels() {
-        try {
-            const customizations = JSON.parse(localStorage.getItem('labelCustomizations')) || {};
-            for (const id in customizations) {
-                const element = document.getElementById(id);
-                const settings = customizations[id];
-                if (element) {
-                    if (settings.text) {
-                        element.textContent = settings.text;
-                    }
-                    if (settings.color) element.style.color = settings.color;
-                    if (settings.backgroundColor) {
-                        element.style.backgroundColor = settings.backgroundColor;
-                        if(settings.backgroundColor !== 'transparent') {
-                           element.style.padding = '2px 5px';
-                           element.style.borderRadius = '4px';
-                        } else {
-                           element.style.padding = '0';
-                        }
-                    }
-                    if (settings.fontSize) element.style.fontSize = settings.fontSize;
-                    if (settings.fontFamily) {
-                         loadGoogleFont(settings.fontFamily);
-                         element.style.fontFamily = settings.fontFamily;
-                    }
-                }
-            }
-        } catch (e) {
-            console.error("Lỗi khi áp dụng tùy chỉnh nhãn:", e);
-        }
-    }
-    // --- KẾT THÚC LOGIC TÙY CHỈNH NHÃN CHỮ ---
-
+    // --- KẾT THÚC LOGIC GIAO DIỆN ---
     
     let client, serverTime = null;
     let selectedDay = 't2', selectedSession = 'sang';
@@ -688,9 +653,9 @@
 
     let u = ""; let g = "";
     if (isMondayMorning) {
-        u = `${r}<div class="input-wrapper"><label id="label-chaoco_${e}">TG Chào cờ</label><div class="unit-input"><input id="chaoco_${e}" type="number" value="40"><span>phút</span></div></div>`;
+        u = `${r}<div class="input-wrapper"><label for="chaoco_${e}">TG Chào cờ</label><div class="unit-input"><input id="chaoco_${e}" type="number" value="40"><span>phút</span></div></div>`;
     } else {
-        u = `${r}<div class="input-wrapper"><label id="label-sinhoat_${e}">TG Sinh hoạt</label><div class="unit-input"><input id="chunhiem_${e}" type="number" value="15"><span>phút</span></div></div>`;
+        u = `${r}<div class="input-wrapper"><label for="chunhiem_${e}">TG Sinh hoạt</label><div class="unit-input"><input id="chunhiem_${e}" type="number" value="15"><span>phút</span></div></div>`;
     }
 
     if (!isMondayMorning) {
@@ -708,7 +673,7 @@
             <div class="toggle-actions-group">
                 <div id="toggle_item_enable_${e}" class="toggle-action-item">
                     <div class="toggle-action-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42A6.92 6.92 0 0 1 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-1.93.78-3.68 2-4.95L5.59 5.64A8.96 8.96 0 0 0 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.49-1-4.73-2.67-6.41z"/></svg></div>
-                    <div class="toggle-action-text" id="label-activate-schedule_${e}">Kích hoạt Lịch</div>
+                    <div class="toggle-action-text">Kích hoạt Lịch</div>
                     <label class="switch ${"chieu"===o?"chieu-toggle":""}">
                         <input type="checkbox" id="enable_${e}" onchange="toggleScheduleActivation('${e}')" checked>
                         <span class="slider"></span>
@@ -716,7 +681,7 @@
                 </div>
                 <div id="toggle_item_special_${e}" class="toggle-action-item">
                     <div class="toggle-action-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></div>
-                    <div class="toggle-action-text" id="label-special-event_${e}">${isMondayMorning ? 'Có Giờ Chào cờ' : 'Có Giờ Sinh hoạt'}</div>
+                    <div class="toggle-action-text">${isMondayMorning ? 'Có Giờ Chào cờ' : 'Có Giờ Sinh hoạt'}</div>
                     <label class="switch ${"chieu"===o?"chieu-toggle":""}">
                         <input type="checkbox" id="has_special_${e}" onchange="toggleSpecialEvent('${e}')">
                         <span class="slider"></span>
@@ -724,7 +689,7 @@
                 </div>
                 <div id="toggle_item_duvao_${e}" class="toggle-action-item">
                     <div class="toggle-action-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M10 20h4c0 1.1-.9 2-2 2s-2-.9-2-2zm10-2.64V11c0-3.35-2.36-6.15-5.5-6.83V3.5c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5V4.17C8.36 4.85 6 7.65 6 11v6.36L4 19.72V20h16v-.28l-2-2.36zM15 11h2v2h-2v-2zm-4 0h2v2h-2v-2zm-4 0h2v2H7v-2z"/></svg></div>
-                    <div class="toggle-action-text" id="label-entry-bell_${e}">Có Chuông Dự vào lớp</div>
+                    <div class="toggle-action-text">Có Chuông Dự vào lớp</div>
                     <label class="switch ${"chieu"===o?"chieu-toggle":""}">
                         <input type="checkbox" id="has_duvao_${e}" onchange="toggleDuVao('${e}')" checked>
                         <span class="slider"></span>
@@ -737,15 +702,15 @@
             <div class="settings-grid">
                 <div class="setting-item full-width">${d}<div class="input-wrapper"><label for="gio_${e}">Giờ vào học</label><input id="gio_${e}" type="time"></div></div>
                 <div id="special_event_container_${e}" class="setting-item full-width" style="display: none;">${u}</div>
-                <div class="setting-item">${l}<div class="input-wrapper"><label id="label-tiethoc_${e}">TG Tiết học</label><div class="unit-input"><input id="tiethoc_${e}" type="number" value="45"><span>phút</span></div></div></div>
-                <div class="setting-item">${c}<div class="input-wrapper"><label id="label-rachoi_${e}">TG Ra chơi</label><div class="unit-input"><input id="rachoi_${e}" type="number" value="5"><span>phút</span></div></div></div>
-                <div class="setting-item" id="duvao_wrapper_${e}">${m}<div class="input-wrapper"><label id="label-duvao_${e}">TG Dự vào</label><div class="unit-input"><input id="duvaotiet_${e}" type="number" value="3"><span>phút</span></div></div></div>
+                <div class="setting-item">${l}<div class="input-wrapper"><label for="tiethoc_${e}">TG Tiết học</label><div class="unit-input"><input id="tiethoc_${e}" type="number" value="45"><span>phút</span></div></div></div>
+                <div class="setting-item">${c}<div class="input-wrapper"><label for="rachoi_${e}">TG Ra chơi</label><div class="unit-input"><input id="rachoi_${e}" type="number" value="5"><span>phút</span></div></div></div>
+                <div class="setting-item" id="duvao_wrapper_${e}">${m}<div class="input-wrapper"><label for="duvaotiet_${e}">TG Dự vào</label><div class="unit-input"><input id="duvaotiet_${e}" type="number" value="3"><span>phút</span></div></div></div>
                 <div class="setting-item">${p}<div class="input-wrapper"><label for="sotiet_${e}">Số tiết học</label><div class="unit-input"><input id="sotiet_${e}" type="number" value="5"><span>tiết</span></div></div></div>
             </div>
         </div>
-        <button class="modern-btn preview-button" onclick="updatePreviewTable('${e}')" style="height: 40px; font-size: 0.85em; background: #34495e; color: var(--accent-color-alt); border: 1px solid var(--accent-color-alt);"><span id="btn-text-update-preview">Cập nhật bảng chi tiết</span></button>
+        <button class="modern-btn preview-button" onclick="updatePreviewTable('${e}')" style="height: 40px; font-size: 0.85em; background: #34495e; color: var(--accent-color-alt); border: 1px solid var(--accent-color-alt);">Cập nhật bảng chi tiết</button>
         <details style="margin-top: 15px;">
-            <summary id="summary-view-details">Xem chi tiết lịch</summary>
+            <summary>Xem chi tiết lịch</summary>
             <div class="details-container" id="details-${e}"></div>
         </details>
     </div>`
@@ -892,7 +857,7 @@
         return uniqueSchedule.map(item => ({ ...item, time: minuteToTime(item.time) })).sort((a, b) => timeToMinute(a.time) - timeToMinute(b.time));
     }
 
-    function updatePreviewTable(e){const t=document.getElementById(`enable_${e}`).checked,o=document.getElementById("details-"+e);if(!o)return;if(!t)return void(o.innerHTML=`<p style='text-align:center; padding: 10px;' id="label-schedule-disabled">Lịch này đang tắt.</p>`);const n=calculateSchedule(e);let a="<table><thead><tr><th>STT</th><th>Thời gian</th><th>Nội dung</th></tr></thead><tbody>";n.forEach((e,t)=>{a+=`<tr><td>${t+1}</td><td>${e.time}</td><td>${e.description}</td></tr>`}),a+="</tbody></table>",o.innerHTML=a}
+    function updatePreviewTable(e){const t=document.getElementById(`enable_${e}`).checked,o=document.getElementById("details-"+e);if(!o)return;if(!t)return void(o.innerHTML="<p style='text-align:center; padding: 10px;'>Lịch này đang tắt.</p>");const n=calculateSchedule(e);let a="<table><thead><tr><th>STT</th><th>Thời gian</th><th>Nội dung</th></tr></thead><tbody>";n.forEach((e,t)=>{a+=`<tr><td>${t+1}</td><td>${e.time}</td><td>${e.description}</td></tr>`}),a+="</tbody></table>",o.innerHTML=a}
     
     function copyAfternoonSchedule(sourceDayId) {
         const sourceDayName = document.querySelector(`.tablinks-day[onclick*="'${sourceDayId.replace('_chieu', '')}'"]`).innerText;
@@ -965,7 +930,6 @@
 
     window.onload = function() { 
         applyTheme(loadThemeSettings());
-        applyCustomLabels(); // ÁP DỤNG TÙY CHỈNH NHÃN
         connectToMqtt();
         setInterval(updateLocalClock, 1000);
         initializeTabs(); 
