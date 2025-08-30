@@ -22,6 +22,9 @@
         --font-main: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
         --font-size-base: 15px;
         --font-weight-base: 400;
+        --font-style-base: normal; /* BIẾN MỚI: Kiểu chữ */
+        --text-bg-primary: transparent; /* BIẾN MỚI: Màu nền chữ chính */
+        --text-bg-secondary: transparent; /* BIẾN MỚI: Màu nền chữ phụ */
         --text-shadow-accent: 0 0 12px var(--accent-color), 0 2px 8px #000;
         --box-shadow-accent-hover: 0 8px 24px var(--accent-color-alt-alpha-55);
         --success-color: #2ecc71;
@@ -37,9 +40,26 @@
         min-height: 100vh; margin: 0;
         font-size: var(--font-size-base);
         font-weight: var(--font-weight-base);
+        font-style: var(--font-style-base); /* Áp dụng kiểu chữ */
         transition: background 0.3s, color 0.3s;
     }
     #main { margin: 24px auto; width: 380px; max-width: 98vw; }
+
+    /* ÁP DỤNG MÀU NỀN CHO CÁC THÀNH PHẦN CHỮ */
+    h2, h4, h5, .modern-btn span, .preset-btn, .theme-label, .action-text .title, .input-wrapper label, .modal-input::placeholder, .adv-modal-tab {
+        background-color: var(--text-bg-primary);
+        padding: 2px 5px;
+        border-radius: 4px;
+        display: inline-block; /* Giúp background vừa với chữ */
+    }
+    .status-bar, .action-text .description, .list-placeholder, .device-info-grid span, .unit-input span, .font-size-value-span, #password-modal-description {
+        background-color: var(--text-bg-secondary);
+        padding: 1px 4px;
+        border-radius: 3px;
+        display: inline-block;
+    }
+    .modern-btn span, .preset-btn { display: initial; } /* Reset cho một số element */
+
 
     /* --- KHUNG NỘI DUNG CHÍNH & BO GÓC TỰ ĐỘNG --- */
     #content {
@@ -55,6 +75,7 @@
         border-radius: calc(var(--border-radius) / 2.5);
     }
     .notification, #ota-progress-bar { border-radius: calc(var(--border-radius) / 2.5); }
+
 
     /* === KHU VỰC THÔNG BÁO PHẢN HỒI === */
     #notification-area {
@@ -173,9 +194,6 @@
         background: var(--content-bg); padding: 20px;
         border-top: 5px solid var(--accent-color-alt); width: 95%; max-width: 400px;
         box-shadow: 0 5px 25px rgba(0,0,0,0.4); transform: scale(0.9); transition: transform 0.3s;
-        display: flex;
-        flex-direction: column;
-        max-height: 90vh;
     }
     .modal-overlay.visible .modal-content { transform: scale(1); }
     .modal-content h4 { margin: 0 0 20px 0; color: var(--accent-color-alt); text-align: center; font-size: 1.2em; text-transform: uppercase; }
@@ -190,12 +208,6 @@
     .adv-modal-tabs { display: flex; border-bottom: 2px solid var(--border-color); margin-bottom: 15px; flex-wrap: wrap; }
     .adv-modal-tab { flex-grow: 1; padding: 10px 2px; text-align: center; cursor: pointer; font-weight: bold; color: #7f8c8d; border-bottom: 3px solid transparent; transition: all 0.2s; font-size: 0.75em; min-width: 60px; }
     .adv-modal-tab.active { color: var(--accent-color); border-bottom-color: var(--accent-color); }
-    .adv-modal-scroll-content {
-        flex-grow: 1;
-        overflow-y: auto;
-        min-height: 100px;
-        padding-right: 5px;
-    }
     .adv-modal-tab-content { display: none; }
     .adv-modal-tab-content.active { display: block; }
     .adv-modal-tab-content h5 { text-align: center; color: var(--accent-color); text-transform: uppercase; margin: 10px 0 15px 0; letter-spacing: 1px; font-size: 0.9em; }
@@ -250,6 +262,9 @@
     select, input[type="range"] { width: 100%; padding: 8px; border: 1px solid var(--border-color); background-color: var(--content-bg); color: var(--text-primary); font-family: var(--font-main); }
     .theme-actions { display: flex; gap: 10px; margin-top: 15px; }
     .theme-actions button { flex-grow: 1; }
+    .text-bg-control { display: flex; align-items: center; gap: 10px; }
+    .text-bg-control label { font-size: 0.8em; flex-grow: 1; }
+    .text-bg-control input[type="checkbox"] { width: 18px; height: 18px; }
   </style>
 </head>
 <body>
@@ -347,125 +362,143 @@
     <div class="modal-content">
         <h4>Cài đặt nâng cao</h4>
         <div class="adv-modal-tabs">
+            <div class="adv-modal-tab" onclick="switchAdvTab(event, 'adv-tab-theme')">Giao diện</div>
             <div class="adv-modal-tab active" onclick="switchAdvTab(event, 'adv-tab-satellites')">Vệ tinh</div>
             <div class="adv-modal-tab" onclick="switchAdvTab(event, 'adv-tab-system')">Hệ thống</div>
             <div class="adv-modal-tab" onclick="switchAdvTab(event, 'adv-tab-reset-wifi')">Reset WiFi</div>
             <div class="adv-modal-tab" onclick="switchAdvTab(event, 'adv-tab-reset-esp')">Reset ESP</div>
             <div class="adv-modal-tab" onclick="switchAdvTab(event, 'adv-tab-change-pass')">Mật khẩu</div>
             <div class="adv-modal-tab" onclick="switchAdvTab(event, 'adv-tab-ota')">Cập nhật OTA</div>
-            <div class="adv-modal-tab" onclick="switchAdvTab(event, 'adv-tab-theme')">Giao diện</div>
         </div>
         
-        <div class="adv-modal-scroll-content">
-            <div id="adv-tab-satellites" class="adv-modal-tab-content active">
-                <h5>CÁC THIẾT BỊ ĐANG QUẢN LÝ</h5>
-                <div id="managed-devices-list" class="device-list">
-                    <p class="list-placeholder">Chưa có thiết bị nào được quản lý.</p>
+        <div id="adv-tab-satellites" class="adv-modal-tab-content active">
+            <h5>CÁC THIẾT BỊ ĐANG QUẢN LÝ</h5>
+            <div id="managed-devices-list" class="device-list">
+                <p class="list-placeholder">Chưa có thiết bị nào được quản lý.</p>
+            </div>
+            <hr style="margin: 20px 0; background: var(--border-color); height: 1px; opacity: 0.5;">
+            <h5>CÁC THIẾT BỊ ĐÃ PHÁT HIỆN</h5>
+            <div id="discovered-devices-list" class="device-list">
+                <p class="list-placeholder">Đang chờ tín hiệu từ các thiết bị...</p>
+            </div>
+        </div>
+
+        <div id="adv-tab-system" class="adv-modal-tab-content">
+            <div id="system-info-actions-list" class="actions-list"></div>
+        </div>
+
+        <div id="adv-tab-reset-wifi" class="adv-modal-tab-content">
+            <div id="reset-wifi-actions-list" class="actions-list"></div>
+        </div>
+
+        <div id="adv-tab-reset-esp" class="adv-modal-tab-content">
+            <div id="reset-esp-actions-list" class="actions-list"></div>
+        </div>
+
+        <div id="adv-tab-change-pass" class="adv-modal-tab-content">
+            <h5>THAY ĐỔI MẬT KHẨU QUẢN TRỊ</h5>
+            <div class="actions-list" style="gap: 15px; padding-top: 10px;">
+                <input type="password" id="old-admin-password" class="modal-input" placeholder="Mật khẩu cũ..." autocomplete="current-password">
+                <input type="password" id="new-admin-password" class="modal-input" placeholder="Mật khẩu mới..." autocomplete="new-password">
+                <input type="password" id="confirm-admin-password" class="modal-input" placeholder="Xác nhận mật khẩu mới..." autocomplete="new-password">
+                <button class="action-btn" style="width: 100%; height: 40px; font-size: 0.9em;" onclick="handleChangePassword()">Lưu Thay Đổi</button>
+            </div>
+        </div>
+        
+        <div id="adv-tab-ota" class="adv-modal-tab-content">
+            <h5>CẬP NHẬT FIRMWARE (OTA)</h5>
+            <div class="actions-list" style="gap: 15px; padding-top: 10px;">
+                <h5>1. CHỌN THIẾT BỊ CẦN CẬP NHẬT</h5>
+                <div id="ota-device-selection-list" class="ota-device-selection">
+                    <p class="list-placeholder">Đang chờ danh sách thiết bị...</p>
                 </div>
-                <hr style="margin: 20px 0; background: var(--border-color); height: 1px; opacity: 0.5;">
-                <h5>CÁC THIẾT BỊ ĐÃ PHÁT HIỆN</h5>
-                <div id="discovered-devices-list" class="device-list">
-                    <p class="list-placeholder">Đang chờ tín hiệu từ các thiết bị...</p>
-                </div>
+                <h5>2. CHỌN FILE FIRMWARE (.bin)</h5>
+                <input type="file" id="ota-file-input" accept=".bin" style="display: none;">
+                <button class="action-btn" id="ota-select-file-btn" onclick="document.getElementById('ota-file-input').click();" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 40px; font-size: 0.9em;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    Chọn File (.bin)
+                </button>
+                <div id="ota-file-name" style="text-align: center; color: var(--accent-color-alt); font-weight: bold; min-height: 20px; font-size: 0.9em;">Chưa chọn tệp nào</div>
+                <h5>3. BẮT ĐẦU CẬP NHẬT</h5>
+                <div id="ota-progress-container"> <div id="ota-progress-bar">0%</div> </div>
+                <div id="ota-status-text"></div> <div id="ota-progress-details"></div> <div id="ota-device-status-list"></div>
+                <button class="action-btn" id="ota-upload-btn" style="width: 100%; height: 40px; font-size: 0.9em; background-color: #27ae60; color: #fff; display: none;" onclick="handleOtaUpload()">Bắt đầu Cập nhật</button>
             </div>
+        </div>
 
-            <div id="adv-tab-system" class="adv-modal-tab-content">
-                <div id="system-info-actions-list" class="actions-list"></div>
-            </div>
-
-            <div id="adv-tab-reset-wifi" class="adv-modal-tab-content">
-                <div id="reset-wifi-actions-list" class="actions-list"></div>
-            </div>
-
-            <div id="adv-tab-reset-esp" class="adv-modal-tab-content">
-                <div id="reset-esp-actions-list" class="actions-list"></div>
-            </div>
-
-            <div id="adv-tab-change-pass" class="adv-modal-tab-content">
-                <h5>THAY ĐỔI MẬT KHẨU QUẢN TRỊ</h5>
-                <div class="actions-list" style="gap: 15px; padding-top: 10px;">
-                    <input type="password" id="old-admin-password" class="modal-input" placeholder="Mật khẩu cũ..." autocomplete="current-password">
-                    <input type="password" id="new-admin-password" class="modal-input" placeholder="Mật khẩu mới..." autocomplete="new-password">
-                    <input type="password" id="confirm-admin-password" class="modal-input" placeholder="Xác nhận mật khẩu mới..." autocomplete="new-password">
-                    <button class="action-btn" style="width: 100%; height: 40px; font-size: 0.9em;" onclick="handleChangePassword()">Lưu Thay Đổi</button>
-                </div>
-            </div>
-            
-            <div id="adv-tab-ota" class="adv-modal-tab-content">
-                <h5>CẬP NHẬT FIRMWARE (OTA)</h5>
-                <div class="actions-list" style="gap: 15px; padding-top: 10px;">
-                    <h5>1. CHỌN THIẾT BỊ CẦN CẬP NHẬT</h5>
-                    <div id="ota-device-selection-list" class="ota-device-selection">
-                        <p class="list-placeholder">Đang chờ danh sách thiết bị...</p>
+        <div id="adv-tab-theme" class="adv-modal-tab-content">
+            <h5>TÙY CHỈNH GIAO DIỆN</h5>
+            <div class="theme-settings-container">
+                <div class="theme-setting-row">
+                    <label class="theme-label">Chủ đề cài sẵn</label>
+                    <div class="theme-presets">
+                        <button class="preset-btn" data-theme="default">Mặc định</button>
+                        <button class="preset-btn" data-theme="light">Ánh sáng</button>
+                        <button class="preset-btn" data-theme="ocean">Xanh biển</button>
+                        <button class="preset-btn" data-theme="classic">Cổ điển</button>
                     </div>
-                    <h5>2. CHỌN FILE FIRMWARE (.bin)</h5>
-                    <input type="file" id="ota-file-input" accept=".bin" style="display: none;">
-                    <button class="action-btn" id="ota-select-file-btn" onclick="document.getElementById('ota-file-input').click();" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 40px; font-size: 0.9em;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                        Chọn File (.bin)
-                    </button>
-                    <div id="ota-file-name" style="text-align: center; color: var(--accent-color-alt); font-weight: bold; min-height: 20px; font-size: 0.9em;">Chưa chọn tệp nào</div>
-                    <h5>3. BẮT ĐẦU CẬP NHẬT</h5>
-                    <div id="ota-progress-container"> <div id="ota-progress-bar">0%</div> </div>
-                    <div id="ota-status-text"></div> <div id="ota-progress-details"></div> <div id="ota-device-status-list"></div>
-                    <button class="action-btn" id="ota-upload-btn" style="width: 100%; height: 40px; font-size: 0.9em; background-color: #27ae60; color: #fff; display: none;" onclick="handleOtaUpload()">Bắt đầu Cập nhật</button>
                 </div>
-            </div>
-
-            <div id="adv-tab-theme" class="adv-modal-tab-content">
-                <h5>TÙY CHỈNH GIAO DIỆN</h5>
-                <div class="theme-settings-container">
-                    <div class="theme-setting-row">
-                        <label class="theme-label">Chủ đề cài sẵn</label>
-                        <div class="theme-presets">
-                            <button class="preset-btn" data-theme="default">Mặc định</button>
-                            <button class="preset-btn" data-theme="light">Ánh sáng</button>
-                            <button class="preset-btn" data-theme="ocean">Xanh biển</button>
-                            <button class="preset-btn" data-theme="classic">Cổ điển</button>
+                
+                <div class="theme-setting-row">
+                    <label class="theme-label">Bảng màu tùy chỉnh</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div class="theme-options color-picker-wrapper">
+                            <label for="theme_accent_color" style="font-size:0.8em; margin-right: 5px;">Màu chủ đạo:</label>
+                            <input type="color" id="theme_accent_color">
+                        </div>
+                        <div class="theme-options color-picker-wrapper">
+                            <label for="theme_bg_grad_start" style="font-size:0.8em; margin-right: 5px;">Nền (Bắt đầu):</label>
+                            <input type="color" id="theme_bg_grad_start">
+                        </div>
+                         <div class="theme-options color-picker-wrapper">
+                            <label for="theme_bg_grad_end" style="font-size:0.8em; margin-right: 5px;">Nền (Kết thúc):</label>
+                            <input type="color" id="theme_bg_grad_end">
+                        </div>
+                        <div class="theme-options color-picker-wrapper">
+                            <label for="theme_content_bg" style="font-size:0.8em; margin-right: 5px;">Nền Nội dung:</label>
+                            <input type="color" id="theme_content_bg">
+                        </div>
+                        <div class="theme-options color-picker-wrapper">
+                            <label for="theme_text_primary" style="font-size:0.8em; margin-right: 5px;">Chữ chính:</label>
+                            <input type="color" id="theme_text_primary">
+                        </div>
+                        <div class="theme-options color-picker-wrapper">
+                            <label for="theme_text_secondary" style="font-size:0.8em; margin-right: 5px;">Chữ phụ:</label>
+                            <input type="color" id="theme_text_secondary">
                         </div>
                     </div>
-                    
-                    <div class="theme-setting-row">
-                        <label class="theme-label">Bảng màu tùy chỉnh</label>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                            <div class="color-picker-wrapper">
-                                <label for="theme_accent_color" style="font-size:0.8em; margin-right: 5px;">Màu chủ đạo:</label>
-                                <input type="color" id="theme_accent_color">
-                            </div>
-                            <div class="color-picker-wrapper">
-                                <label for="theme_bg_grad_start" style="font-size:0.8em; margin-right: 5px;">Nền (Bắt đầu):</label>
-                                <input type="color" id="theme_bg_grad_start">
-                            </div>
-                             <div class="color-picker-wrapper">
-                                <label for="theme_bg_grad_end" style="font-size:0.8em; margin-right: 5px;">Nền (Kết thúc):</label>
-                                <input type="color" id="theme_bg_grad_end">
-                            </div>
-                            <div class="color-picker-wrapper">
-                                <label for="theme_content_bg" style="font-size:0.8em; margin-right: 5px;">Nền Nội dung:</label>
-                                <input type="color" id="theme_content_bg">
-                            </div>
-                            <div class="color-picker-wrapper">
-                                <label for="theme_text_primary" style="font-size:0.8em; margin-right: 5px;">Chữ chính:</label>
-                                <input type="color" id="theme_text_primary">
-                            </div>
-                            <div class="color-picker-wrapper">
-                                <label for="theme_text_secondary" style="font-size:0.8em; margin-right: 5px;">Chữ phụ:</label>
-                                <input type="color" id="theme_text_secondary">
-                            </div>
-                        </div>
-                    </div>
+                </div>
 
-                    <div class="theme-setting-row">
-                        <label class="theme-label" for="theme_font_family">Font chữ</label>
-                        <select id="theme_font_family">
-                            <option value="'Roboto', sans-serif">Roboto</option>
-                            <option value="'Open Sans', sans-serif">Open Sans</option>
-                            <option value="'Montserrat', sans-serif">Montserrat</option>
-                            <option value="'Source Sans Pro', sans-serif">Source Sans Pro</option>
-                            <option value="'Be Vietnam Pro', sans-serif">Be Vietnam Pro</option>
-                            <option value="'Nunito', sans-serif">Nunito</option>
-                        </select>
-                    </div>
+                <div class="theme-setting-row">
+                    <label class="theme-label" for="theme_font_family">Font chữ</label>
+                    <select id="theme_font_family">
+                        <option value="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif">Hệ thống</option>
+                        <option value="'Roboto', sans-serif">Roboto</option>
+                        <option value="'Open Sans', sans-serif">Open Sans</option>
+                        <option value="'Montserrat', sans-serif">Montserrat</option>
+                        <option value="'Lato', sans-serif">Lato</option>
+                        <option value="'Be Vietnam Pro', sans-serif">Be Vietnam Pro</option>
+                        <option value="'Nunito', sans-serif">Nunito</option>
+                        <option value="'Source Sans Pro', sans-serif">Source Sans Pro</option>
+                        <option value="'Inter', sans-serif">Inter</option>
+                        <option value="'Merriweather', serif">Merriweather (Serif)</option>
+                        <option value="'Playfair Display', serif">Playfair Display (Serif)</option>
+                        <option value="'Lora', serif">Lora (Serif)</option>
+                        <option value="'Noto Serif', serif">Noto Serif</option>
+                        <option value="'Fira Code', monospace">Fira Code (Code)</option>
+                        <option value="'Roboto Mono', monospace">Roboto Mono (Code)</option>
+                        <option value="'Source Code Pro', monospace">Source Code Pro (Code)</option>
+                        <option value="'Oswald', sans-serif">Oswald (Display)</option>
+                        <option value="'Raleway', sans-serif">Raleway (Display)</option>
+                        <option value="'Pacifico', cursive">Pacifico (Handwriting)</option>
+                        <option value="'Dancing Script', cursive">Dancing Script (Handwriting)</option>
+                        <option value="'Lobster', cursive">Lobster (Handwriting)</option>
+                        <option value="'Comfortaa', cursive">Comfortaa</option>
+                        <option value="'Quicksand', sans-serif">Quicksand</option>
+                        <option value="'Ubuntu', sans-serif">Ubuntu</option>
+                    </select>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                     <div class="theme-setting-row">
                         <label class="theme-label" for="theme_font_weight">Độ đậm</label>
                         <select id="theme_font_weight">
@@ -475,69 +508,44 @@
                         </select>
                     </div>
                     <div class="theme-setting-row">
-                        <label class="theme-label" for="theme_font_size">Cỡ chữ (<span id="font-size-value">15</span>px)</label>
-                        <input type="range" id="theme_font_size" min="12" max="18" value="15" step="1">
+                        <label class="theme-label" for="theme_font_style">Kiểu chữ</label>
+                        <select id="theme_font_style">
+                            <option value="normal" selected>Thường</option>
+                            <option value="italic">Nghiêng</option>
+                        </select>
                     </div>
-                    <div class="theme-setting-row">
-                        <label class="theme-label" for="theme_border_radius">Độ bo góc (<span id="border-radius-value">18</span>px)</label>
-                        <input type="range" id="theme_border_radius" min="0" max="30" value="18" step="1">
+                </div>
+                 <div class="theme-setting-row">
+                    <label class="theme-label" for="theme_text_bg_primary">Màu nền chữ</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div class="theme-options color-picker-wrapper text-bg-control">
+                           <label for="theme_text_bg_primary_enable">Nền chữ chính:</label>
+                           <input type="checkbox" id="theme_text_bg_primary_enable">
+                           <input type="color" id="theme_text_bg_primary">
+                        </div>
+                        <div class="theme-options color-picker-wrapper text-bg-control">
+                           <label for="theme_text_bg_secondary_enable">Nền chữ phụ:</label>
+                           <input type="checkbox" id="theme_text_bg_secondary_enable">
+                           <input type="color" id="theme_text_bg_secondary">
+                        </div>
                     </div>
-
-                    <div class="theme-setting-row">
-                        <details>
-                            <summary style="font-weight: bold; cursor: pointer; color: var(--accent-color);">
-                                ▼ Tùy chỉnh Nút Nâng cao
-                            </summary>
-                            <div style="padding-top: 15px; display: flex; flex-direction: column; gap: 15px;">
-                                <div>
-                                    <label class="theme-label" style="font-size: 1em;">1. Nút Lưu (Chính)</label>
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 5px;">
-                                        <div class="color-picker-wrapper">
-                                            <label for="btn_save_bg" style="font-size:0.8em;">Nền:</label>
-                                            <input type="color" id="btn_save_bg">
-                                        </div>
-                                        <div class="color-picker-wrapper">
-                                            <label for="btn_save_text" style="font-size:0.8em;">Chữ:</label>
-                                            <input type="color" id="btn_save_text">
-                                        </div>
-                                        <div class="color-picker-wrapper" style="grid-column: 1 / -1;">
-                                            <label for="btn_save_border" style="font-size:0.8em;">Viền:</label>
-                                            <input type="color" id="btn_save_border">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label class="theme-label" style="font-size: 1em;">2. Nút Thử Chuông / Phụ</label>
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 5px;">
-                                        <div class="color-picker-wrapper">
-                                            <label for="btn_test_bg" style="font-size:0.8em;">Nền:</label>
-                                            <input type="color" id="btn_test_bg">
-                                        </div>
-                                        <div class="color-picker-wrapper">
-                                            <label for="btn_test_text" style="font-size:0.8em;">Chữ:</label>
-                                            <input type="color" id="btn_test_text">
-                                        </div>
-                                        <div class="color-picker-wrapper" style="grid-column: 1 / -1;">
-                                            <label for="btn_test_border" style="font-size:0.8em;">Viền:</label>
-                                            <input type="color" id="btn_test_border">
-                                        </div>
-                                    </div>
-                                </div>
-                                <button class="action-btn" style="background-color: #7f8c8d;" onclick="resetButtonStyles()">Reset màu các nút</button>
-                            </div>
-                        </details>
-                    </div>
-                    
-                    <div class="theme-actions">
-                        <button class="action-btn" style="background-color: #27ae60;" onclick="handleSaveTheme()">Lưu Giao Diện</button>
-                    </div>
+                </div>
+                <div class="theme-setting-row">
+                    <label class="theme-label" for="theme_font_size">Cỡ chữ (<span id="font-size-value" class="font-size-value-span">15</span>px)</label>
+                    <input type="range" id="theme_font_size" min="12" max="18" value="15" step="1">
+                </div>
+                <div class="theme-setting-row">
+                    <label class="theme-label" for="theme_border_radius">Độ bo góc (<span id="border-radius-value" class="font-size-value-span">18</span>px)</label>
+                    <input type="range" id="theme_border_radius" min="0" max="30" value="18" step="1">
+                </div>
+                <div class="theme-actions">
+                    <button class="action-btn" style="background-color: #27ae60;" onclick="handleSaveTheme()">Lưu Giao Diện</button>
                 </div>
             </div>
         </div>
-        
+
         <div class="modal-buttons">
-            <button class="modal-cancel-btn" onclick="handleCloseAdvancedSettingsModal()">Đóng</button>
-            <button class="modal-confirm-btn" onclick="saveAndCloseAdvancedSettingsModal()">Lưu & Đóng</button>
+            <button class="modal-cancel-btn" onclick="closeAdvancedSettingsModal()">Đóng</button>
         </div>
     </div>
   </div>
@@ -582,12 +590,12 @@
         fontFamily: "'Roboto', sans-serif",
         fontSize: '15px',
         fontWeight: '400',
+        fontStyle: 'normal',
         borderRadius: '18px',
         colorOverrides: null,
-        buttonStyles: {} // Thêm mục mới để lưu style của nút
+        textBgColorPrimary: 'transparent',
+        textBgColorSecondary: 'transparent'
     };
-
-    let initialThemeSettings = null; 
 
     function hexToRgb(hex) {
         let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -595,48 +603,16 @@
     }
     
     function loadGoogleFont(fontFamily) {
+        if (!fontFamily) return;
         const fontName = fontFamily.split(',')[0].replace(/'/g, '').replace(/\s/g, '+');
+        if (!fontName || fontName.toLowerCase() === 'system-ui') return;
         const fontId = `google-font-${fontName}`;
         if (document.getElementById(fontId)) return;
         const link = document.createElement('link');
         link.id = fontId;
         link.rel = 'stylesheet';
-        link.href = `https://fonts.googleapis.com/css2?family=${fontName}:wght@300;400;700&display=swap`;
+        link.href = `https://fonts.googleapis.com/css2?family=${fontName}:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap`;
         document.head.appendChild(link);
-    }
-
-    function applyButtonStyles(settings) {
-        if (!settings || !settings.buttonStyles) return;
-        for (const [key, styles] of Object.entries(settings.buttonStyles)) {
-            const buttons = document.querySelectorAll(`.${key}`);
-            buttons.forEach(button => {
-                // Chỉ áp dụng style nếu màu khác màu mặc định (#000000)
-                if (styles.bg && styles.bg !== '#000000') {
-                    button.style.background = styles.bg;
-                }
-                if (styles.text && styles.text !== '#000000') {
-                    button.style.color = styles.text;
-                    button.style.textShadow = `0 0 8px ${styles.text}`;
-                }
-                if (styles.border && styles.border !== '#000000') {
-                    button.style.borderLeftColor = styles.border;
-                    button.style.borderRightColor = styles.border;
-                }
-            });
-        }
-    }
-
-    function resetButtonStyles() {
-        if (confirm("Ông có chắc muốn xóa tất cả tùy chỉnh màu của các nút không?")) {
-            ['btn_save_bg', 'btn_save_text', 'btn_save_border', 'btn_test_bg', 'btn_test_text', 'btn_test_border'].forEach(id => {
-                 document.getElementById(id).value = '#000000';
-            });
-            const settings = getSettingsFromUI();
-            settings.buttonStyles = {};
-            saveThemeSettings(settings);
-            applyTheme(settings);
-            showNotification("Đã reset màu các nút.", "info");
-        }
     }
 
     function applyTheme(settings) {
@@ -663,7 +639,10 @@
         root.style.setProperty('--font-main', settings.fontFamily);
         root.style.setProperty('--font-size-base', settings.fontSize);
         root.style.setProperty('--font-weight-base', settings.fontWeight);
+        root.style.setProperty('--font-style-base', settings.fontStyle);
         root.style.setProperty('--border-radius', settings.borderRadius);
+        root.style.setProperty('--text-bg-primary', settings.textBgColorPrimary || 'transparent');
+        root.style.setProperty('--text-bg-secondary', settings.textBgColorSecondary || 'transparent');
 
         const rgb = hexToRgb(accentColor);
         if(rgb) {
@@ -671,7 +650,6 @@
           root.style.setProperty('--accent-color-alt-alpha-33', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.33)`);
           root.style.setProperty('--accent-color-alt-alpha-55', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.55)`);
         }
-        applyButtonStyles(settings);
     }
 
     function loadThemeSettings() {
@@ -697,6 +675,7 @@
         
         document.getElementById('theme_font_family').value = settings.fontFamily;
         document.getElementById('theme_font_weight').value = settings.fontWeight || '400';
+        document.getElementById('theme_font_style').value = settings.fontStyle || 'normal';
         
         const fontSize = parseInt(settings.fontSize, 10);
         const fontSizeSlider = document.getElementById('theme_font_size');
@@ -707,17 +686,24 @@
         const radiusSlider = document.getElementById('theme_border_radius');
         radiusSlider.value = radius;
         document.getElementById('border-radius-value').textContent = radius;
-
-        if (settings.buttonStyles) {
-            const saveBtnStyles = settings.buttonStyles['save-button'] || {};
-            document.getElementById('btn_save_bg').value = saveBtnStyles.bg || '#000000';
-            document.getElementById('btn_save_text').value = saveBtnStyles.text || '#000000';
-            document.getElementById('btn_save_border').value = saveBtnStyles.border || '#000000';
-            
-            const testBtnStyles = settings.buttonStyles['test-button'] || {};
-            document.getElementById('btn_test_bg').value = testBtnStyles.bg || '#000000';
-            document.getElementById('btn_test_text').value = testBtnStyles.text || '#000000';
-            document.getElementById('btn_test_border').value = testBtnStyles.border || '#000000';
+        
+        // Cập nhật UI cho màu nền chữ
+        const textBgPrimaryEnable = document.getElementById('theme_text_bg_primary_enable');
+        const textBgPrimaryColor = document.getElementById('theme_text_bg_primary');
+        if (settings.textBgColorPrimary && settings.textBgColorPrimary !== 'transparent') {
+            textBgPrimaryEnable.checked = true;
+            textBgPrimaryColor.value = settings.textBgColorPrimary;
+        } else {
+            textBgPrimaryEnable.checked = false;
+        }
+        
+        const textBgSecondaryEnable = document.getElementById('theme_text_bg_secondary_enable');
+        const textBgSecondaryColor = document.getElementById('theme_text_bg_secondary');
+        if (settings.textBgColorSecondary && settings.textBgColorSecondary !== 'transparent') {
+            textBgSecondaryEnable.checked = true;
+            textBgSecondaryColor.value = settings.textBgColorSecondary;
+        } else {
+            textBgSecondaryEnable.checked = false;
         }
     }
 
@@ -731,26 +717,16 @@
             textPrimary: document.getElementById('theme_text_primary').value,
             textSecondary: document.getElementById('theme_text_secondary').value
         };
-        const buttonStyles = {
-            'save-button': {
-                bg: document.getElementById('btn_save_bg').value,
-                text: document.getElementById('btn_save_text').value,
-                border: document.getElementById('btn_save_border').value
-            },
-            'test-button': {
-                bg: document.getElementById('btn_test_bg').value,
-                text: document.getElementById('btn_test_text').value,
-                border: document.getElementById('btn_test_border').value
-            }
-        };
         return {
             preset: activePreset,
             fontFamily: document.getElementById('theme_font_family').value,
             fontWeight: document.getElementById('theme_font_weight').value,
+            fontStyle: document.getElementById('theme_font_style').value,
             fontSize: `${document.getElementById('theme_font_size').value}px`,
             borderRadius: `${document.getElementById('theme_border_radius').value}px`,
             colorOverrides: colorOverrides,
-            buttonStyles: buttonStyles
+            textBgColorPrimary: document.getElementById('theme_text_bg_primary_enable').checked ? document.getElementById('theme_text_bg_primary').value : 'transparent',
+            textBgColorSecondary: document.getElementById('theme_text_bg_secondary_enable').checked ? document.getElementById('theme_text_bg_secondary').value : 'transparent'
         };
     }
     
@@ -758,13 +734,11 @@
         const settings = getSettingsFromUI();
         saveThemeSettings(settings);
         applyTheme(settings);
-        initialThemeSettings = settings; 
         showNotification('Đã lưu cài đặt giao diện!', 'success');
     }
 
     function initThemeSystem() {
         const settings = loadThemeSettings();
-        loadGoogleFont(settings.fontFamily);
         applyTheme(settings);
         
         if(document.getElementById('adv-tab-theme')) {
@@ -778,19 +752,24 @@
                     newSettings.preset = presetName;
                     
                     newSettings.colorOverrides = themes[presetName];
+                    newSettings.textBgColorPrimary = 'transparent'; // Reset khi đổi theme
+                    newSettings.textBgColorSecondary = 'transparent'; // Reset khi đổi theme
                     
                     applyTheme(newSettings);
                     updateThemeUI(newSettings);
                 });
             });
-            [
-                'theme_accent_color', 'theme_bg_grad_start', 'theme_bg_grad_end', 'theme_content_bg', 'theme_text_primary', 'theme_text_secondary', 
-                'theme_font_family', 'theme_border_radius', 'theme_font_size', 'theme_font_weight',
-                'btn_save_bg', 'btn_save_text', 'btn_save_border', 'btn_test_bg', 'btn_test_text', 'btn_test_border'
-            ].forEach(id => {
+            // Lắng nghe sự kiện cho TẤT CẢ các control
+            ['theme_accent_color', 'theme_bg_grad_start', 'theme_bg_grad_end', 'theme_content_bg', 'theme_text_primary', 'theme_text_secondary', 
+             'theme_font_family', 'theme_border_radius', 'theme_font_size', 'theme_font_weight', 'theme_font_style',
+             'theme_text_bg_primary', 'theme_text_bg_primary_enable', 'theme_text_bg_secondary', 'theme_text_bg_secondary_enable'].forEach(id => {
                 const element = document.getElementById(id);
                 if (element) {
                     element.addEventListener('input', () => {
+                        // Tự động check vào box nếu người dùng chọn màu
+                        if (id === 'theme_text_bg_primary') document.getElementById('theme_text_bg_primary_enable').checked = true;
+                        if (id === 'theme_text_bg_secondary') document.getElementById('theme_text_bg_secondary_enable').checked = true;
+                        
                         const settings = getSettingsFromUI();
                         applyTheme(settings);
                         if(id === 'theme_border_radius') {
@@ -880,41 +859,17 @@
         if(client&&client.connected) { client.publish(CONTROL_TOPIC, JSON.stringify({ command: "TEST_BELL" }), {qos:1}); showNotification("Đã gửi lệnh thử chuông chung..."); } 
         else { showNotification("Chưa kết nối máy chủ!", 'error'); }
     }
-    
     function openAdvancedSettingsModal() { 
         document.getElementById('advanced-settings-modal').classList.add('visible'); 
-        if(document.querySelector('#adv-tab-system.active')) requestSystemInfo(); 
-        initThemeSystem();
-        initialThemeSettings = getSettingsFromUI();
+        // Luôn khởi tạo tab giao diện khi mở modal
+        initThemeSystem(); 
+        if(document.querySelector('#adv-tab-system.active')) requestSystemInfo();
     }
-    function closeAdvancedSettingsModal() { 
-        document.getElementById('advanced-settings-modal').classList.remove('visible'); 
-        applyTheme(loadThemeSettings());
-    }
-    
-    function saveAndCloseAdvancedSettingsModal() {
-        handleSaveTheme();
-        closeAdvancedSettingsModal();
-    }
-
-    function handleCloseAdvancedSettingsModal() {
-        const currentSettings = getSettingsFromUI();
-        if (JSON.stringify(currentSettings) !== JSON.stringify(initialThemeSettings)) {
-            if (confirm("Bạn có thay đổi giao diện chưa lưu. Bạn có muốn lưu lại không?")) {
-                handleSaveTheme();
-            }
-        }
-        closeAdvancedSettingsModal();
-    }
-
+    function closeAdvancedSettingsModal() { document.getElementById('advanced-settings-modal').classList.remove('visible'); }
     function switchAdvTab(evt, tabName) {
         document.querySelectorAll('.adv-modal-tab, .adv-modal-tab-content').forEach(el => el.classList.remove('active'));
-        evt.currentTarget.classList.add('active'); 
-        const tabContent = document.getElementById(tabName);
-        if (tabContent) tabContent.classList.add('active');
-
-        if (tabName === 'adv-tab-system') requestSystemInfo(); 
-        if (tabName === 'adv-tab-theme') initThemeSystem();
+        evt.currentTarget.classList.add('active'); document.getElementById(tabName).classList.add('active');
+        if (tabName === 'adv-tab-system') requestSystemInfo();
     }
     function renderSystemInfo(info) {
         const list=document.getElementById('system-info-actions-list'); if(!list)return; list.innerHTML='';
@@ -994,7 +949,7 @@
     }
     
     window.onload = function() { 
-        initThemeSystem(); 
+        applyTheme(loadThemeSettings()); 
         connectToMqtt();
         populateSohоiForm();
         
