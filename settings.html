@@ -21,7 +21,7 @@
         --border-radius: 18px;
         --font-main: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
         --font-size-base: 15px;
-        --font-weight-base: 400; /* BIẾN MỚI: Độ đậm font */
+        --font-weight-base: 400;
         --text-shadow-accent: 0 0 12px var(--accent-color), 0 2px 8px #000;
         --box-shadow-accent-hover: 0 8px 24px var(--accent-color-alt-alpha-55);
         --success-color: #2ecc71;
@@ -36,7 +36,7 @@
         color: var(--text-primary);
         min-height: 100vh; margin: 0;
         font-size: var(--font-size-base);
-        font-weight: var(--font-weight-base); /* Áp dụng độ đậm */
+        font-weight: var(--font-weight-base);
         transition: background 0.3s, color 0.3s;
     }
     #main { margin: 24px auto; width: 380px; max-width: 98vw; }
@@ -55,7 +55,6 @@
         border-radius: calc(var(--border-radius) / 2.5);
     }
     .notification, #ota-progress-bar { border-radius: calc(var(--border-radius) / 2.5); }
-
 
     /* === KHU VỰC THÔNG BÁO PHẢN HỒI === */
     #notification-area {
@@ -174,6 +173,11 @@
         background: var(--content-bg); padding: 20px;
         border-top: 5px solid var(--accent-color-alt); width: 95%; max-width: 400px;
         box-shadow: 0 5px 25px rgba(0,0,0,0.4); transform: scale(0.9); transition: transform 0.3s;
+        
+        /* [SỬA LỖI] Giúp modal cuộn trên mobile */
+        display: flex;
+        flex-direction: column;
+        max-height: 90vh; /* Giới hạn chiều cao tổng thể của modal */
     }
     .modal-overlay.visible .modal-content { transform: scale(1); }
     .modal-content h4 { margin: 0 0 20px 0; color: var(--accent-color-alt); text-align: center; font-size: 1.2em; text-transform: uppercase; }
@@ -188,6 +192,15 @@
     .adv-modal-tabs { display: flex; border-bottom: 2px solid var(--border-color); margin-bottom: 15px; flex-wrap: wrap; }
     .adv-modal-tab { flex-grow: 1; padding: 10px 2px; text-align: center; cursor: pointer; font-weight: bold; color: #7f8c8d; border-bottom: 3px solid transparent; transition: all 0.2s; font-size: 0.75em; min-width: 60px; }
     .adv-modal-tab.active { color: var(--accent-color); border-bottom-color: var(--accent-color); }
+    
+    /* [SỬA LỖI] Class mới cho vùng nội dung có thể cuộn */
+    .adv-modal-scroll-content {
+        flex-grow: 1; /* Cho phép co giãn để lấp đầy không gian còn lại */
+        overflow-y: auto; /* Thêm thanh cuộn dọc khi nội dung dài hơn */
+        min-height: 100px; /* Đảm bảo nó không bị xẹp quá nhỏ */
+        padding-right: 5px; /* Thêm chút khoảng trống cho thanh cuộn */
+    }
+
     .adv-modal-tab-content { display: none; }
     .adv-modal-tab-content.active { display: block; }
     .adv-modal-tab-content h5 { text-align: center; color: var(--accent-color); text-transform: uppercase; margin: 10px 0 15px 0; letter-spacing: 1px; font-size: 0.9em; }
@@ -348,137 +361,139 @@
             <div class="adv-modal-tab" onclick="switchAdvTab(event, 'adv-tab-theme')">Giao diện</div>
         </div>
         
-        <div id="adv-tab-satellites" class="adv-modal-tab-content active">
-            <h5>CÁC THIẾT BỊ ĐANG QUẢN LÝ</h5>
-            <div id="managed-devices-list" class="device-list">
-                <p class="list-placeholder">Chưa có thiết bị nào được quản lý.</p>
+        <div class="adv-modal-scroll-content">
+            <div id="adv-tab-satellites" class="adv-modal-tab-content active">
+                <h5>CÁC THIẾT BỊ ĐANG QUẢN LÝ</h5>
+                <div id="managed-devices-list" class="device-list">
+                    <p class="list-placeholder">Chưa có thiết bị nào được quản lý.</p>
+                </div>
+                <hr style="margin: 20px 0; background: var(--border-color); height: 1px; opacity: 0.5;">
+                <h5>CÁC THIẾT BỊ ĐÃ PHÁT HIỆN</h5>
+                <div id="discovered-devices-list" class="device-list">
+                    <p class="list-placeholder">Đang chờ tín hiệu từ các thiết bị...</p>
+                </div>
             </div>
-            <hr style="margin: 20px 0; background: var(--border-color); height: 1px; opacity: 0.5;">
-            <h5>CÁC THIẾT BỊ ĐÃ PHÁT HIỆN</h5>
-            <div id="discovered-devices-list" class="device-list">
-                <p class="list-placeholder">Đang chờ tín hiệu từ các thiết bị...</p>
+
+            <div id="adv-tab-system" class="adv-modal-tab-content">
+                <div id="system-info-actions-list" class="actions-list"></div>
             </div>
-        </div>
 
-        <div id="adv-tab-system" class="adv-modal-tab-content">
-            <div id="system-info-actions-list" class="actions-list"></div>
-        </div>
+            <div id="adv-tab-reset-wifi" class="adv-modal-tab-content">
+                <div id="reset-wifi-actions-list" class="actions-list"></div>
+            </div>
 
-        <div id="adv-tab-reset-wifi" class="adv-modal-tab-content">
-            <div id="reset-wifi-actions-list" class="actions-list"></div>
-        </div>
+            <div id="adv-tab-reset-esp" class="adv-modal-tab-content">
+                <div id="reset-esp-actions-list" class="actions-list"></div>
+            </div>
 
-        <div id="adv-tab-reset-esp" class="adv-modal-tab-content">
-            <div id="reset-esp-actions-list" class="actions-list"></div>
-        </div>
+            <div id="adv-tab-change-pass" class="adv-modal-tab-content">
+                <h5>THAY ĐỔI MẬT KHẨU QUẢN TRỊ</h5>
+                <div class="actions-list" style="gap: 15px; padding-top: 10px;">
+                    <input type="password" id="old-admin-password" class="modal-input" placeholder="Mật khẩu cũ..." autocomplete="current-password">
+                    <input type="password" id="new-admin-password" class="modal-input" placeholder="Mật khẩu mới..." autocomplete="new-password">
+                    <input type="password" id="confirm-admin-password" class="modal-input" placeholder="Xác nhận mật khẩu mới..." autocomplete="new-password">
+                    <button class="action-btn" style="width: 100%; height: 40px; font-size: 0.9em;" onclick="handleChangePassword()">Lưu Thay Đổi</button>
+                </div>
+            </div>
+            
+            <div id="adv-tab-ota" class="adv-modal-tab-content">
+                <h5>CẬP NHẬT FIRMWARE (OTA)</h5>
+                <div class="actions-list" style="gap: 15px; padding-top: 10px;">
+                    <h5>1. CHỌN THIẾT BỊ CẦN CẬP NHẬT</h5>
+                    <div id="ota-device-selection-list" class="ota-device-selection">
+                        <p class="list-placeholder">Đang chờ danh sách thiết bị...</p>
+                    </div>
+                    <h5>2. CHỌN FILE FIRMWARE (.bin)</h5>
+                    <input type="file" id="ota-file-input" accept=".bin" style="display: none;">
+                    <button class="action-btn" id="ota-select-file-btn" onclick="document.getElementById('ota-file-input').click();" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 40px; font-size: 0.9em;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                        Chọn File (.bin)
+                    </button>
+                    <div id="ota-file-name" style="text-align: center; color: var(--accent-color-alt); font-weight: bold; min-height: 20px; font-size: 0.9em;">Chưa chọn tệp nào</div>
+                    <h5>3. BẮT ĐẦU CẬP NHẬT</h5>
+                    <div id="ota-progress-container"> <div id="ota-progress-bar">0%</div> </div>
+                    <div id="ota-status-text"></div> <div id="ota-progress-details"></div> <div id="ota-device-status-list"></div>
+                    <button class="action-btn" id="ota-upload-btn" style="width: 100%; height: 40px; font-size: 0.9em; background-color: #27ae60; color: #fff; display: none;" onclick="handleOtaUpload()">Bắt đầu Cập nhật</button>
+                </div>
+            </div>
 
-        <div id="adv-tab-change-pass" class="adv-modal-tab-content">
-            <h5>THAY ĐỔI MẬT KHẨU QUẢN TRỊ</h5>
-            <div class="actions-list" style="gap: 15px; padding-top: 10px;">
-                <input type="password" id="old-admin-password" class="modal-input" placeholder="Mật khẩu cũ..." autocomplete="current-password">
-                <input type="password" id="new-admin-password" class="modal-input" placeholder="Mật khẩu mới..." autocomplete="new-password">
-                <input type="password" id="confirm-admin-password" class="modal-input" placeholder="Xác nhận mật khẩu mới..." autocomplete="new-password">
-                <button class="action-btn" style="width: 100%; height: 40px; font-size: 0.9em;" onclick="handleChangePassword()">Lưu Thay Đổi</button>
+            <div id="adv-tab-theme" class="adv-modal-tab-content">
+                <h5>TÙY CHỈNH GIAO DIỆN</h5>
+                <div class="theme-settings-container">
+                    <div class="theme-setting-row">
+                        <label class="theme-label">Chủ đề cài sẵn</label>
+                        <div class="theme-presets">
+                            <button class="preset-btn" data-theme="default">Mặc định</button>
+                            <button class="preset-btn" data-theme="light">Ánh sáng</button>
+                            <button class="preset-btn" data-theme="ocean">Xanh biển</button>
+                            <button class="preset-btn" data-theme="classic">Cổ điển</button>
+                        </div>
+                    </div>
+                    
+                    <div class="theme-setting-row">
+                        <label class="theme-label">Bảng màu tùy chỉnh</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div class="theme-options color-picker-wrapper">
+                                <label for="theme_accent_color" style="font-size:0.8em; margin-right: 5px;">Màu chủ đạo:</label>
+                                <input type="color" id="theme_accent_color">
+                            </div>
+                            <div class="theme-options color-picker-wrapper">
+                                <label for="theme_bg_grad_start" style="font-size:0.8em; margin-right: 5px;">Nền (Bắt đầu):</label>
+                                <input type="color" id="theme_bg_grad_start">
+                            </div>
+                             <div class="theme-options color-picker-wrapper">
+                                <label for="theme_bg_grad_end" style="font-size:0.8em; margin-right: 5px;">Nền (Kết thúc):</label>
+                                <input type="color" id="theme_bg_grad_end">
+                            </div>
+                            <div class="theme-options color-picker-wrapper">
+                                <label for="theme_content_bg" style="font-size:0.8em; margin-right: 5px;">Nền Nội dung:</label>
+                                <input type="color" id="theme_content_bg">
+                            </div>
+                            <div class="theme-options color-picker-wrapper">
+                                <label for="theme_text_primary" style="font-size:0.8em; margin-right: 5px;">Chữ chính:</label>
+                                <input type="color" id="theme_text_primary">
+                            </div>
+                            <div class="theme-options color-picker-wrapper">
+                                <label for="theme_text_secondary" style="font-size:0.8em; margin-right: 5px;">Chữ phụ:</label>
+                                <input type="color" id="theme_text_secondary">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="theme-setting-row">
+                        <label class="theme-label" for="theme_font_family">Font chữ</label>
+                        <select id="theme_font_family">
+                            <option value="'Roboto', sans-serif">Roboto</option>
+                            <option value="'Open Sans', sans-serif">Open Sans</option>
+                            <option value="'Montserrat', sans-serif">Montserrat</option>
+                            <option value="'Source Sans Pro', sans-serif">Source Sans Pro</option>
+                            <option value="'Be Vietnam Pro', sans-serif">Be Vietnam Pro</option>
+                            <option value="'Nunito', sans-serif">Nunito</option>
+                        </select>
+                    </div>
+                    <div class="theme-setting-row">
+                        <label class="theme-label" for="theme_font_weight">Độ đậm</label>
+                        <select id="theme_font_weight">
+                            <option value="300">Mỏng (Light)</option>
+                            <option value="400" selected>Thường (Regular)</option>
+                            <option value="700">Đậm (Bold)</option>
+                        </select>
+                    </div>
+                    <div class="theme-setting-row">
+                        <label class="theme-label" for="theme_font_size">Cỡ chữ (<span id="font-size-value">15</span>px)</label>
+                        <input type="range" id="theme_font_size" min="12" max="18" value="15" step="1">
+                    </div>
+                    <div class="theme-setting-row">
+                        <label class="theme-label" for="theme_border_radius">Độ bo góc (<span id="border-radius-value">18</span>px)</label>
+                        <input type="range" id="theme_border_radius" min="0" max="30" value="18" step="1">
+                    </div>
+                    <div class="theme-actions">
+                        <button class="action-btn" style="background-color: #27ae60;" onclick="handleSaveTheme()">Lưu Giao Diện</button>
+                    </div>
+                </div>
             </div>
         </div>
         
-        <div id="adv-tab-ota" class="adv-modal-tab-content">
-            <h5>CẬP NHẬT FIRMWARE (OTA)</h5>
-            <div class="actions-list" style="gap: 15px; padding-top: 10px;">
-                <h5>1. CHỌN THIẾT BỊ CẦN CẬP NHẬT</h5>
-                <div id="ota-device-selection-list" class="ota-device-selection">
-                    <p class="list-placeholder">Đang chờ danh sách thiết bị...</p>
-                </div>
-                <h5>2. CHỌN FILE FIRMWARE (.bin)</h5>
-                <input type="file" id="ota-file-input" accept=".bin" style="display: none;">
-                <button class="action-btn" id="ota-select-file-btn" onclick="document.getElementById('ota-file-input').click();" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 40px; font-size: 0.9em;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                    Chọn File (.bin)
-                </button>
-                <div id="ota-file-name" style="text-align: center; color: var(--accent-color-alt); font-weight: bold; min-height: 20px; font-size: 0.9em;">Chưa chọn tệp nào</div>
-                <h5>3. BẮT ĐẦU CẬP NHẬT</h5>
-                <div id="ota-progress-container"> <div id="ota-progress-bar">0%</div> </div>
-                <div id="ota-status-text"></div> <div id="ota-progress-details"></div> <div id="ota-device-status-list"></div>
-                <button class="action-btn" id="ota-upload-btn" style="width: 100%; height: 40px; font-size: 0.9em; background-color: #27ae60; color: #fff; display: none;" onclick="handleOtaUpload()">Bắt đầu Cập nhật</button>
-            </div>
-        </div>
-
-        <div id="adv-tab-theme" class="adv-modal-tab-content">
-            <h5>TÙY CHỈNH GIAO DIỆN</h5>
-            <div class="theme-settings-container">
-                <div class="theme-setting-row">
-                    <label class="theme-label">Chủ đề cài sẵn</label>
-                    <div class="theme-presets">
-                        <button class="preset-btn" data-theme="default">Mặc định</button>
-                        <button class="preset-btn" data-theme="light">Ánh sáng</button>
-                        <button class="preset-btn" data-theme="ocean">Xanh biển</button>
-                        <button class="preset-btn" data-theme="classic">Cổ điển</button>
-                    </div>
-                </div>
-                
-                <div class="theme-setting-row">
-                    <label class="theme-label">Bảng màu tùy chỉnh</label>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                        <div class="theme-options color-picker-wrapper">
-                            <label for="theme_accent_color" style="font-size:0.8em; margin-right: 5px;">Màu chủ đạo:</label>
-                            <input type="color" id="theme_accent_color">
-                        </div>
-                        <div class="theme-options color-picker-wrapper">
-                            <label for="theme_bg_grad_start" style="font-size:0.8em; margin-right: 5px;">Nền (Bắt đầu):</label>
-                            <input type="color" id="theme_bg_grad_start">
-                        </div>
-                         <div class="theme-options color-picker-wrapper">
-                            <label for="theme_bg_grad_end" style="font-size:0.8em; margin-right: 5px;">Nền (Kết thúc):</label>
-                            <input type="color" id="theme_bg_grad_end">
-                        </div>
-                        <div class="theme-options color-picker-wrapper">
-                            <label for="theme_content_bg" style="font-size:0.8em; margin-right: 5px;">Nền Nội dung:</label>
-                            <input type="color" id="theme_content_bg">
-                        </div>
-                        <div class="theme-options color-picker-wrapper">
-                            <label for="theme_text_primary" style="font-size:0.8em; margin-right: 5px;">Chữ chính:</label>
-                            <input type="color" id="theme_text_primary">
-                        </div>
-                        <div class="theme-options color-picker-wrapper">
-                            <label for="theme_text_secondary" style="font-size:0.8em; margin-right: 5px;">Chữ phụ:</label>
-                            <input type="color" id="theme_text_secondary">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="theme-setting-row">
-                    <label class="theme-label" for="theme_font_family">Font chữ</label>
-                    <select id="theme_font_family">
-                        <option value="'Roboto', sans-serif">Roboto</option>
-                        <option value="'Open Sans', sans-serif">Open Sans</option>
-                        <option value="'Montserrat', sans-serif">Montserrat</option>
-                        <option value="'Source Sans Pro', sans-serif">Source Sans Pro</option>
-                        <option value="'Be Vietnam Pro', sans-serif">Be Vietnam Pro</option>
-                        <option value="'Nunito', sans-serif">Nunito</option>
-                    </select>
-                </div>
-                <div class="theme-setting-row">
-                    <label class="theme-label" for="theme_font_weight">Độ đậm</label>
-                    <select id="theme_font_weight">
-                        <option value="300">Mỏng (Light)</option>
-                        <option value="400" selected>Thường (Regular)</option>
-                        <option value="700">Đậm (Bold)</option>
-                    </select>
-                </div>
-                <div class="theme-setting-row">
-                    <label class="theme-label" for="theme_font_size">Cỡ chữ (<span id="font-size-value">15</span>px)</label>
-                    <input type="range" id="theme_font_size" min="12" max="18" value="15" step="1">
-                </div>
-                <div class="theme-setting-row">
-                    <label class="theme-label" for="theme_border_radius">Độ bo góc (<span id="border-radius-value">18</span>px)</label>
-                    <input type="range" id="theme_border_radius" min="0" max="30" value="18" step="1">
-                </div>
-                <div class="theme-actions">
-                    <button class="action-btn" style="background-color: #27ae60;" onclick="handleSaveTheme()">Lưu Giao Diện</button>
-                </div>
-            </div>
-        </div>
-
         <div class="modal-buttons">
             <button class="modal-cancel-btn" onclick="handleCloseAdvancedSettingsModal()">Đóng</button>
             <button class="modal-confirm-btn" onclick="saveAndCloseAdvancedSettingsModal()">Lưu & Đóng</button>
@@ -764,7 +779,6 @@
     function openAdvancedSettingsModal() { 
         document.getElementById('advanced-settings-modal').classList.add('visible'); 
         if(document.querySelector('#adv-tab-system.active')) requestSystemInfo(); 
-        
         initThemeSystem();
         initialThemeSettings = getSettingsFromUI();
     }
@@ -774,7 +788,7 @@
     }
     
     function saveAndCloseAdvancedSettingsModal() {
-        handleSaveTheme(); // Luôn lưu cài đặt giao diện
+        handleSaveTheme();
         closeAdvancedSettingsModal();
     }
 
@@ -790,11 +804,12 @@
 
     function switchAdvTab(evt, tabName) {
         document.querySelectorAll('.adv-modal-tab, .adv-modal-tab-content').forEach(el => el.classList.remove('active'));
-        evt.currentTarget.classList.add('active'); document.getElementById(tabName).classList.add('active');
+        evt.currentTarget.classList.add('active'); 
+        const tabContent = document.getElementById(tabName);
+        if (tabContent) tabContent.classList.add('active');
+
         if (tabName === 'adv-tab-system') requestSystemInfo(); 
-        if (tabName === 'adv-tab-theme') {
-            initThemeSystem();
-        }
+        if (tabName === 'adv-tab-theme') initThemeSystem();
     }
     function renderSystemInfo(info) {
         const list=document.getElementById('system-info-actions-list'); if(!list)return; list.innerHTML='';
