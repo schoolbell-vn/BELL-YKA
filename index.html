@@ -44,19 +44,26 @@
     #main { margin: 24px auto; width: 380px; max-width: 98vw; }
 
     /* ÁP DỤNG MÀU NỀN CHO CÁC THÀNH PHẦN CHỮ */
-    h2, h3, .modern-btn span, .tablinks-day, .tablinks-session, .setting-item label, summary, .notification {
+    /* SỬA LỖI CĂN GIỮA: Chỉ áp dụng display:inline-block cho các element nhỏ, không phải block lớn như h2, h3 */
+    .modern-btn span, .tablinks-day, .tablinks-session, .setting-item label, summary, .notification {
         background-color: var(--text-bg-primary);
         padding: 2px 5px;
         border-radius: 4px;
         display: inline-block; /* Giúp background vừa với chữ */
     }
-     .session-subtitle, .date-display, .details-container td, .unit-input span {
+    .session-subtitle, .date-display, .unit-input span {
         background-color: var(--text-bg-secondary);
         padding: 1px 4px;
         border-radius: 3px;
         display: inline-block;
     }
     .modern-btn span { display: initial; } /* Reset cho nút bấm */
+    /* Áp dụng màu nền cho H2, H3 nhưng không đổi display để giữ căn giữa */
+    h2, h3 {
+        background-color: var(--text-bg-primary);
+        padding: 2px 5px;
+        border-radius: 4px;
+    }
 
 
     /* --- KHUNG NỘI DUNG CHÍNH --- */
@@ -87,6 +94,7 @@
         color: var(--accent-color);
         text-shadow: 0 4px 12px var(--accent-color-alpha-18), 0 2px 4px rgba(0,0,0,0.08);
         letter-spacing: 1px; font-weight: 800;
+        display: block; /* Đảm bảo h2 là block để text-align:center hoạt động đúng */
     }
     h3 {
         margin-top: 28px; margin-bottom: 18px; text-align: center; font-size: 1.15em;
