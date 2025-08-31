@@ -1272,13 +1272,13 @@
 
   <div class="modal-overlay" id="interface-settings-modal">
     <div class="modal-content">
-        <h4>Cài đặt Giao diện</h4>
+        <h4 id="interface-modal-title">Cài đặt Giao diện</h4>
         <div class="interface-table-container">
             <table>
                 <thead>
                     <tr>
-                        <th>Mô tả</th>
-                        <th>Nội dung hiện tại</th>
+                        <th id="interface-table-header-desc">Mô tả</th>
+                        <th id="interface-table-header-content">Nội dung hiện tại</th>
                     </tr>
                 </thead>
                 <tbody id="text-elements-table-body">
@@ -1312,7 +1312,7 @@
                 </div>
             </div>
             <div class="interface-action-buttons">
-                <button class="modal-buttons-button reset-btn" onclick="resetInterfaceSettings()">Reset về Mặc định</button>
+                <button class="modal-buttons-button reset-btn" onclick="resetInterfaceSettings()"><span id="btn-reset-interface">Reset về Mặc định</span></button>
             </div>
         </div>
         <div class="modal-buttons">
@@ -1929,9 +1929,9 @@
                 </div>
             </div>
 
-            <button class="modern-btn preview-button" onclick="updatePreviewTable('${e}')" style="height: 40px; font-size: 0.85em; background: #34495e; color: #f1c40f; border: 1px solid #f1c40f;">Cập nhật bảng chi tiết</button>
+            <button class="modern-btn preview-button" onclick="updatePreviewTable('${e}')" style="height: 40px; font-size: 0.85em; background: #34495e; color: #f1c40f; border: 1px solid #f1c40f;"><span class="preview-button-text">Cập nhật bảng chi tiết</span></button>
             <details style="margin-top: 15px;">
-                <summary>Xem chi tiết lịch</summary>
+                <summary><span class="summary-details-text">Xem chi tiết lịch</span></summary>
                 <div class="details-container" id="details-${e}"></div>
             </details>
         </div>`
@@ -2337,6 +2337,12 @@
         { id: 'btn-interface-settings', defaultText: 'Cài đặt giao diện', description: 'Nút Cài đặt giao diện' },
         { id: 'btn-advanced-settings', defaultText: 'Cài đặt nâng cao', description: 'Nút Cài đặt nâng cao' },
         { id: 'btn-logout', defaultText: 'Đăng xuất', description: 'Nút Đăng xuất' },
+        { selector: '.preview-button-text', defaultText: 'Cập nhật bảng chi tiết', description: 'Nút Cập nhật Bảng' },
+        { selector: '.summary-details-text', defaultText: 'Xem chi tiết lịch', description: 'Nút Xem Chi tiết Lịch' },
+        { id: 'interface-modal-title', defaultText: 'Cài đặt Giao diện', description: 'Tiêu đề Modal Giao diện' },
+        { id: 'interface-table-header-desc', defaultText: 'Mô tả', description: 'Cột Bảng: Mô tả' },
+        { id: 'interface-table-header-content', defaultText: 'Nội dung hiện tại', description: 'Cột Bảng: Nội dung' },
+        { id: 'btn-reset-interface', defaultText: 'Reset về Mặc định', description: 'Nút Reset Giao diện' },
     ];
     let selectedElementId = null;
 
@@ -2355,31 +2361,36 @@
         tableBody.innerHTML = '';
         const savedSettings = localStorage.getItem('interfaceSettings');
         const settings = savedSettings ? JSON.parse(savedSettings) : {};
+        
         customizableTexts.forEach(item => {
-            const element = document.getElementById(item.id);
-            const currentText = settings[item.id]?.text || (element ? element.innerText : item.defaultText);
+            const key = item.id || item.selector;
+            const element = item.id ? document.getElementById(item.id) : document.querySelector(item.selector);
+            const currentText = settings[key]?.text || (element ? element.innerText : item.defaultText);
+            
             const row = document.createElement('tr');
-            row.setAttribute('data-element-id', item.id);
-            row.onclick = () => selectTextElement(row, item.id);
-            row.innerHTML = `<td>${item.description}</td><td id="table-cell-${item.id}">${currentText}</td>`;
+            row.setAttribute('data-element-key', key);
+            row.onclick = () => selectTextElement(row, key);
+            
+            row.innerHTML = `<td>${item.description}</td><td id="table-cell-${key.replace('.','')
+            .replace('#','')}">${currentText}</td>`;
             tableBody.appendChild(row);
         });
     }
 
-    function selectTextElement(row, elementId) {
-        selectedElementId = elementId;
+    function selectTextElement(row, key) {
+        selectedElementId = key;
         document.querySelectorAll('#text-elements-table-body tr').forEach(r => r.classList.remove('selected-row'));
         row.classList.add('selected-row');
 
         const savedSettings = localStorage.getItem('interfaceSettings');
         const settings = savedSettings ? JSON.parse(savedSettings) : {};
-        const specificSettings = settings[elementId];
-        const defaultConfig = customizableTexts.find(item => item.id === elementId);
+        const specificSettings = settings[key];
+        const defaultConfig = customizableTexts.find(item => (item.id === key || item.selector === key));
 
         const textValue = specificSettings?.text ?? defaultConfig?.defaultText ?? '';
         document.getElementById('text-editor-input').value = textValue;
         
-        const element = document.getElementById(elementId);
+        const element = key.startsWith('.') || key.startsWith('#') ? document.querySelector(key) : document.getElementById(key);
         const computedStyle = element ? window.getComputedStyle(element) : {};
 
         const colorValue = specificSettings?.color || computedStyle.color || '#f5f6fa';
@@ -2414,16 +2425,20 @@
 
         localStorage.setItem('interfaceSettings', JSON.stringify(settings));
 
-        const element = document.getElementById(selectedElementId);
-        if (element) {
-            if (property === 'text') element.innerText = value;
-            if (property === 'color') element.style.color = value;
-            if (property === 'fontSize') element.style.fontSize = settings[selectedElementId].fontSize;
-            if (property === 'fontFamily') element.style.fontFamily = value;
-        }
+        const isSelector = selectedElementId.startsWith('.') || selectedElementId.startsWith('#');
+        const elements = isSelector ? document.querySelectorAll(selectedElementId) : [document.getElementById(selectedElementId)];
+        
+        elements.forEach(element => {
+            if (element) {
+                if (property === 'text') element.innerText = value;
+                if (property === 'color') element.style.color = value;
+                if (property === 'fontSize') element.style.fontSize = settings[selectedElementId].fontSize;
+                if (property === 'fontFamily') element.style.fontFamily = value;
+            }
+        });
         
         if (property === 'text') {
-            const tableCell = document.getElementById(`table-cell-${selectedElementId}`);
+            const tableCell = document.getElementById(`table-cell-${selectedElementId.replace('.','').replace('#','')}`);
             if (tableCell) tableCell.innerText = value;
         }
     }
@@ -2432,15 +2447,19 @@
         const savedSettings = localStorage.getItem('interfaceSettings');
         if (savedSettings) {
             const settings = JSON.parse(savedSettings);
-            for (const id in settings) {
-                const element = document.getElementById(id);
-                const itemSettings = settings[id];
-                if (element && itemSettings) {
-                    if (itemSettings.text) element.innerText = itemSettings.text;
-                    if (itemSettings.color) element.style.color = itemSettings.color;
-                    if (itemSettings.fontSize) element.style.fontSize = itemSettings.fontSize;
-                    if (itemSettings.fontFamily) element.style.fontFamily = itemSettings.fontFamily;
-                }
+            for (const key in settings) {
+                const isSelector = key.startsWith('.') || key.startsWith('#');
+                const elements = isSelector ? document.querySelectorAll(key) : [document.getElementById(key)];
+                const itemSettings = settings[key];
+                
+                elements.forEach(element => {
+                    if (element && itemSettings) {
+                        if (itemSettings.text) element.innerText = itemSettings.text;
+                        if (itemSettings.color) element.style.color = itemSettings.color;
+                        if (itemSettings.fontSize) element.style.fontSize = itemSettings.fontSize;
+                        if (itemSettings.fontFamily) element.style.fontFamily = itemSettings.fontFamily;
+                    }
+                });
             }
         }
     }
