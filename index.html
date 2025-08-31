@@ -1866,17 +1866,17 @@
 
         let u = ""; // Special event HTML
         if (isMondayMorning) {
-            u = `${r}<div class="input-wrapper"><label for="chaoco_${e}">TG Chào cờ</label><div class="unit-input"><input id="chaoco_${e}" type="number" value="40"><span>phút</span></div></div>`;
+            u = `${r}<div class="input-wrapper"><label for="chaoco_${e}"><span class="label-input-tgchaoco">TG Chào cờ</span></label><div class="unit-input"><input id="chaoco_${e}" type="number" value="40"><span>phút</span></div></div>`;
         } else {
-            u = `${r}<div class="input-wrapper"><label for="chunhiem_${e}">TG Sinh hoạt</label><div class="unit-input"><input id="chunhiem_${e}" type="number" value="15"><span>phút</span></div></div>`;
+            u = `${r}<div class="input-wrapper"><label for="chunhiem_${e}"><span class="label-input-tgshcn">TG Sinh hoạt</span></label><div class="unit-input"><input id="chunhiem_${e}" type="number" value="15"><span>phút</span></div></div>`;
         }
 
         let g = ""; // Copy button HTML
         if (!isMondayMorning) {
             if (o === 'sang') {
-                g = `<div class="copy-button-container"><button class="copy-button sang" onclick="copyMorningSchedule('${e}')">Sao chép đến T3-CN (Sáng)</button></div>`;
+                g = `<div class="copy-button-container"><button class="copy-button sang" onclick="copyMorningSchedule('${e}')"><span class="btn-copy-sang">Sao chép đến T3-CN (Sáng)</span></button></div>`;
             } else { // 'chieu'
-                g = `<div class="copy-button-container"><button class="copy-button chieu" onclick="copyAfternoonSchedule('${e}')">Sao chép đến các ngày Chiều</button></div>`;
+                g = `<div class="copy-button-container"><button class="copy-button chieu" onclick="copyAfternoonSchedule('${e}')"><span class="btn-copy-chieu">Sao chép đến các ngày Chiều</span></button></div>`;
             }
         }
         
@@ -1888,7 +1888,7 @@
                 <div class="toggle-actions-group">
                     <div id="toggle_item_enable_${e}" class="toggle-action-item">
                         <div class="toggle-action-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42A6.92 6.92 0 0 1 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-1.93.78-3.68 2-4.95L5.59 5.64A8.96 8.96 0 0 0 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.49-1-4.73-2.67-6.41z"/></svg></div>
-                        <div class="toggle-action-text">Kích hoạt Lịch</div>
+                        <div class="toggle-action-text"><span class="label-toggle-enable">Kích hoạt Lịch</span></div>
                         <label class="switch ${"chieu"===o?"chieu-toggle":""}">
                             <input type="checkbox" id="enable_${e}" onchange="toggleScheduleActivation('${e}')" checked>
                             <span class="slider"></span>
@@ -1896,7 +1896,7 @@
                     </div>
                     <div id="toggle_item_special_${e}" class="toggle-action-item">
                         <div class="toggle-action-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></div>
-                        <div class="toggle-action-text">${isMondayMorning ? 'Có Giờ Chào cờ' : 'Có Giờ Sinh hoạt'}</div>
+                        <div class="toggle-action-text">${isMondayMorning ? '<span class="label-toggle-chaoco">Có Giờ Chào cờ</span>' : '<span class="label-toggle-shcn">Có Giờ Sinh hoạt</span>'}</div>
                         <label class="switch ${"chieu"===o?"chieu-toggle":""}">
                             <input type="checkbox" id="has_special_${e}" onchange="toggleSpecialEvent('${e}')">
                             <span class="slider"></span>
@@ -1904,7 +1904,7 @@
                     </div>
                     <div id="toggle_item_duvao_${e}" class="toggle-action-item">
                         <div class="toggle-action-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M10 20h4c0 1.1-.9 2-2 2s-2-.9-2-2zm10-2.64V11c0-3.35-2.36-6.15-5.5-6.83V3.5c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5V4.17C8.36 4.85 6 7.65 6 11v6.36L4 19.72V20h16v-.28l-2-2.36zM15 11h2v2h-2v-2zm-4 0h2v2h-2v-2zm-4 0h2v2H7v-2z"/></svg></div>
-                        <div class="toggle-action-text">Có Chuông Dự vào lớp</div>
+                        <div class="toggle-action-text"><span class="label-toggle-duvao">Có Chuông Dự vào lớp</span></div>
                         <label class="switch ${"chieu"===o?"chieu-toggle":""}">
                             <input type="checkbox" id="has_duvao_${e}" onchange="toggleDuVao('${e}')" checked>
                             <span class="slider"></span>
@@ -1917,14 +1917,14 @@
                     <hr style="margin: 15px; background: #414345; height: 1px; opacity: 0.5;">
 
                     <div class="settings-grid">
-                        <div class="setting-item full-width">${d}<div class="input-wrapper"><label for="gio_${e}">Giờ vào học</label><input id="gio_${e}" type="time"></div></div>
+                        <div class="setting-item full-width">${d}<div class="input-wrapper"><label for="gio_${e}"><span class="label-input-giovao">Giờ vào học</span></label><input id="gio_${e}" type="time"></div></div>
                         
                         <div id="special_event_container_${e}" class="setting-item full-width" style="display: none;">${u}</div>
                         
-                        <div class="setting-item">${l}<div class="input-wrapper"><label for="tiethoc_${e}">TG Tiết học</label><div class="unit-input"><input id="tiethoc_${e}" type="number" value="45"><span>phút</span></div></div></div>
-                        <div class="setting-item">${c}<div class="input-wrapper"><label for="rachoi_${e}">TG Ra chơi</label><div class="unit-input"><input id="rachoi_${e}" type="number" value="5"><span>phút</span></div></div></div>
-                        <div class="setting-item" id="duvao_wrapper_${e}">${m}<div class="input-wrapper"><label for="duvaotiet_${e}">TG Dự vào</label><div class="unit-input"><input id="duvaotiet_${e}" type="number" value="3"><span>phút</span></div></div></div>
-                        <div class="setting-item">${p}<div class="input-wrapper"><label for="sotiet_${e}">Số tiết học</label><div class="unit-input"><input id="sotiet_${e}" type="number" value="5"><span>tiết</span></div></div></div>
+                        <div class="setting-item">${l}<div class="input-wrapper"><label for="tiethoc_${e}"><span class="label-input-tiethoc">TG Tiết học</span></label><div class="unit-input"><input id="tiethoc_${e}" type="number" value="45"><span>phút</span></div></div></div>
+                        <div class="setting-item">${c}<div class="input-wrapper"><label for="rachoi_${e}"><span class="label-input-rachoi">TG Ra chơi</span></label><div class="unit-input"><input id="rachoi_${e}" type="number" value="5"><span>phút</span></div></div></div>
+                        <div class="setting-item" id="duvao_wrapper_${e}">${m}<div class="input-wrapper"><label for="duvaotiet_${e}"><span class="label-input-duvao">TG Dự vào</span></label><div class="unit-input"><input id="duvaotiet_${e}" type="number" value="3"><span>phút</span></div></div></div>
+                        <div class="setting-item">${p}<div class="input-wrapper"><label for="sotiet_${e}"><span class="label-input-sotiet">Số tiết học</span></label><div class="unit-input"><input id="sotiet_${e}" type="number" value="5"><span>tiết</span></div></div></div>
                     </div>
                 </div>
             </div>
@@ -2343,6 +2343,19 @@
         { id: 'interface-table-header-desc', defaultText: 'Mô tả', description: 'Cột Bảng: Mô tả' },
         { id: 'interface-table-header-content', defaultText: 'Nội dung hiện tại', description: 'Cột Bảng: Nội dung' },
         { id: 'btn-reset-interface', defaultText: 'Reset về Mặc định', description: 'Nút Reset Giao diện' },
+        { selector: '.label-toggle-enable', defaultText: 'Kích hoạt Lịch', description: 'Label Toggle: Kích hoạt' },
+        { selector: '.label-toggle-chaoco', defaultText: 'Có Giờ Chào cờ', description: 'Label Toggle: Chào cờ' },
+        { selector: '.label-toggle-shcn', defaultText: 'Có Giờ Sinh hoạt', description: 'Label Toggle: Sinh hoạt' },
+        { selector: '.label-toggle-duvao', defaultText: 'Có Chuông Dự vào lớp', description: 'Label Toggle: Dự vào' },
+        { selector: '.label-input-giovao', defaultText: 'Giờ vào học', description: 'Label Input: Giờ vào' },
+        { selector: '.label-input-tgchaoco', defaultText: 'TG Chào cờ', description: 'Label Input: TG Chào cờ' },
+        { selector: '.label-input-tgshcn', defaultText: 'TG Sinh hoạt', description: 'Label Input: TG Sinh hoạt' },
+        { selector: '.label-input-tiethoc', defaultText: 'TG Tiết học', description: 'Label Input: TG Tiết học' },
+        { selector: '.label-input-rachoi', defaultText: 'TG Ra chơi', description: 'Label Input: TG Ra chơi' },
+        { selector: '.label-input-duvao', defaultText: 'TG Dự vào', description: 'Label Input: TG Dự vào' },
+        { selector: '.label-input-sotiet', defaultText: 'Số tiết học', description: 'Label Input: Số tiết' },
+        { selector: '.btn-copy-sang', defaultText: 'Sao chép đến T3-CN (Sáng)', description: 'Nút Sao chép (Sáng)' },
+        { selector: '.btn-copy-chieu', defaultText: 'Sao chép đến các ngày Chiều', description: 'Nút Sao chép (Chiều)' },
     ];
     let selectedElementId = null;
 
