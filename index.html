@@ -1888,21 +1888,25 @@
     }
 }
     
-    function publishUpdate(){
-        if(!client||!client.connected) return showNotification("Chưa kết nối máy chủ!", 'error');
-        try {
-            const scheduleData = gatherDataFromForm();
-            const payload = {
-                schedule: scheduleData
-            };
-            const payloadString = JSON.stringify(payload);
-            client.publish(SET_DATA_TOPIC, payloadString, {qos:1, retain:true});
-            showNotification("Đã gửi lệnh cập nhật lịch và cài đặt số hồi...");
-        } catch(e) {
-            showNotification("Lỗi: " + e.message, 'error');
-            console.error(e)
-        }
+    function publishUpdate() {
+    if (!client || !client.connected) return showNotification("Chưa kết nối máy chủ!", 'error');
+    try {
+        const scheduleData = gatherDataFromForm();
+
+        // TẠO PAYLOAD GỬI ĐI
+        const payload = {
+            schedule: scheduleData,
+            holidays: holidayData // <-- [SỬA LỖI] THÊM DÒNG NÀY ĐỂ GỬI KÈM LỊCH NGHỈ
+        };
+
+        const payloadString = JSON.stringify(payload);
+        client.publish(SET_DATA_TOPIC, payloadString, { qos: 1, retain: true });
+        showNotification("Đã gửi lệnh cập nhật Lịch học & Lịch nghỉ...", 'success'); // Thay đổi thông báo cho rõ hơn
+    } catch (e) {
+        showNotification("Lỗi: " + e.message, 'error');
+        console.error(e)
     }
+}
     
     function publishTestBell(){
         if(client&&client.connected) {
