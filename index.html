@@ -463,11 +463,9 @@
     
     /* --- BẢNG LỊCH CHI TIẾT --- */
     .details-container {max-height: 250px;overflow-y: auto;}
-    .details-container {max-height: 250px;overflow-y: auto;}
     .details-container::-webkit-scrollbar {width: 8px;}
     .details-container::-webkit-scrollbar-track {background: #2c3e50;border-radius: 4px;}
     .details-container::-webkit-scrollbar-thumb {background-color: #f1c40f;border-radius: 4px;border: 2px solid #2c3e50;}
-    .details-container table { width: 100%; border-collapse: collapse; margin-top: 10px; background: #232526; border-radius: 8px; overflow: hidden; }
     .details-container table { width: 100%; border-collapse: collapse; margin-top: 10px; background: #232526; border-radius: 8px; overflow: hidden; }
     .details-container th, .details-container td { border: 1px solid #414345; padding: 8px 5px; text-align: center; font-size: 0.9em; }
     .details-container th { background: #f1c40f; color: #232526; font-weight: bold; }
@@ -1225,21 +1223,21 @@
           </details>
       </div>
       <div class="holiday-calendar-container">
-    <details>
-        <summary>
-            <div>LỊCH NGHỈ LỄ</div>
-        </summary>
-        <div class="details-content">
-            <div class="calendar-header">
-                <button onclick="changeMonth(-1)">&#8249;</button>
-                <div id="month-year-display">Tháng 9 2024</div>
-                <button onclick="changeMonth(1)">&#8250;</button>
-            </div>
-            <div class="calendar-grid" id="calendar-grid">
-                </div>
-        </div>
-    </details>
-</div>
+          <details>
+              <summary>
+                  <div>LỊCH NGHỈ LỄ</div>
+              </summary>
+              <div class="details-content">
+                  <div class="calendar-header">
+                      <button onclick="changeMonth(-1)">&#8249;</button>
+                      <div id="month-year-display">Tháng 9 2024</div>
+                      <button onclick="changeMonth(1)">&#8250;</button>
+                  </div>
+                  <div class="calendar-grid" id="calendar-grid">
+                      </div>
+              </div>
+          </details>
+      </div>
       <div class="divider-yellow"></div>
 
       <div class="button-section">
@@ -1869,16 +1867,11 @@
     
    function _load(e) {
     try {
-        const t = JSON.parse(e); // 't' là toàn bộ dữ liệu từ ESP32
-
-        // Xử lý Lịch học và Thời gian (như cũ)
-        // Sửa nhỏ: truyền t.schedule thay vì cả t để rõ ràng hơn
+        const t = JSON.parse(e);
         if (t.schedule && t.epoch) {
             setTime(t.epoch);
             populateForm(t.schedule); 
         }
-
-        // [MỚI] Thêm logic để tải và hiển thị Lịch nghỉ lễ đã lưu
         if (t.holidays) {
             loadHolidayData(t.holidays);
         }
@@ -1892,16 +1885,13 @@
     if (!client || !client.connected) return showNotification("Chưa kết nối máy chủ!", 'error');
     try {
         const scheduleData = gatherDataFromForm();
-
-        // TẠO PAYLOAD GỬI ĐI
         const payload = {
             schedule: scheduleData,
-            holidays: holidayData // <-- [SỬA LỖI] THÊM DÒNG NÀY ĐỂ GỬI KÈM LỊCH NGHỈ
+            holidays: holidayData
         };
-
         const payloadString = JSON.stringify(payload);
         client.publish(SET_DATA_TOPIC, payloadString, { qos: 1, retain: true });
-        showNotification("Đã gửi lệnh cập nhật Lịch học & Lịch nghỉ...", 'success'); // Thay đổi thông báo cho rõ hơn
+        showNotification("Đã gửi lệnh cập nhật Lịch học & Lịch nghỉ...", 'success');
     } catch (e) {
         showNotification("Lỗi: " + e.message, 'error');
         console.error(e)
@@ -2057,19 +2047,24 @@
     
     const contentWrapper = document.getElementById("tab-content-wrapper");
     const days=[{id:"t2",name:"Thứ 2"},{id:"t3",name:"Thứ 3"},{id:"t4",name:"Thứ 4"},{id:"t5",name:"Thứ 5"},{id:"t6",name:"Thứ 6"},{id:"t7",name:"Thứ 7"},{id:"cn",name:"Chủ Nhật"}];
-    days.forEach(e => {
-        contentWrapper.innerHTML += createDayContent(`${e.id}_sang`, e.name, "sang");
-        contentWrapper.innerHTML += createDayContent(`${e.id}_chieu`, e.name, "chieu");
-    });
     
     function populateForm(e){
         const t = e;
         if(t&&t.sohoi&&t.lich){
+            // [SỬA LỖI] Chỉ xóa các tabcontent của lịch học, không xóa toàn bộ
+            document.querySelectorAll('#tab-content-wrapper .tabcontent').forEach(el => el.remove());
+
             console.log("Bat dau cap nhat form voi du lieu:",t);
             ["batdau","vaotiet","rachoi","duvao", "tg_reo", "tg_nghi"].forEach(e=>{
                 const o=document.getElementById(`sohoi_${e}`);
                 o&&(o.value=t.sohoi[e]||"")
             });
+            
+            days.forEach(day => {
+                contentWrapper.innerHTML += createDayContent(`${day.id}_sang`, day.name, "sang");
+                contentWrapper.innerHTML += createDayContent(`${day.id}_chieu`, day.name, "chieu");
+            });
+
             ["sang","chieu"].forEach(e=>{
                 days.forEach(o=>{
                     const n=t.lich?.[e]?.[o.id];
@@ -2105,6 +2100,7 @@
                     }
                 })
             });
+             showActiveTab();
         } else {
             console.error("Dữ liệu lịch học nhận được không hợp lệ hoặc không đầy đủ:",e)
         }
@@ -2432,6 +2428,12 @@
         }
 
         document.querySelector(`.tablinks-session[onclick*="'${selectedSession}'"]`).classList.add('active');
+        
+        days.forEach(day => {
+            contentWrapper.innerHTML += createDayContent(`${day.id}_sang`, day.name, "sang");
+            contentWrapper.innerHTML += createDayContent(`${day.id}_chieu`, day.name, "chieu");
+        });
+
         showActiveTab();
     }
     
@@ -2614,6 +2616,7 @@
         document.getElementById('font-family-select').addEventListener('change', (e) => applyInterfaceChanges('fontFamily', e.target.value));
 
         initializeTabs();
+        generateCalendar(currentDisplayDate.getFullYear(), currentDisplayDate.getMonth());
     };
     // =======================================================
 // [MỚI] SCRIPT CHO LỊCH NGHỈ LỄ
@@ -2696,11 +2699,6 @@ function loadHolidayData(data) {
         generateCalendar(currentDisplayDate.getFullYear(), currentDisplayDate.getMonth());
     }
 }
-
-// Khởi tạo lịch khi tải trang
-document.addEventListener('DOMContentLoaded', (event) => {
-    generateCalendar(currentDisplayDate.getFullYear(), currentDisplayDate.getMonth());
-});
   </script>
 </body>
 </html>
