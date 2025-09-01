@@ -1867,7 +1867,26 @@
         }
     }
     
-    function _load(e){try{const t=JSON.parse(e);t.schedule&&t.epoch&&(setTime(t.epoch),populateForm(t))}catch(t){console.error("Lỗi parse JSON từ MQTT:",t)}}
+   function _load(e) {
+    try {
+        const t = JSON.parse(e); // 't' là toàn bộ dữ liệu từ ESP32
+
+        // Xử lý Lịch học và Thời gian (như cũ)
+        // Sửa nhỏ: truyền t.schedule thay vì cả t để rõ ràng hơn
+        if (t.schedule && t.epoch) {
+            setTime(t.epoch);
+            populateForm(t.schedule); 
+        }
+
+        // [MỚI] Thêm logic để tải và hiển thị Lịch nghỉ lễ đã lưu
+        if (t.holidays) {
+            loadHolidayData(t.holidays);
+        }
+
+    } catch (t) {
+        console.error("Lỗi parse JSON từ MQTT:", t);
+    }
+}
     
     function publishUpdate(){
         if(!client||!client.connected) return showNotification("Chưa kết nối máy chủ!", 'error');
@@ -2040,7 +2059,7 @@
     });
     
     function populateForm(e){
-        const t=e.schedule?e.schedule:e;
+        const t = e;
         if(t&&t.sohoi&&t.lich){
             console.log("Bat dau cap nhat form voi du lieu:",t);
             ["batdau","vaotiet","rachoi","duvao", "tg_reo", "tg_nghi"].forEach(e=>{
