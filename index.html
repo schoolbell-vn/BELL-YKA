@@ -1054,7 +1054,85 @@
     .save-btn {
         background: #27ae60; color: #fff;
     }
-    
+    /* === [MỚI] GIAO DIỆN LỊCH NGHỈ LỄ === */
+.holiday-calendar-container {
+    padding: 0 15px;
+    margin-top: 25px;
+}
+.holiday-calendar-container details summary {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #485563 0%, #29323c 100%);
+    color: #e74c3c;
+    border-left: 4px solid #e74c3c;
+    border-right: 4px solid #e74c3c;
+    text-shadow: 0 0 12px #e74c3c, 0 2px 8px #000;
+    box-shadow: 0 4px 18px 0 #00000044;
+}
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #34495e;
+    border-radius: 8px 8px 0 0;
+}
+.calendar-header button {
+    background: none;
+    border: none;
+    color: #f1c40f;
+    font-size: 1.5em;
+    cursor: pointer;
+}
+#month-year-display {
+    color: #f1c40f;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    padding: 10px;
+    background-color: #2c3e50;
+    border-radius: 0 0 8px 8px;
+}
+.calendar-day, .calendar-day-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 35px;
+    border-radius: 6px;
+    font-weight: bold;
+}
+.calendar-day-header {
+    color: #bdc3c7;
+    font-size: 0.8em;
+}
+.calendar-day {
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+.calendar-day:not(.empty):hover {
+    background-color: #34495e;
+    transform: scale(1.05);
+}
+.calendar-day.holiday {
+    background-color: #c0392b;
+    color: #fff;
+    box-shadow: 0 0 10px #e74c3c88;
+}
+.calendar-day.today {
+    border: 2px solid #f1c40f;
+}
+.calendar-day.empty {
+    cursor: default;
+    opacity: 0.3;
+}
   </style>
 </head>
 <body>
@@ -1146,7 +1224,22 @@
               </div>
           </details>
       </div>
-
+      <div class="holiday-calendar-container">
+    <details>
+        <summary>
+            <div>LỊCH NGHỈ LỄ</div>
+        </summary>
+        <div class="details-content">
+            <div class="calendar-header">
+                <button onclick="changeMonth(-1)">&#8249;</button>
+                <div id="month-year-display">Tháng 9 2024</div>
+                <button onclick="changeMonth(1)">&#8250;</button>
+            </div>
+            <div class="calendar-grid" id="calendar-grid">
+                </div>
+        </div>
+    </details>
+</div>
       <div class="divider-yellow"></div>
 
       <div class="button-section">
@@ -2499,6 +2592,92 @@
 
         initializeTabs();
     };
+    // =======================================================
+// [MỚI] SCRIPT CHO LỊCH NGHỈ LỄ
+// =======================================================
+let holidayData = {}; // Ví dụ: { "2024-12-25": true, "2025-01-01": true }
+let currentDisplayDate = new Date();
+
+function generateCalendar(year, month) {
+    const grid = document.getElementById('calendar-grid');
+    const display = document.getElementById('month-year-display');
+    grid.innerHTML = '';
+
+    const today = new Date();
+    const firstDayOfMonth = new Date(year, month, 1);
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    
+    display.textContent = `Tháng ${month + 1} ${year}`;
+    currentDisplayDate = new Date(year, month, 1);
+
+    // Thêm các ngày trong tuần
+    ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'].forEach(day => {
+        const dayHeader = document.createElement('div');
+        dayHeader.className = 'calendar-day-header';
+        dayHeader.textContent = day;
+        grid.appendChild(dayHeader);
+    });
+
+    // Thêm các ô trống cho đầu tháng
+    for (let i = 0; i < firstDayOfMonth.getDay(); i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'calendar-day empty';
+        grid.appendChild(emptyCell);
+    }
+
+    // Thêm các ngày trong tháng
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dayCell = document.createElement('div');
+        dayCell.className = 'calendar-day';
+        dayCell.textContent = day;
+        
+        const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        dayCell.setAttribute('data-date', dateString);
+
+        if (holidayData[dateString]) {
+            dayCell.classList.add('holiday');
+        }
+        if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+            dayCell.classList.add('today');
+        }
+
+        dayCell.onclick = () => toggleHoliday(dateString);
+        grid.appendChild(dayCell);
+    }
+}
+
+function changeMonth(offset) {
+    currentDisplayDate.setMonth(currentDisplayDate.getMonth() + offset);
+    generateCalendar(currentDisplayDate.getFullYear(), currentDisplayDate.getMonth());
+}
+
+function toggleHoliday(dateString) {
+    const cell = document.querySelector(`.calendar-day[data-date="${dateString}"]`);
+    if (holidayData[dateString]) {
+        delete holidayData[dateString];
+        cell.classList.remove('holiday');
+    } else {
+        holidayData[dateString] = true;
+        cell.classList.add('holiday');
+    }
+    // Gửi cập nhật đến ESP32 (cần thêm logic publish MQTT)
+    // Ví dụ: client.publish('esp32/bell/holidays/set', JSON.stringify(holidayData), { qos: 1 });
+    console.log("Cập nhật danh sách ngày nghỉ:", holidayData);
+    showNotification(`Đã cập nhật ngày nghỉ. Nhấn "Lưu và gửi cập nhật" để áp dụng.`, 'info');
+}
+
+// Hàm này cần được gọi khi nhận dữ liệu từ ESP32
+function loadHolidayData(data) {
+    if (typeof data === 'object' && data !== null) {
+        holidayData = data;
+        generateCalendar(currentDisplayDate.getFullYear(), currentDisplayDate.getMonth());
+    }
+}
+
+// Khởi tạo lịch khi tải trang
+document.addEventListener('DOMContentLoaded', (event) => {
+    generateCalendar(currentDisplayDate.getFullYear(), currentDisplayDate.getMonth());
+});
   </script>
 </body>
 </html>
