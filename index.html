@@ -290,55 +290,11 @@
     }
     .tabcontent.active {
         display: block;
-        max-height: 1000px;
+        max-height: 2000px; /* Tăng max-height */
         opacity: 1;
         padding: 15px 10px 10px 10px;
     }
-    .tabcontent h3 {
-        font-size: 1em; 
-        margin: 0; 
-        margin-bottom: 10px;
-        padding: 10px 15px;
-        color: #f1c40f; 
-        font-weight: 700;
-        cursor: pointer;
-        position: relative;
-        border-bottom: 1px solid #414345;
-        background: rgba(44, 62, 80, 0.5);
-        border-radius: 8px;
-        text-align: center;
-    }
-    .tabcontent h3::after {
-        content: '▼';
-        position: absolute;
-        right: 15px;
-        top: 50%;
-        transform: translateY(-50%) scale(0.9);
-        font-size: 0.8em;
-        transition: transform 0.3s ease-in-out;
-    }
-    .tabcontent h3.expanded::after {
-        transform: translateY(-50%) scale(0.9) rotate(180deg);
-    }
-    .session-subtitle {
-        font-size: 0.8em;
-        font-weight: normal;
-        text-transform: none;
-        color: #bdc3c7;
-    }
-    .collapsible-settings {
-        overflow: hidden;
-        max-height: 0;
-        opacity: 0;
-        transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out, margin-top 0.4s ease-in-out;
-        margin-top: 0;
-    }
-    .collapsible-settings.expanded {
-        max-height: 500px;
-        opacity: 1;
-        margin-top: 10px;
-    }
-
+    
     /* === CÀI ĐẶT NÚT GẠT (TOGGLE SWITCH) DẠNG BOX === */
     .toggle-actions-group {
         display: flex;
@@ -449,14 +405,7 @@
     }
     .details-content { padding: 12px 15px 16px 15px; border-top: 1px solid #414345; }
     
-    .tabcontent details summary {
-        text-align: center;
-        font-size: 1em;
-        border-radius: 8px 8px 0 0;
-        background: #2c3e50;
-        color: #f1c40f;
-    }
-    details[open] > .tabcontent details summary { 
+    details[open] > summary { 
         background: #f1c40f;
         color: #232526; 
     }
@@ -476,22 +425,6 @@
     .divider-yellow {width: 90%; height: 2px; background: linear-gradient(90deg, #f1c40f 0%, #fff200 100%);border-radius: 2px; margin: 24px auto 18px auto; box-shadow: 0 2px 8px #f1c40f55;}
 
     /* --- GIAO DIỆN LƯỚI "THÔNG MINH" CHO CÀI ĐẶT --- */
-    .settings-grid-container {
-        overflow: hidden;
-        transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out;
-        max-height: 1000px;
-        opacity: 1;
-    }
-    .settings-grid-container.hidden {
-        max-height: 0;
-        opacity: 0;
-    }
-    .settings-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-        padding: 8px 0;
-    }
     .setting-item {
         background: #232526;
         border: 1px solid #414345;
@@ -532,46 +465,21 @@
         display: flex;
         align-items: center;
     }
-    .unit-input input {
+    .unit-input input, .setting-item input[type="time"] {
         width: 100%;
         margin-right: 8px;
+        padding: 8px;
+        font-size: 0.9em;
+        border-radius: 6px;
+        border: 1px solid #414345;
+        background: #2c3e50;
+        color: #ecf0f1;
     }
     .unit-input span {
         font-size: 0.9em;
         color: #bdc3c7;
     }
-    .setting-item input[type="time"] {
-        width: 100%;
-        padding: 8px;
-        font-size: 0.9em;
-    }
-    .copy-button-container {
-        padding: 5px 5px 15px 5px;
-    }
-    .copy-button {
-        padding: 8px 12px;
-        font-size: 0.8em;
-        color: #fff;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: all 0.18s;
-        font-weight: 700;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        text-shadow: 0 1px 2px #00000044;
-        width: 100%;
-    }
-    .copy-button:active {
-        transform: scale(0.96);
-        filter: brightness(0.95);
-    }
-    .copy-button.sang {
-        background: linear-gradient(90deg, #16a085 0%, #43e97b 100%);
-    }
-    .copy-button.chieu {
-        background: linear-gradient(90deg, #2980b9 0%, #6dd5fa 100%);
-    }
-
+    
     /* === Giao diện cho Modal Chung === */
     .modal-overlay {
         position: fixed;
@@ -1552,7 +1460,7 @@
       <div class="holiday-calendar-container">
           <details>
               <summary>
-                  <div>LỊCH NGHỈ LỄ</div>
+                  <div>LỊCH NGHỈ LỄ & SỰ KIỆN ĐẶC BIỆT</div>
               </summary>
               <div class="details-content">
                   <div class="calendar-header">
