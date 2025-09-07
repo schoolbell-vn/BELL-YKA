@@ -614,6 +614,14 @@
         padding: 8px;
         font-size: 0.9em;
     }
+    /* [MỚI] CSS cho Hướng dẫn nhỏ */
+    .input-helper-text {
+        font-size: 0.75em;
+        color: #7f8c8d;
+        font-style: italic;
+        margin-top: 4px;
+        text-align: right;
+    }
     .copy-button-container {
         padding: 5px 5px 15px 5px;
     }
@@ -1827,7 +1835,7 @@
                 <h5>2. CHỌN FILE FIRMWARE (.bin)</h5>
                 <input type="file" id="ota-file-input" accept=".bin" style="display: none;">
                 <button class="action-btn" id="ota-select-file-btn" onclick="document.getElementById('ota-file-input').click();" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 40px; font-size: 0.9em;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                     Chọn File (.bin)
                 </button>
                 <div id="ota-file-name" style="text-align: center; color: #f1c40f; font-weight: bold; min-height: 20px; font-size: 0.9em;">Chưa chọn tệp nào</div>
@@ -2140,21 +2148,25 @@
         if (status.playlist && Array.isArray(status.playlist)) {
             playlistContainer.innerHTML = '';
             trackSelect.innerHTML = '<option value="">-- Chọn bài hát --</option>';
-            status.playlist.forEach(track => {
-                const item = document.createElement('div');
-                item.className = 'playlist-item';
-                item.textContent = track;
-                item.onclick = () => handleMusicControl('play_track', track);
-                if (track === status.current_track) {
-                    item.classList.add('playing');
-                }
-                playlistContainer.appendChild(item);
+            if(status.playlist.length === 0) {
+                 playlistContainer.innerHTML = '<p class="list-placeholder">Không tìm thấy file nhạc nào trên thẻ nhớ.</p>';
+            } else {
+                status.playlist.forEach(track => {
+                    const item = document.createElement('div');
+                    item.className = 'playlist-item';
+                    item.textContent = track;
+                    item.onclick = () => handleMusicControl('play_track', track);
+                    if (track === status.current_track) {
+                        item.classList.add('playing');
+                    }
+                    playlistContainer.appendChild(item);
 
-                const option = document.createElement('option');
-                option.value = track;
-                option.textContent = track;
-                trackSelect.appendChild(option);
-            });
+                    const option = document.createElement('option');
+                    option.value = track;
+                    option.textContent = track;
+                    trackSelect.appendChild(option);
+                });
+            }
 
             // [THÊM MỚI] Gọi hàm cập nhật các dropdown trong cài đặt
             updateTrackSelectors(status.playlist);
@@ -2180,7 +2192,7 @@
         document.getElementById('total-time').textContent = formatTime(status.total_time_s || 0);
 
         // Cập nhật thanh âm lượng
-        document.getElementById('volume-slider').value = status.volume || 50;
+        document.getElementById('volume-slider').value = status.volume === undefined ? 50 : Math.round(status.volume / 30 * 100);
 
         // Cập nhật các chế độ phát
         document.getElementById('shuffle-btn').classList.toggle('active', status.shuffle_mode || false);
@@ -2206,7 +2218,11 @@
         if (!client || !client.connected) return showNotification("Chưa kết nối máy chủ!", 'error');
         const payload = { command: command };
         if (value !== null) {
-            payload.value = value;
+             if (command === 'set_volume') {
+                payload.value = Math.round(parseInt(value) / 100 * 30);
+            } else {
+                payload.value = value;
+            }
         }
         client.publish(MUSIC_CONTROL_TOPIC, JSON.stringify(payload), { qos: 1 });
     }
@@ -2235,8 +2251,9 @@
     }
 
     function formatTime(seconds) {
+        if (isNaN(seconds) || seconds < 0) return "00:00";
         const min = Math.floor(seconds / 60);
-        const sec = seconds % 60;
+        const sec = Math.floor(seconds % 60);
         return `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
     }
     // KẾT THÚC CÁC HÀM VỀ NHẠC
@@ -2632,7 +2649,7 @@
         const checkbox = document.getElementById(`has_special_${dayId}`);
         const container = document.getElementById(`special_event_container_${dayId}`);
         if (container) {
-            container.style.display = checkbox.checked ? 'flex' : 'none';
+            container.style.display = checkbox.checked ? 'grid' : 'none'; // Use grid for consistency
         }
     }
 
@@ -2644,22 +2661,27 @@
         }
     }
 
+    // =======================================================
+    // === [NÂNG CẤP] CÁC HÀM TẠO GIAO DIỆN VÀ TÍNH TOÁN LỊCH HỌC ===
+    // =======================================================
+
     const createDayContent = (e, t, o) => {
         const isMondayMorning = (e === 't2_sang');
         
+        // Icons
         const d = `<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586z"></path></svg></div>`;
         const r = `<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm-1 15H6V7h12v12z"></path></svg></div>`;
         const l = `<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 2H6c-1.206 0-3 .799-3 3v14c0 2.201 1.794 3 3 3h15v-2H6.012C5.55 19.988 5 19.806 5 19s.55-.988 1.012-1H21V4c0-1.103-.897-2-2-2zm0 13H6V5h13v10z"></path></svg></div>`;
         const c = `<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M18 5h-2V2H8v3H6c-1.654 0-3 1.346-3 3v6c0 1.654 1.346 3 3 3h1v1c0 .552.447 1 1 1h6c.553 0 1-.448 1-1v-1h1c1.654 0 3-1.346 3-3V8c0-1.654-1.346-3-3-3zm1 9c0 .552-.447 1-1 1H6c-.553 0-1-.448-1-1V8c0-.552.447-1 1-1h12c.553 0 1 .448 1 1v6z"></path></svg></div>`;
         const m = `<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M14 12V8h-4v4H8l4 4 4-4h-2z"></path></svg></div>`;
         const p = `<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h2v2H4zm0 5h2v2H4zm0 5h2v2H4zm16-8V6H8v2h12zm0 5H8v2h12zm0 5H8v2h12z"></path></svg></div>`;
-
-        let u = ""; // Special event HTML
-        if (isMondayMorning) {
-            u = `${r}<div class="input-wrapper"><label for="chaoco_${e}">TG Chào cờ</label><div class="unit-input"><input id="chaoco_${e}" type="number" value="40"><span>phút</span></div></div>`;
-        } else {
-            u = `${r}<div class="input-wrapper"><label for="chunhiem_${e}">TG Sinh hoạt</label><div class="unit-input"><input id="chunhiem_${e}" type="number" value="15"><span>phút</span></div></div>`;
-        }
+        
+        // [NÂNG CẤP] Tạo HTML cho khu vực sự kiện đặc biệt, bao gồm cả ô nhập thời gian chuẩn bị
+        const specialEventInput = isMondayMorning 
+            ? `<div class="setting-item full-width">${r}<div class="input-wrapper"><label for="chaoco_${e}">TG Chào cờ</label><div class="unit-input"><input id="chaoco_${e}" type="number" value="40"><span>phút</span></div></div></div>`
+            : `<div class="setting-item full-width">${r}<div class="input-wrapper"><label for="chunhiem_${e}">TG Sinh hoạt</label><div class="unit-input"><input id="chunhiem_${e}" type="number" value="15"><span>phút</span></div></div></div>`;
+        const prepareAfterSpecialInput = `<div class="setting-item full-width">${m}<div class="input-wrapper"><label for="prepare_after_special_${e}">TG chuẩn bị sau SH/CC</label><div class="unit-input"><input id="prepare_after_special_${e}" type="number" value="2"><span>phút</span></div></div></div>`;
+        const u = specialEventInput + prepareAfterSpecialInput;
 
         let g = ""; // Copy button HTML
         if (!isMondayMorning) {
@@ -2709,10 +2731,10 @@
                     <div class="settings-grid">
                         <div class="setting-item full-width">${d}<div class="input-wrapper"><label for="gio_${e}">Giờ vào học</label><input id="gio_${e}" type="time"></div></div>
                         
-                        <div id="special_event_container_${e}" class="setting-item full-width" style="display: none;">${u}</div>
+                        <div id="special_event_container_${e}" class="settings-grid full-width" style="display: none; grid-template-columns: 1fr; gap: 8px; padding: 0;">${u}</div>
                         
                         <div class="setting-item">${l}<div class="input-wrapper"><label for="tiethoc_${e}">TG Tiết học</label><div class="unit-input"><input id="tiethoc_${e}" type="number" value="45"><span>phút</span></div></div></div>
-                        <div class="setting-item">${c}<div class="input-wrapper"><label for="rachoi_${e}">TG Ra chơi</label><div class="unit-input"><input id="rachoi_${e}" type="number" value="5"><span>phút</span></div></div></div>
+                        <div class="setting-item">${c}<div class="input-wrapper"><label for="rachoi_${e}">TG Ra chơi</label><div class="unit-input"><input id="rachoi_${e}" type="text" value="5"><span>phút</span></div><div class="input-helper-text">VD: 5,15,5,5</div></div></div>
                         <div class="setting-item" id="duvao_wrapper_${e}">${m}<div class="input-wrapper"><label for="duvaotiet_${e}">TG Dự vào</label><div class="unit-input"><input id="duvaotiet_${e}" type="number" value="3"><span>phút</span></div></div></div>
                         <div class="setting-item">${p}<div class="input-wrapper"><label for="sotiet_${e}">Số tiết học</label><div class="unit-input"><input id="sotiet_${e}" type="number" value="5"><span>tiết</span></div></div></div>
                     </div>
@@ -2733,11 +2755,9 @@
     function populateForm(e){
         const t = e;
         if(t&&t.sohoi&&t.lich){
-            // [SỬA LỖI] Chỉ xóa các tabcontent của lịch học, không xóa toàn bộ
             document.querySelectorAll('#tab-content-wrapper .tabcontent').forEach(el => el.remove());
-
             console.log("Bat dau cap nhat form voi du lieu:",t);
-            // [CẬP NHẬT] Xử lý dữ liệu cho cài đặt chuông/nhạc
+
             const bellTypes = ["batdau","vaotiet","rachoi","duvao"];
             bellTypes.forEach(type => {
                 const numInput = document.getElementById(`sohoi_${type}`);
@@ -2756,8 +2776,7 @@
                     const randomCheckbox = document.getElementById('sohoi_rachoi_random');
                     if(randomCheckbox) randomCheckbox.checked = t.sohoi[type]?.random || false;
                 }
-
-                toggleActionOptions(type); // Cập nhật UI
+                toggleActionOptions(type);
             });
             ["tg_reo", "tg_nghi"].forEach(e=>{
                 const o=document.getElementById(`sohoi_${e}`);
@@ -2777,7 +2796,7 @@
                         document.getElementById(`enable_${dayId}`).checked=n.enabled;
                         document.getElementById(`gio_${dayId}`).value=n.gio||"";
                         document.getElementById(`tiethoc_${dayId}`).value=n.tiethoc||"";
-                        document.getElementById(`rachoi_${dayId}`).value=n.rachoi||"";
+                        document.getElementById(`rachoi_${dayId}`).value=n.rachoi||"5"; // [NÂNG CẤP]
                         document.getElementById(`duvaotiet_${dayId}`).value=n.duvaotiet||"";
                         document.getElementById(`sotiet_${dayId}`).value=n.sotiet||"";
                         
@@ -2786,6 +2805,10 @@
                         
                         const chunhiemInput = document.getElementById(`chunhiem_${dayId}`);
                         if(chunhiemInput) chunhiemInput.value=n.chunhiem||0;
+                        
+                        // [NÂNG CẤP] Tải dữ liệu cho trường mới
+                        const prepareSpecialInput = document.getElementById(`prepare_after_special_${dayId}`);
+                        if(prepareSpecialInput) prepareSpecialInput.value = n.prepare_after_special || 2;
                         
                         const hasSpecialCheckbox = document.getElementById(`has_special_${dayId}`);
                         if (hasSpecialCheckbox) {
@@ -2813,7 +2836,6 @@
     function gatherDataFromForm(){
         const e={sohoi:{},lich:{sang:{},chieu:{}}};
         
-        // [CẬP NHẬT] Thu thập dữ liệu từ cài đặt chuông/nhạc
         const bellTypes = ["batdau","vaotiet","rachoi","duvao"];
         bellTypes.forEach(type => {
             e.sohoi[type] = {
@@ -2830,7 +2852,6 @@
             e.sohoi[t]=parseInt(document.getElementById(`sohoi_${t}`).value)||0
         });
 
-        // Giữ nguyên logic thu thập dữ liệu lịch học
         ["sang","chieu"].forEach(t=>{
             days.forEach(o=>{
                 const dayId = `${o.id}_${t}`;
@@ -2838,7 +2859,7 @@
                 n.enabled=document.getElementById(`enable_${dayId}`).checked;
                 n.gio=document.getElementById(`gio_${dayId}`).value;
                 n.tiethoc=parseInt(document.getElementById(`tiethoc_${dayId}`).value)||0;
-                n.rachoi=parseInt(document.getElementById(`rachoi_${dayId}`).value)||0;
+                n.rachoi=document.getElementById(`rachoi_${dayId}`).value || "5"; // [NÂNG CẤP]
                 n.duvaotiet=parseInt(document.getElementById(`duvaotiet_${dayId}`).value)||0;
                 n.sotiet=parseInt(document.getElementById(`sotiet_${dayId}`).value)||0;
                 
@@ -2848,6 +2869,10 @@
                 const chunhiemInput = document.getElementById(`chunhiem_${dayId}`);
                 if(chunhiemInput) n.chunhiem=parseInt(chunhiemInput.value)||0;
                 
+                // [NÂNG CẤP] Thu thập dữ liệu từ trường mới
+                const prepareSpecialInput = document.getElementById(`prepare_after_special_${dayId}`);
+                if(prepareSpecialInput) n.prepare_after_special = parseInt(prepareSpecialInput.value) || 0;
+
                 const hasSpecialCheckbox = document.getElementById(`has_special_${dayId}`);
                 if (hasSpecialCheckbox) n.has_special_event = hasSpecialCheckbox.checked;
 
@@ -2885,77 +2910,92 @@
 
     function timeToMinute(e){if(!e)return 0;const[t,o]=e.split(":").map(Number);return 60*t+o}function minuteToTime(e){const t=Math.floor(e/60).toString().padStart(2,"0"),o=(e%60).toString().padStart(2,"0");return`${t}:${o}`}
     
+    // [NÂNG CẤP TOÀN BỘ] Hàm tính toán lịch học được viết lại để linh hoạt hơn
     function calculateSchedule(dayId) {
-        const getVal = id => parseInt(document.getElementById(id)?.value) || 0;
-        const getTime = id => timeToMinute(document.getElementById(id).value);
-        
+        const getVal = (id, defaultValue = 0) => {
+            const el = document.getElementById(id);
+            return el ? (parseInt(el.value) || defaultValue) : defaultValue;
+        };
+
         const hasSpecial = document.getElementById(`has_special_${dayId}`)?.checked;
         const hasDuVao = document.getElementById(`has_duvao_${dayId}`)?.checked;
         
-        const startTime = getTime(`gio_${dayId}`);
-        const lessonTime = getVal(`tiethoc_${dayId}`);
-        const breakTime = getVal(`rachoi_${dayId}`);
-        const prepareTime = hasDuVao ? getVal(`duvaotiet_${dayId}`) : 0;
-        const lessonCount = getVal(`sotiet_${dayId}`);
-        const flagCeremonyTime = hasSpecial ? getVal(`chaoco_${dayId}`) : 0;
-        const classActivityTime = hasSpecial ? getVal(`chunhiem_${dayId}`) : 0;
+        const startTime = timeToMinute(document.getElementById(`gio_${dayId}`).value);
+        const lessonTime = getVal(`tiethoc_${dayId}`, 45);
+        const lessonCount = getVal(`sotiet_${dayId}`, 5);
+        const prepareTime = hasDuVao ? getVal(`duvaotiet_${dayId}`, 3) : 0;
         
+        // [GIẢI PHÁP 1] Đọc chuỗi thời gian ra chơi linh hoạt
+        const breakTimeStr = document.getElementById(`rachoi_${dayId}`).value || '5';
+        const breakTimes = breakTimeStr.split(',').map(s => parseInt(s.trim()) || 0);
+
+        // [GIẢI PHÁP 2] Đọc thời gian chuẩn bị riêng sau sự kiện đặc biệt
+        const isMondayMorning = dayId.includes('t2_sang');
+        const specialEventTime = hasSpecial ? getVal(isMondayMorning ? `chaoco_${dayId}` : `chunhiem_${dayId}`) : 0;
+        const specialPrepareTime = hasSpecial ? getVal(`prepare_after_special_${dayId}`, 2) : 0;
+        
+        if (startTime === 0 || lessonTime === 0 || lessonCount === 0) return [];
+
         let schedule = [];
         let currentTime = startTime;
 
-        if (hasSpecial) {
-            if (flagCeremonyTime > 0) {
-                schedule.push({ time: currentTime, description: "Chào cờ / SHCN" });
-                currentTime += flagCeremonyTime;
-                schedule.push({ time: currentTime, description: "Vào tiết 1" });
-            } else if (classActivityTime > 0) {
-                schedule.push({ time: currentTime, description: "Chào cờ / SHCN" });
-                currentTime += classActivityTime;
-                if (prepareTime > 0) {
-                    schedule.push({ time: currentTime, description: "Dự vào tiết 1" });
-                    currentTime += prepareTime;
-                }
-                schedule.push({ time: currentTime, description: "Vào tiết 1" });
-            } else {
-                schedule.push({ time: currentTime, description: "Vào tiết 1" });
+        // 1. Xử lý sự kiện đặc biệt (Chào cờ/Sinh hoạt) nếu có
+        if (hasSpecial && specialEventTime > 0) {
+            schedule.push({ time: currentTime, description: isMondayMorning ? "Chào cờ" : "Sinh hoạt" });
+            currentTime += specialEventTime;
+            
+            if (specialPrepareTime > 0) {
+                schedule.push({ time: currentTime, description: "Nghỉ sau SH/CC" });
+                currentTime += specialPrepareTime;
             }
-        } else {
-            schedule.push({ time: currentTime, description: "Vào tiết 1" });
         }
 
-        for (let i = 1; i < lessonCount; i++) {
+        // 2. Vòng lặp qua các tiết học và giờ ra chơi
+        for (let i = 1; i <= lessonCount; i++) {
+            schedule.push({ time: currentTime, description: `Vào tiết ${i}` });
             currentTime += lessonTime;
-            if (breakTime > 0) {
-                schedule.push({ time: currentTime, description: `Ra chơi tiết ${i}` });
-                currentTime += breakTime;
-                if (prepareTime > 0) {
-                    schedule.push({ time: currentTime, description: `Dự vào tiết ${i + 1}` });
-                    currentTime += prepareTime;
+
+            // Thêm giờ ra chơi sau mỗi tiết, trừ tiết cuối cùng
+            if (i < lessonCount) {
+                // Lấy thời gian ra chơi tương ứng, nếu không có thì dùng giá trị cuối cùng trong mảng
+                const currentBreakTime = breakTimes[i - 1] ?? breakTimes[breakTimes.length - 1]; 
+                
+                if (currentBreakTime > 0) {
+                    schedule.push({ time: currentTime, description: `Ra chơi tiết ${i}` });
+                    currentTime += currentBreakTime;
+
+                    // Thêm thời gian dự vào chung
+                    if (prepareTime > 0) {
+                        schedule.push({ time: currentTime, description: `Dự vào tiết ${i + 1}` });
+                        currentTime += prepareTime;
+                    }
                 }
             }
-            schedule.push({ time: currentTime, description: `Vào tiết ${i + 1}` });
         }
 
-        if (lessonCount > 0 && breakTime > 0) {
-            currentTime += lessonTime;
-            schedule.push({ time: currentTime, description: "Ra về" });
-        }
+        // 3. Thêm sự kiện "Ra về"
+        schedule.push({ time: currentTime, description: "Ra về" });
         
+        // 4. Lọc các sự kiện trùng giờ, sắp xếp và định dạng lại thời gian
         const uniqueSchedule = Array.from(new Map(schedule.map(item => [item.time, item])).values());
-        return uniqueSchedule.map(item => ({ ...item, time: minuteToTime(item.time) })).sort((a, b) => timeToMinute(a.time) - timeToMinute(b.time));
+        return uniqueSchedule
+            .map(item => ({ ...item, timeInMinutes: item.time, time: minuteToTime(item.time) }))
+            .sort((a, b) => a.timeInMinutes - b.timeInMinutes);
     }
 
     function updatePreviewTable(e){const t=document.getElementById(`enable_${e}`).checked,o=document.getElementById("details-"+e);if(!o)return;if(!t)return void(o.innerHTML="<p style='text-align:center; padding: 10px;'>Lịch này đang tắt.</p>");const n=calculateSchedule(e);let a="<table><thead><tr><th>STT</th><th>Thời gian</th><th>Nội dung</th></tr></thead><tbody>";n.forEach((e,t)=>{a+=`<tr><td>${t+1}</td><td>${e.time}</td><td>${e.description}</td></tr>`}),a+="</tbody></table>",o.innerHTML=a}
     
+    // [NÂNG CẤP] Các hàm sao chép để bao gồm cả trường dữ liệu mới
     function copyAfternoonSchedule(sourceDayId) {
-        const sourceDayName = document.querySelector(`.tablinks-day[onclick*="'${sourceDayId.replace('_chieu', '')}'"]`).innerText;
-        if (!confirm(`Bạn có chắc muốn sao chép lịch của Thứ ${sourceDayName} (chiều) đến TẤT CẢ các ngày còn lại của buổi chiều không?`)) return;
+        const sourceDayName = sourceDayId.split('_')[0].toUpperCase();
+        if (!confirm(`Bạn có chắc muốn sao chép lịch của ${sourceDayName} (chiều) đến TẤT CẢ các ngày còn lại của buổi chiều không?`)) return;
 
         const sourceData = {
             enabled: document.getElementById(`enable_${sourceDayId}`).checked,
             gio: document.getElementById(`gio_${sourceDayId}`).value,
             has_special_event: document.getElementById(`has_special_${sourceDayId}`).checked,
             chunhiem: document.getElementById(`chunhiem_${sourceDayId}`).value,
+            prepare_after_special: document.getElementById(`prepare_after_special_${sourceDayId}`).value,
             has_duvao_bell: document.getElementById(`has_duvao_${sourceDayId}`).checked,
             tiethoc: document.getElementById(`tiethoc_${sourceDayId}`).value,
             rachoi: document.getElementById(`rachoi_${sourceDayId}`).value,
@@ -2970,6 +3010,7 @@
             document.getElementById(`gio_${targetDayId}`).value = sourceData.gio;
             document.getElementById(`has_special_${targetDayId}`).checked = sourceData.has_special_event;
             document.getElementById(`chunhiem_${targetDayId}`).value = sourceData.chunhiem;
+            document.getElementById(`prepare_after_special_${targetDayId}`).value = sourceData.prepare_after_special;
             document.getElementById(`has_duvao_${targetDayId}`).checked = sourceData.has_duvao_bell;
             document.getElementById(`tiethoc_${targetDayId}`).value = sourceData.tiethoc;
             document.getElementById(`rachoi_${targetDayId}`).value = sourceData.rachoi;
@@ -2985,14 +3026,15 @@
     }
 
     function copyMorningSchedule(sourceDayId) {
-        const sourceDayName = document.querySelector(`.tablinks-day[onclick*="'${sourceDayId.replace('_sang', '')}'"]`).innerText;
-        if (!confirm(`Bạn có chắc muốn sao chép lịch của Thứ ${sourceDayName} (sáng) đến các ngày còn lại (T3-CN) không?`)) return;
+        const sourceDayName = sourceDayId.split('_')[0].toUpperCase();
+        if (!confirm(`Bạn có chắc muốn sao chép lịch của ${sourceDayName} (sáng) đến các ngày còn lại (T3-CN) không?`)) return;
 
         const sourceData = {
             enabled: document.getElementById(`enable_${sourceDayId}`).checked,
             gio: document.getElementById(`gio_${sourceDayId}`).value,
             has_special_event: document.getElementById(`has_special_${sourceDayId}`).checked,
             chunhiem: document.getElementById(`chunhiem_${sourceDayId}`).value,
+            prepare_after_special: document.getElementById(`prepare_after_special_${sourceDayId}`).value,
             has_duvao_bell: document.getElementById(`has_duvao_${sourceDayId}`).checked,
             tiethoc: document.getElementById(`tiethoc_${sourceDayId}`).value,
             rachoi: document.getElementById(`rachoi_${sourceDayId}`).value,
@@ -3009,6 +3051,7 @@
             document.getElementById(`gio_${targetDayId}`).value = sourceData.gio;
             document.getElementById(`has_special_${targetDayId}`).checked = sourceData.has_special_event;
             document.getElementById(`chunhiem_${targetDayId}`).value = sourceData.chunhiem;
+            document.getElementById(`prepare_after_special_${targetDayId}`).value = sourceData.prepare_after_special;
             document.getElementById(`has_duvao_${targetDayId}`).checked = sourceData.has_duvao_bell;
             document.getElementById(`tiethoc_${targetDayId}`).value = sourceData.tiethoc;
             document.getElementById(`rachoi_${targetDayId}`).value = sourceData.rachoi;
@@ -3022,6 +3065,9 @@
         });
         showNotification('Sao chép thành công! Hãy nhấn "Lưu và gửi cập nhật" để áp dụng.',"success");
     }
+    // =======================================================
+    // === KẾT THÚC PHẦN NÂNG CẤP ===
+    // =======================================================
 
     function resetOtaUi(hideProgress = false) {
         otaInProgress = false;
@@ -3304,6 +3350,80 @@
       return "#" + toHex(match[1]) + toHex(match[2]) + toHex(match[3]);
     }
     // =======================================================
+    // [MỚI] SCRIPT CHO LỊCH NGHỈ LỄ
+    // =======================================================
+    let holidayData = {}; 
+    let currentDisplayDate = new Date();
+
+    function generateCalendar(year, month) {
+        const grid = document.getElementById('calendar-grid');
+        const display = document.getElementById('month-year-display');
+        grid.innerHTML = '';
+
+        const today = new Date();
+        const firstDayOfMonth = new Date(year, month, 1);
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        
+        display.textContent = `Tháng ${month + 1} ${year}`;
+        currentDisplayDate = new Date(year, month, 1);
+
+        ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'].forEach(day => {
+            const dayHeader = document.createElement('div');
+            dayHeader.className = 'calendar-day-header';
+            dayHeader.textContent = day;
+            grid.appendChild(dayHeader);
+        });
+
+        for (let i = 0; i < firstDayOfMonth.getDay(); i++) {
+            const emptyCell = document.createElement('div');
+            emptyCell.className = 'calendar-day empty';
+            grid.appendChild(emptyCell);
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayCell = document.createElement('div');
+            dayCell.className = 'calendar-day';
+            dayCell.textContent = day;
+            
+            const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            dayCell.setAttribute('data-date', dateString);
+
+            if (holidayData[dateString]) {
+                dayCell.classList.add('holiday');
+            }
+            if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                dayCell.classList.add('today');
+            }
+
+            dayCell.onclick = () => toggleHoliday(dateString);
+            grid.appendChild(dayCell);
+        }
+    }
+
+    function changeMonth(offset) {
+        currentDisplayDate.setMonth(currentDisplayDate.getMonth() + offset);
+        generateCalendar(currentDisplayDate.getFullYear(), currentDisplayDate.getMonth());
+    }
+
+    function toggleHoliday(dateString) {
+        const cell = document.querySelector(`.calendar-day[data-date="${dateString}"]`);
+        if (holidayData[dateString]) {
+            delete holidayData[dateString];
+            cell.classList.remove('holiday');
+        } else {
+            holidayData[dateString] = true;
+            cell.classList.add('holiday');
+        }
+        showNotification(`Đã cập nhật ngày nghỉ. Nhấn "Lưu và gửi cập nhật" để áp dụng.`, 'info');
+    }
+
+    function loadHolidayData(data) {
+        if (typeof data === 'object' && data !== null) {
+            holidayData = data;
+            generateCalendar(currentDisplayDate.getFullYear(), currentDisplayDate.getMonth());
+        }
+    }
+    // =======================================================
 
     window.onload = function() { 
         loadInterfaceSettings();
@@ -3335,95 +3455,12 @@
         document.getElementById('font-size-input').addEventListener('input', (e) => applyInterfaceChanges('fontSize', e.target.value));
         document.getElementById('font-family-select').addEventListener('change', (e) => applyInterfaceChanges('fontFamily', e.target.value));
 
-        // [MỚI] Gán sự kiện cho các thanh trượt nhạc
         document.getElementById('volume-slider').addEventListener('change', (e) => handleMusicControl('set_volume', e.target.value));
         document.getElementById('music-progress-bar').addEventListener('change', (e) => handleMusicControl('seek', e.target.value));
-
 
         initializeTabs();
         generateCalendar(currentDisplayDate.getFullYear(), currentDisplayDate.getMonth());
     };
-    // =======================================================
-// [MỚI] SCRIPT CHO LỊCH NGHỈ LỄ
-// =======================================================
-let holidayData = {}; // Ví dụ: { "2024-12-25": true, "2025-01-01": true }
-let currentDisplayDate = new Date();
-
-function generateCalendar(year, month) {
-    const grid = document.getElementById('calendar-grid');
-    const display = document.getElementById('month-year-display');
-    grid.innerHTML = '';
-
-    const today = new Date();
-    const firstDayOfMonth = new Date(year, month, 1);
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    
-    display.textContent = `Tháng ${month + 1} ${year}`;
-    currentDisplayDate = new Date(year, month, 1);
-
-    // Thêm các ngày trong tuần
-    ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'].forEach(day => {
-        const dayHeader = document.createElement('div');
-        dayHeader.className = 'calendar-day-header';
-        dayHeader.textContent = day;
-        grid.appendChild(dayHeader);
-    });
-
-    // Thêm các ô trống cho đầu tháng
-    for (let i = 0; i < firstDayOfMonth.getDay(); i++) {
-        const emptyCell = document.createElement('div');
-        emptyCell.className = 'calendar-day empty';
-        grid.appendChild(emptyCell);
-    }
-
-    // Thêm các ngày trong tháng
-    for (let day = 1; day <= daysInMonth; day++) {
-        const dayCell = document.createElement('div');
-        dayCell.className = 'calendar-day';
-        dayCell.textContent = day;
-        
-        const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-        dayCell.setAttribute('data-date', dateString);
-
-        if (holidayData[dateString]) {
-            dayCell.classList.add('holiday');
-        }
-        if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-            dayCell.classList.add('today');
-        }
-
-        dayCell.onclick = () => toggleHoliday(dateString);
-        grid.appendChild(dayCell);
-    }
-}
-
-function changeMonth(offset) {
-    currentDisplayDate.setMonth(currentDisplayDate.getMonth() + offset);
-    generateCalendar(currentDisplayDate.getFullYear(), currentDisplayDate.getMonth());
-}
-
-function toggleHoliday(dateString) {
-    const cell = document.querySelector(`.calendar-day[data-date="${dateString}"]`);
-    if (holidayData[dateString]) {
-        delete holidayData[dateString];
-        cell.classList.remove('holiday');
-    } else {
-        holidayData[dateString] = true;
-        cell.classList.add('holiday');
-    }
-    // Gửi cập nhật đến ESP32 (cần thêm logic publish MQTT)
-    // Ví dụ: client.publish('esp32/bell/holidays/set', JSON.stringify(holidayData), { qos: 1 });
-    console.log("Cập nhật danh sách ngày nghỉ:", holidayData);
-    showNotification(`Đã cập nhật ngày nghỉ. Nhấn "Lưu và gửi cập nhật" để áp dụng.`, 'info');
-}
-
-// Hàm này cần được gọi khi nhận dữ liệu từ ESP32
-function loadHolidayData(data) {
-    if (typeof data === 'object' && data !== null) {
-        holidayData = data;
-        generateCalendar(currentDisplayDate.getFullYear(), currentDisplayDate.getMonth());
-    }
-}
   </script>
-</body>
+  </body>
 </html>
