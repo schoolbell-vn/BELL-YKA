@@ -16,6 +16,8 @@
         color: #f5f6fa;
         min-height: 100vh;
         margin: 0;
+        /* [MỚI] Thêm padding-bottom để không bị thanh hành động che mất nội dung */
+        padding-bottom: 80px; 
         font-size: 15px;
     }
     #main {
@@ -35,6 +37,72 @@
         box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
     }
 
+    /* === [MỚI] THANH HÀNH ĐỘNG CỐ ĐỊNH (STICKY ACTION BAR) === */
+    .sticky-action-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: rgba(35, 37, 38, 0.85);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        padding: 10px;
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        z-index: 100;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+        border-top: 1px solid #414345;
+    }
+    .sticky-action-bar .modern-btn {
+        flex: 1;
+        max-width: 200px;
+        margin: 0;
+    }
+    /* Làm cho nút Lưu nổi bật hơn */
+    .sticky-action-bar .save-button {
+        transform: scale(1.05);
+        box-shadow: 0 8px 24px #00e6ff55;
+    }
+
+    /* === [MỚI] HỆ THỐNG TAB CHÍNH === */
+    .main-tabs {
+        display: flex;
+        background-color: #232526;
+        border-radius: 16px 16px 0 0;
+        padding: 5px;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #414345;
+    }
+    .main-tab-button {
+        flex: 1;
+        padding: 10px 5px;
+        cursor: pointer;
+        background: transparent;
+        border: none;
+        color: #bdc3c7;
+        font-weight: 700;
+        font-size: 0.8em;
+        transition: all 0.2s ease-out;
+        border-radius: 12px;
+        text-transform: uppercase;
+    }
+    .main-tab-button:hover {
+        background-color: #414345;
+        color: #fff;
+    }
+    .main-tab-button.active {
+        background: #f1c40f;
+        color: #232526;
+        box-shadow: 0 2px 10px #f1c40f55;
+    }
+    .main-tab-content {
+        display: none; /* Mặc định ẩn tất cả nội dung tab */
+    }
+    .main-tab-content.active {
+        display: block; /* Chỉ hiện nội dung của tab đang active */
+    }
+    
     /* === KHU VỰC THÔNG BÁO PHẢN HỒI === */
     #notification-area {
         position: fixed;
@@ -154,6 +222,7 @@
     .date-display { font-size: 0.9em; color: #ecf0f1; margin-top: 5px; font-weight: 500; }
 
     /* --- KHU VỰC NÚT ĐIỀU KHIỂN --- */
+    /* [SỬA ĐỔI] Giữ lại .button-section cho các nút trong tab Hệ thống */
     .button-section {
         display: flex;
         flex-direction: column;
@@ -1055,7 +1124,7 @@
     /* === [MỚI] GIAO DIỆN LỊCH NGHỈ LỄ === */
     .holiday-calendar-container {
         padding: 0 15px;
-        margin-top: 15px;
+        margin-top: 25px;
     }
     .holiday-calendar-container details summary {
         display: flex;
@@ -1372,131 +1441,6 @@
         font-size: 0.9em;
         cursor: pointer;
     }
-    
-    /* === [MỚI] CSS CHO BỐ CỤC 3 CHẾ ĐỘ === */
-    .mode-switcher {
-        display: flex;
-        justify-content: center;
-        padding: 10px 15px;
-        background-color: #232526;
-        margin: 15px 15px 0 15px;
-        border-radius: 12px;
-        gap: 10px;
-    }
-    .mode-btn {
-        flex-grow: 1;
-        padding: 10px 5px;
-        background: #414345;
-        color: #bdc3c7;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 700;
-        font-size: 0.85em;
-        transition: all 0.2s ease-out;
-        border-bottom: 3px solid transparent;
-    }
-    .mode-btn:hover {
-        background-color: #34495e;
-        color: #fff;
-    }
-    .mode-btn.active {
-        background-color: #f1c40f;
-        color: #232526;
-        border-bottom-color: #f39c12;
-    }
-    .mode-view {
-        display: none; /* Mặc định ẩn tất cả các view */
-    }
-    .mode-view.active {
-        display: block; /* Chỉ hiện view đang active */
-    }
-    .placeholder-content {
-        padding: 20px;
-        margin: 15px;
-        background-color: #232526;
-        border-radius: 12px;
-        text-align: center;
-        color: #7f8c8d;
-        border: 2px dashed #414345;
-    }
-    .placeholder-content h4 {
-        color: #f1c40f;
-        margin-top: 0;
-    }
-    .placeholder-content p {
-        font-size: 0.9em;
-        line-height: 1.5;
-    }
-    .quick-mode-header {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-        padding: 15px;
-    }
-    .template-selector {
-        background-color: #232526;
-        border-radius: 10px;
-        padding: 15px;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-    .template-selector label {
-        font-weight: 700;
-        font-size: 0.9em;
-        color: #f1c40f;
-    }
-    .template-selector select {
-      width: 100%;
-      padding: 8px;
-      border-radius: 6px;
-      border: 1px solid #7f8c8d;
-      background-color: #2c3e50;
-      color: #ecf0f1;
-    }
-    .template-selector button {
-      padding: 8px 12px;
-      background-color: #f1c40f;
-      color: #232526;
-      border: none;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .advanced-mode-container {
-        display: flex;
-        gap: 15px;
-        padding: 15px;
-    }
-    .advanced-mode-column {
-        flex: 1;
-        background: #232526;
-        padding: 15px;
-        border-radius: 10px;
-    }
-    .advanced-mode-column h5 {
-        margin-top: 0;
-        text-align: center;
-        color: #f1c40f;
-        text-transform: uppercase;
-    }
-    .special-event-container {
-        display: flex;
-        gap: 15px;
-        padding: 0 15px 15px 15px;
-    }
-    .special-event-manual-form {
-        background: #2c3e50;
-        padding: 15px;
-        border-radius: 8px;
-        flex-grow: 1;
-    }
-    .special-event-manual-form h5 {
-        text-align: center;
-        margin-top: 0;
-        color: #f1c40f;
-    }
   </style>
 </head>
 <body>
@@ -1513,106 +1457,40 @@
         <div id="date" class="date-display">Đang chờ đồng bộ...</div>
       </div>
       
-      <div class="mode-switcher">
-          <button id="btn-mode-quick" class="mode-btn active" onclick="switchMode('quick')">LỊCH HÀNG TUẦN</button>
-          <button id="btn-mode-special" class="mode-btn" onclick="switchMode('special')">LỊCH SỰ KIỆN</button>
-          <button id="btn-mode-advanced" class="mode-btn" onclick="switchMode('advanced')">MẪU LỊCH TRÌNH</button>
+      <div class="main-tabs">
+        <button class="main-tab-button active" onclick="openMainTab(event, 'tab-lich-hoc')">🗓️ Lịch Học</button>
+        <button class="main-tab-button" onclick="openMainTab(event, 'tab-cai-dat')">⚙️ Cài Đặt</button>
+        <button class="main-tab-button" onclick="openMainTab(event, 'tab-phat-nhac')">🎶 Phát Nhạc</button>
+        <button class="main-tab-button" onclick="openMainTab(event, 'tab-he-thong')">🛠️ Hệ Thống</button>
       </div>
 
-      <div id="main-content-modes">
+      <div class="main-tab-content-container">
 
-          <div id="mode-quick-view" class="mode-view active">
-              <h3 id="index-schedule-title" style="text-align: center; font-size: 1.15em; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: #ecf0f1; background: none; border: none; box-shadow: none; margin-bottom: 10px; margin-top: 20px;">
-                CÀI ĐẶT LỊCH HỌC HÀNG TUẦN
-              </h3>
-
-              <div class="quick-mode-header">
-                  <div class="template-selector">
-                      <label for="template-select">Áp dụng Mẫu Lịch Trình có sẵn:</label>
-                      <select id="template-select">
-                          <option value="">-- Chọn một mẫu --</option>
-                          <option value="default">Lịch học Tiêu chuẩn</option>
-                          <option value="exam">Lịch Thi học kỳ</option>
-                          <option value="monday">Lịch Thứ 2 có Chào cờ</option>
-                      </select>
-                      <button onclick="alert('Chức năng đang được phát triển!')">Áp Dụng Mẫu</button>
-                  </div>
-
-                  <div class="tab" id="tab_day">
-                      <button class="tablinks-day" onclick="selectDay(event, 't2')">T2</button>
-                      <button class="tablinks-day" onclick="selectDay(event, 't3')">T3</button>
-                      <button class="tablinks-day" onclick="selectDay(event, 't4')">T4</button>
-                      <button class="tablinks-day" onclick="selectDay(event, 't5')">T5</button>
-                      <button class="tablinks-day" onclick="selectDay(event, 't6')">T6</button>
-                      <button class="tablinks-day" onclick="selectDay(event, 't7')">T7</button>
-                      <button class="tablinks-day" onclick="selectDay(event, 'cn')">CN</button>
-                  </div>
-                  <div class="tab-session" id="tab_session">
-                      <button class="tablinks-session" onclick="selectSession(event, 'sang')">Sáng</button>
-                      <button class="tablinks-session" onclick="selectSession(event, 'chieu')">Chiều</button>
-                  </div>
-              </div>
-              
-              <div id="tab-content-wrapper"></div>
+        <div id="tab-lich-hoc" class="main-tab-content active">
+          <h3 id="index-schedule-title" style="text-align: center; font-size: 1.15em; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: #ecf0f1; background: none; border: none; box-shadow: none; margin-bottom: 10px; margin-top: 5px;">
+            CÀI ĐẶT LỊCH HỌC
+          </h3>
+          
+          <div class="tab" id="tab_day">
+            <button class="tablinks-day" onclick="selectDay(event, 't2')">T2</button>
+            <button class="tablinks-day" onclick="selectDay(event, 't3')">T3</button>
+            <button class="tablinks-day" onclick="selectDay(event, 't4')">T4</button>
+            <button class="tablinks-day" onclick="selectDay(event, 't5')">T5</button>
+            <button class="tablinks-day" onclick="selectDay(event, 't6')">T6</button>
+            <button class="tablinks-day" onclick="selectDay(event, 't7')">T7</button>
+            <button class="tablinks-day" onclick="selectDay(event, 'cn')">CN</button>
           </div>
 
-          <div id="mode-advanced-view" class="mode-view">
-              <div class="placeholder-content">
-                  <h4>Chế độ Vận hành Nâng cao</h4>
-                  <p>Tại đây, ông có thể tạo, chỉnh sửa chi tiết các "Mẫu Lịch Trình" bằng cách kéo-thả các khối sự kiện (Tiết học, Ra chơi, Chào cờ...).</p>
-              </div>
-              <div class="advanced-mode-container">
-                  <div class="advanced-mode-column">
-                      <h5>DANH SÁCH MẪU</h5>
-                      <p style="text-align:center; font-size:0.9em; color:#bdc3c7;">(Chức năng đang phát triển)</p>
-                      <button class="modern-btn save-button" style="height:40px;">+ Tạo Mẫu Mới</button>
-                  </div>
-                  <div class="advanced-mode-column">
-                      <h5>TRÌNH DỰNG LỊCH TRÌNH</h5>
-                      <p style="text-align:center; font-size:0.9em; color:#bdc3c7;">(Khu vực kéo-thả sẽ ở đây)</p>
-                  </div>
-              </div>
+          <div class="tab-session" id="tab_session">
+            <button class="tablinks-session" onclick="selectSession(event, 'sang')">Sáng</button>
+            <button class="tablinks-session" onclick="selectSession(event, 'chieu')">Chiều</button>
           </div>
           
-          <div id="mode-special-view" class="mode-view">
-               <div class="placeholder-content">
-                  <h4>Chế độ Lịch Sự Kiện</h4>
-                  <p>Chọn một ngày trên lịch bên dưới để ghi đè lịch học thông thường bằng một lịch trình thủ công cho các sự kiện đặc biệt (ví dụ: Khai giảng, Họp phụ huynh...)</p>
-              </div>
-              <div class="special-event-container">
-                  <div class="holiday-calendar-container" style="flex: 1.2; margin-top:0;">
-                      <details open>
-                          <summary style="background: #34495e; color: #f1c40f;">CHỌN NGÀY</summary>
-                          <div class="details-content" style="padding:0;">
-                              <div class="calendar-header">
-                                  <button onclick="changeMonth(-1)">&#8249;</button>
-                                  <div id="month-year-display">Tháng 9 2024</div>
-                                  <button onclick="changeMonth(1)">&#8250;</button>
-                              </div>
-                              <div class="calendar-grid" id="calendar-grid">
-                              </div>
-                          </div>
-                      </details>
-                  </div>
-                  <div class="special-event-manual-form">
-                    <h5>LỊCH CHO NGÀY ĐÃ CHỌN</h5>
-                    <p style="text-align:center; font-size:0.9em; color:#bdc3c7;">(Chức năng đang phát triển)</p>
-                    <div class="control-group">
-                      <label>Thời gian</label>
-                      <input type="time" class="modal-input" style="padding: 8px; margin: 0;">
-                    </div>
-                     <div class="control-group" style="margin-top:10px;">
-                      <label>Hành động</label>
-                      <select class="modal-input" style="padding: 8px; margin: 0;"><option>Reo chuông</option><option>Phát nhạc</option></select>
-                    </div>
-                     <button class="action-btn" style="width:100%; margin-top:15px;">Thêm Mốc Thời Gian</button>
-                  </div>
-              </div>
-          </div>
-      </div>
+          <div id="tab-content-wrapper"></div>
+        </div>
 
-      <div id="general-settings-area">
-          <div class="sohoi-container" style="margin-top: 25px;">
+        <div id="tab-cai-dat" class="main-tab-content">
+            <div class="sohoi-container" style="margin-top: 5px;">
               <details open> <summary id="header-sohoi">
                       <div id="sohoi-title">CÀI ĐẶT CHUÔNG BÁO & ÂM THANH</div>
                       <span id="sohoi-subtitle" style="font-size: 0.8em; font-weight: normal; color: #ccc; margin-top: 2px;">(CHUNG CHO TẤT CẢ CÁC NGÀY)</span>
@@ -1645,7 +1523,7 @@
                           </div>
 
                           <div class="bell-action-item">
-                              <div class="bell-action-header">
+                               <div class="bell-action-header">
                                   <div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M13 16.438V7.562a1 1 0 0 0-1.555-.832L8 9.562v4.876l3.445 2.832A1 1 0 0 0 13 16.438zM12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path></svg></div>
                                   <div class="input-wrapper">
                                       <label for="sohoi_vaotiet" id="label-sohoi-vaotiet">Vào tiết</label>
@@ -1671,7 +1549,7 @@
                           </div>
 
                           <div class="bell-action-item">
-                              <div class="bell-action-header">
+                               <div class="bell-action-header">
                                   <div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M18 5h-2V2H8v3H6c-1.654 0-3 1.346-3 3v6c0 1.654 1.346 3 3 3h1v1c0 .552.447 1 1 1h6c.553 0 1-.448 1-1v-1h1c1.654 0 3-1.346 3-3V8c0-1.654-1.346-3-3-3zm1 9c0 .552-.447 1-1 1H6c-.553 0-1-.448-1-1V8c0-.552.447-1 1-1h12c.553 0 1 .448 1 1v6z"></path></svg></div>
                                   <div class="input-wrapper">
                                       <label for="sohoi_rachoi" id="label-sohoi-rachoi">Ra chơi</label>
@@ -1703,7 +1581,7 @@
                           </div>
 
                           <div class="bell-action-item">
-                              <div class="bell-action-header">
+                               <div class="bell-action-header">
                                   <div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M14 12V8h-4v4H8l4 4 4-4h-2z"></path></svg></div>
                                   <div class="input-wrapper">
                                       <label for="sohoi_duvao" id="label-sohoi-duvao">Dự vào lớp</label>
@@ -1751,10 +1629,28 @@
                       </div>
                   </div>
               </details>
-          </div>
-          
-          <div class="music-player-container">
-              <details>
+            </div>
+            <div class="holiday-calendar-container">
+                <details>
+                    <summary>
+                        <div>LỊCH NGHỈ LỄ</div>
+                    </summary>
+                    <div class="details-content">
+                        <div class="calendar-header">
+                            <button onclick="changeMonth(-1)">&#8249;</button>
+                            <div id="month-year-display">Tháng 9 2024</div>
+                            <button onclick="changeMonth(1)">&#8250;</button>
+                        </div>
+                        <div class="calendar-grid" id="calendar-grid">
+                            </div>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div id="tab-phat-nhac" class="main-tab-content">
+            <div class="music-player-container" style="margin-top: 5px;">
+              <details open>
                   <summary>
                       <div>ĐIỀU KHIỂN PHÁT NHẠC</div>
                   </summary>
@@ -1789,7 +1685,7 @@
                           <button class="control-btn" id="shuffle-btn" onclick="togglePlayMode('shuffle')">
                               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10.59 9.17 5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"></path></svg>
                           </button>
-                          <div class="progress-container" style="flex-grow: 1; margin: 0 10px;">
+                           <div class="progress-container" style="flex-grow: 1; margin: 0 10px;">
                               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width: 20px; height: 20px;"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path></svg>
                               <input type="range" id="volume-slider" value="50" min="0" max="100">
                           </div>
@@ -1833,18 +1729,11 @@
                       </details>
                   </div>
               </details>
-          </div>
-          <div class="divider-yellow"></div>
-
+            </div>
+        </div>
+        
+        <div id="tab-he-thong" class="main-tab-content">
           <div class="button-section">
-            <button class="modern-btn save-button" onclick="publishUpdate()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
-                <span id="btn-save-schedule">Lưu và gửi cập nhật</span>
-            </button>
-            <button class="modern-btn test-button" onclick="publishTestBell()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-                <span id="btn-test-bell">Thử Chuông Chung</span>
-            </button>
             <button class="modern-btn interface-button" onclick="openInterfaceSettingsModal()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path><path d="M12 22.31V12h10.31"></path><path d="M12 12H1.69"></path><path d="m12 12 5.66-5.66"></path></svg>
                 <span id="btn-interface-settings">Cài đặt giao diện</span>
@@ -1853,13 +1742,28 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 0 2l-.15.08a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l-.22-.38a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1 0-2l.15-.08a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                 <span id="btn-advanced-settings">Cài đặt nâng cao</span>
             </button>
+            <div class="divider-yellow" style="margin: 10px auto;"></div>
             <button class="modern-btn logout-button" onclick="logout()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
                 <span id="btn-logout">Đăng xuất</span>
             </button>
           </div>
+        </div>
+
       </div>
+
     </div>
+  </div>
+
+  <div class="sticky-action-bar">
+    <button class="modern-btn test-button" onclick="publishTestBell()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+        <span id="btn-test-bell">Thử Chuông Chung</span>
+    </button>
+    <button class="modern-btn save-button" onclick="publishUpdate()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+        <span id="btn-save-schedule">Lưu và gửi cập nhật</span>
+    </button>
   </div>
 
   <div class="modal-overlay" id="advanced-settings-modal">
@@ -2009,8 +1913,29 @@
         </div>
     </div>
   </div>
-
   <script>
+    // [MỚI] HÀM ĐIỀU KHIỂN CÁC TAB CHÍNH
+    function openMainTab(evt, tabName) {
+        // Lấy tất cả các phần tử có class="main-tab-content" và ẩn chúng đi
+        const tabcontent = document.getElementsByClassName("main-tab-content");
+        for (let i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].classList.remove("active");
+        }
+
+        // Lấy tất cả các phần tử có class="main-tab-button" và xóa class "active"
+        const tablinks = document.getElementsByClassName("main-tab-button");
+        for (let i = 0; i < tablinks.length; i++) {
+            tablinks[i].classList.remove("active");
+        }
+
+        // Hiển thị tab hiện tại và thêm một class "active" vào nút đã mở tab
+        document.getElementById(tabName).classList.add("active");
+        evt.currentTarget.classList.add("active");
+    }
+
+    // =======================================================
+    // PHẦN MÃ GỐC (GIỮ NGUYÊN)
+    // =======================================================
     if("true"!==sessionStorage.getItem("isLoggedIn"))window.location.href="login.html";
     
     let client, serverTime = null, targetDevice = null, targetAction = null, otaInProgress = false;
@@ -2040,26 +1965,6 @@
     // [MỚI] TOPICS MQTT CHO ĐIỀU KHIỂN NHẠC
     const MUSIC_CONTROL_TOPIC = "esp32/bell/music/control";
     const MUSIC_STATUS_TOPIC = "esp32/bell/music/status";
-
-    // [MỚI] JAVASCRIPT CHO BỐ CỤC 3 CHẾ ĐỘ
-    function switchMode(modeName) {
-        // Ẩn tất cả các view
-        document.querySelectorAll('.mode-view').forEach(view => view.classList.remove('active'));
-        
-        // Hiện view được chọn
-        const activeView = document.getElementById(`mode-${modeName}-view`);
-        if (activeView) {
-            activeView.classList.add('active');
-        }
-
-        // Cập nhật trạng thái active cho nút
-        document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
-        const activeButton = document.getElementById(`btn-mode-${modeName}`);
-        if(activeButton) {
-            activeButton.classList.add('active');
-        }
-    }
-    // KẾT THÚC JAVASCRIPT MỚI
 
 
     function connectToMqtt(){
@@ -2811,13 +2716,10 @@
                         <div class="setting-item" id="duvao_wrapper_${e}">${m}<div class="input-wrapper"><label for="duvaotiet_${e}">TG Dự vào</label><div class="unit-input"><input id="duvaotiet_${e}" type="number" value="3"><span>phút</span></div></div></div>
                         <div class="setting-item">${p}<div class="input-wrapper"><label for="sotiet_${e}">Số tiết học</label><div class="unit-input"><input id="sotiet_${e}" type="number" value="5"><span>tiết</span></div></div></div>
                     </div>
-                    <div style="padding: 10px 5px;">
-                      <button class="modern-btn advanced-button" style="height:40px; font-size: 0.8em;" onclick="switchMode('advanced')">Chuyển sang Chế độ Nâng cao</button>
-                    </div>
                 </div>
             </div>
 
-            <button class="modern-btn" onclick="updatePreviewTable('${e}')" style="height: 40px; font-size: 0.85em; background: #34495e; color: #f1c40f; border: 1px solid #f1c40f;">Cập nhật bảng chi tiết</button>
+            <button class="modern-btn preview-button" onclick="updatePreviewTable('${e}')" style="height: 40px; font-size: 0.85em; background: #34495e; color: #f1c40f; border: 1px solid #f1c40f;">Cập nhật bảng chi tiết</button>
             <details style="margin-top: 15px;">
                 <summary>Xem chi tiết lịch</summary>
                 <div class="details-container" id="details-${e}"></div>
