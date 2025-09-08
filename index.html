@@ -551,6 +551,7 @@
     max-height: 380px; 
     overflow-y: auto;
     padding-right: 5px; /* Thêm khoảng đệm nhỏ để thanh cuộn không quá sát */
+    padding-bottom: 20px; /* THÊM DÒNG NÀY: Tạo khoảng đệm ở cuối vùng cuộn */
     
     /* Giữ nguyên các thuộc tính cũ */
     opacity: 1;
@@ -1651,11 +1652,11 @@
                                   </div>
                               </div>
                           </div>
-                              <div class="sticky-action-bar"> 
-                             <button class="modern-btn test-button" onclick="publishTestBell()">
-                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-                             <span id="btn-test-bell">Thử Chuông Chung</span>
-                            </button>
+                          <div style="padding: 15px 0 0 0;">
+                          <button class="modern-btn test-button" onclick="publishTestBell()">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                              <span id="btn-test-bell">Thử Chuông Báo Chung</span>
+                          </button>
                       </div>
                   </div>
               </details>
@@ -1784,15 +1785,13 @@
 
     </div>
   </div>
-
-  
-    <button class="modern-btn save-button" onclick="publishUpdate()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
-        <span id="btn-save-schedule">Lưu và gửi cập nhật</span>
-    </button>
-  </div>
-
-  <div class="modal-overlay" id="advanced-settings-modal">
+<div class="sticky-action-bar">
+  <button class="modern-btn save-button" onclick="publishUpdate()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+      <span id="btn-save-schedule">Lưu và gửi cập nhật</span>
+  </button>
+</div>
+<div class="modal-overlay" id="advanced-settings-modal">
     <div class="modal-content">
         <h4>Cài đặt nâng cao</h4>
         <div class="adv-modal-tabs">
