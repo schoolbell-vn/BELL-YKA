@@ -321,8 +321,7 @@
         box-shadow: 0 8px 24px #e74c3c55;
     }
     
-    /* --- TAB NGÀY & NỘI DUNG TAB --- */
-    .tab { display: flex; justify-content: space-around; border-bottom: 2px solid #414345; margin: 0 15px 0 15px; position: relative; z-index: 1; }
+.tab { display: flex; justify-content: space-around; border-bottom: 2px solid #414345; margin: 0 15px 0 15px; position: relative; z-index: 1; }
     .tab button {
         flex-grow: 1; border: none; outline: none; cursor: pointer; padding: 10px 5px 8px 5px;
         transition: all 0.2s ease-out;
@@ -1468,6 +1467,75 @@
         font-size: 0.9em;
         cursor: pointer;
     }
+
+    /* === [THÊM MỚI] CSS CHO TÍNH NĂNG HẸN GIỜ THEO KỊCH BẢN === */
+    .scenario-timer-container {
+        padding: 0 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    .scenario-input-group {
+        background: #232526;
+        border: 1px solid #414345;
+        border-radius: 8px;
+        padding: 12px;
+    }
+    .scenario-input-group label {
+        display: flex;
+        align-items: center;
+        font-size: 1em;
+        font-weight: 600;
+        color: #bdc3c7;
+        margin-bottom: 8px;
+    }
+    .scenario-input-group label svg {
+        width: 20px;
+        height: 20px;
+        margin-right: 8px;
+        color: #f1c40f;
+    }
+    .scenario-input-group input {
+        width: 100%;
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #7f8c8d;
+        background-color: #2c3e50;
+        color: #ecf0f1;
+        font-size: 1.1em;
+    }
+    .scenario-helper-text {
+        font-size: 0.8em;
+        color: #7f8c8d;
+        font-style: italic;
+        margin-top: 5px;
+    }
+    .scenario-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+    }
+    #scenario-preview-table-container {
+        max-height: 250px;
+        overflow-y: auto;
+    }
+    #scenario-preview-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        font-size: 0.9em;
+    }
+    #scenario-preview-table th, #scenario-preview-table td {
+        border: 1px solid #414345;
+        padding: 8px;
+        text-align: center;
+    }
+    #scenario-preview-table th {
+        background: #f1c40f;
+        color: #232526;
+    }
+    /* === KẾT THÚC CSS MỚI === */
+    
   </style>
 </head>
 <body>
@@ -1486,13 +1554,13 @@
       
       <div class="main-tabs">
         <button class="main-tab-button active" onclick="openMainTab(event, 'tab-lich-hoc')">🗓️ Lịch Học</button>
+        <button class="main-tab-button" onclick="openMainTab(event, 'tab-hen-gio')">⏱️ Hẹn Giờ</button>
         <button class="main-tab-button" onclick="openMainTab(event, 'tab-cai-dat')">⚙️ Cài Đặt</button>
         <button class="main-tab-button" onclick="openMainTab(event, 'tab-phat-nhac')">🎶 Phát Nhạc</button>
         <button class="main-tab-button" onclick="openMainTab(event, 'tab-he-thong')">🛠️ Hệ Thống</button>
       </div>
 
       <div class="main-tab-content-container">
-
         <div id="tab-lich-hoc" class="main-tab-content active">
           <h3 id="index-schedule-title" style="text-align: center; font-size: 1.15em; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: #ecf0f1; background: none; border: none; box-shadow: none; margin-bottom: 10px; margin-top: 5px;">
             CÀI ĐẶT LỊCH HỌC
@@ -1516,6 +1584,49 @@
           <div id="tab-content-wrapper"></div>
         </div>
 
+        <div id="tab-hen-gio" class="main-tab-content">
+            <h3 style="text-align: center; font-size: 1.15em; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: #ecf0f1; background: none; border: none; box-shadow: none; margin-bottom: 15px; margin-top: 5px;">
+                HẸN GIỜ THEO KỊCH BẢN
+            </h3>
+
+            <div class="scenario-timer-container">
+                <div class="scenario-input-group">
+                    <label for="scenario-start-time">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586z"></path></svg>
+                        Thời gian bắt đầu
+                    </label>
+                    <input type="time" id="scenario-start-time">
+                </div>
+
+                <div class="scenario-input-group">
+                    <label for="scenario-intervals">
+                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 9a3 3 0 0 0-3 3h6a3 3 0 0 0-3-3z"></path><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path></svg>
+                        Lặp lại sau (phút)
+                    </label>
+                    <input type="text" id="scenario-intervals" placeholder="Ví dụ: 45,7,4,10">
+                    <p class="scenario-helper-text">Nhập các khoảng thời gian chờ, cách nhau bằng dấu phẩy (,)</p>
+                </div>
+
+                <div class="scenario-input-group">
+                    <label for="scenario-bells">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13.586V10c0-3.217-2.185-5.927-5-6.758V2h-4v1.242C7.185 4.073 5 6.783 5 10v3.586l-1.707 1.707A.996.996 0 0 0 3 16v2a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-2a.996.996 0 0 0-.293-.707L19 13.586zM19 17H5v-.586l1.707-1.707A.996.996 0 0 0 7 14v-4c0-2.757 2.243-5 5-5s5 2.243 5 5v4c0 .266.105.52.293.707L19 16.414V17zM12 22a2.98 2.98 0 0 0 2.818-2H9.182A2.98 2.98 0 0 0 12 22z"></path></svg>
+                        Số hồi chuông tương ứng
+                    </label>
+                    <input type="text" id="scenario-bells" placeholder="Ví dụ: 6,3,2,6,3">
+                    <p class="scenario-helper-text">Nhập số hồi chuông cho giờ bắt đầu và các lần lặp lại</p>
+                </div>
+                
+                <button class="modern-btn test-button" onclick="previewScenario()" style="height: 40px;">Xem trước kịch bản</button>
+
+                <div id="scenario-preview-table-container">
+                    </div>
+
+                <div class="scenario-actions">
+                    <button class="modern-btn save-button" onclick="addScenario()" style="background: linear-gradient(90deg, #27ae60, #2ecc71); border-color: #2ecc71; color: white; flex: 2;">Thêm & Gửi Lệnh</button>
+                    <button class="modern-btn logout-button" onclick="clearScenarioInputs()" style="flex: 1;">Xóa</button>
+                </div>
+            </div>
+        </div>
         <div id="tab-cai-dat" class="main-tab-content">
             <div class="sohoi-container" style="margin-top: 5px;">
               <details> <summary id="header-sohoi">
@@ -1782,8 +1893,7 @@
         </div>
 
       </div>
-
-    </div>
+      </div>
   </div>
 <div class="sticky-action-bar">
   <button class="modern-btn save-button" onclick="publishUpdate()">
@@ -1956,7 +2066,132 @@
         // Hiển thị tab hiện tại và thêm một class "active" vào nút đã mở tab
         document.getElementById(tabName).classList.add("active");
         evt.currentTarget.classList.add("active");
+
+        // [SỬA ĐỔI] Ẩn thanh hành động khi ở các tab không cần thiết
+        const actionBar = document.querySelector('.sticky-action-bar');
+        if (tabName === 'tab-lich-hoc' || tabName === 'tab-cai-dat') {
+            actionBar.style.display = 'flex';
+        } else {
+            actionBar.style.display = 'none';
+        }
     }
+
+    // =======================================================
+    // === [BẮT ĐẦU] JS MỚI CHO HẸN GIỜ THEO KỊCH BẢN ===
+    // =======================================================
+    function calculateScenario() {
+        const startTimeEl = document.getElementById('scenario-start-time');
+        const intervalsEl = document.getElementById('scenario-intervals');
+        const bellsEl = document.getElementById('scenario-bells');
+
+        if (!startTimeEl.value) {
+            showNotification("Vui lòng nhập thời gian bắt đầu!", "error");
+            return null;
+        }
+
+        const intervalsStr = intervalsEl.value.trim();
+        const bellsStr = bellsEl.value.trim();
+
+        if (!bellsStr) {
+            showNotification("Vui lòng nhập chuỗi số hồi chuông!", "error");
+            return null;
+        }
+        
+        const intervals = intervalsStr === '' ? [] : intervalsStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+        const bells = bellsStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+        
+        let currentTimeInMinutes = timeToMinute(startTimeEl.value);
+        let scenario = [];
+
+        if (bells.length === 0) {
+            showNotification("Chuỗi số hồi chuông không hợp lệ!", "error");
+            return null;
+        }
+
+        // Lần reo đầu tiên tại thời điểm bắt đầu
+        scenario.push({
+            time: minuteToTime(currentTimeInMinutes),
+            bell: bells[0]
+        });
+
+        // Các lần reo tiếp theo
+        const loopCount = Math.min(intervals.length, bells.length - 1);
+        for (let i = 0; i < loopCount; i++) {
+            currentTimeInMinutes += intervals[i];
+            scenario.push({
+                time: minuteToTime(currentTimeInMinutes),
+                bell: bells[i + 1]
+            });
+        }
+
+        return scenario;
+    }
+
+    function previewScenario() {
+        const scenario = calculateScenario();
+        const container = document.getElementById('scenario-preview-table-container');
+        
+        if (!scenario) {
+            container.innerHTML = ''; // Xóa bảng nếu có lỗi
+            return;
+        }
+
+        let tableHTML = `
+            <table id="scenario-preview-table">
+                <thead>
+                    <tr>
+                        <th>Lần reo</th>
+                        <th>Thời gian dự kiến</th>
+                        <th>Số hồi chuông</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+        scenario.forEach((event, index) => {
+            tableHTML += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${event.time}</td>
+                    <td>${event.bell} hồi</td>
+                </tr>
+            `;
+        });
+        tableHTML += `</tbody></table>`;
+
+        container.innerHTML = tableHTML;
+    }
+
+    function addScenario() {
+        if (!client || !client.connected) {
+            return showNotification("Chưa kết nối máy chủ!", 'error');
+        }
+
+        const scenario = calculateScenario();
+        if (scenario && scenario.length > 0) {
+            // Đây là nơi để gửi dữ liệu qua MQTT
+            // Cần định nghĩa một topic mới, ví dụ: "esp32/bell/scenario/set"
+            // const SCENARIO_SET_TOPIC = "esp32/bell/scenario/set";
+            // client.publish(SCENARIO_SET_TOPIC, JSON.stringify(scenario), { qos: 1 });
+            
+            showNotification("Đã gửi kịch bản hẹn giờ đến thiết bị!", "success");
+            console.log("Dữ liệu kịch bản sẽ được gửi đi:", scenario);
+        } else {
+            showNotification("Không có kịch bản hợp lệ để gửi đi!", "error");
+        }
+    }
+
+    function clearScenarioInputs() {
+        document.getElementById('scenario-start-time').value = '';
+        document.getElementById('scenario-intervals').value = '';
+        document.getElementById('scenario-bells').value = '';
+        document.getElementById('scenario-preview-table-container').innerHTML = '';
+        showNotification("Đã xóa nội dung.", "info");
+    }
+
+    // =======================================================
+    // === [KẾT THÚC] JS MỚI CHO HẸN GIỜ THEO KỊCH BẢN ===
+    // =======================================================
+
 
     // =======================================================
     // PHẦN MÃ GỐC (GIỮ NGUYÊN)
@@ -3479,9 +3714,9 @@
 
         initializeTabs();
         generateCalendar(currentDisplayDate.getFullYear(), currentDisplayDate.getMonth());
+        // Mặc định ẩn thanh hành động khi tải trang, vì tab đầu tiên không cần nó
+        document.querySelector('.sticky-action-bar').style.display = 'flex';
     };
   </script>
   </body>
 </html>
-
-
