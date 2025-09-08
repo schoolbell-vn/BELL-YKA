@@ -55,10 +55,10 @@
         border-top: 1px solid #414345;
     }
     .sticky-action-bar .modern-btn {
-        flex: 1;
-        max-width: 200px;
-        margin: 0;
-    }
+    flex: 1;
+    max-width: 350px; /* Tăng chiều rộng tối đa */
+    margin: 0;
+}
     /* Làm cho nút Lưu nổi bật hơn */
     .sticky-action-bar .save-button {
         transform: scale(1.05);
@@ -1651,7 +1651,11 @@
                                   </div>
                               </div>
                           </div>
-
+                              <div class="sticky-action-bar"> 
+                             <button class="modern-btn test-button" onclick="publishTestBell()">
+                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                             <span id="btn-test-bell">Thử Chuông Chung</span>
+                            </button>
                       </div>
                   </div>
               </details>
@@ -1781,11 +1785,7 @@
     </div>
   </div>
 
-  <div class="sticky-action-bar">
-    <button class="modern-btn test-button" onclick="publishTestBell()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-        <span id="btn-test-bell">Thử Chuông Chung</span>
-    </button>
+  
     <button class="modern-btn save-button" onclick="publishUpdate()">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
         <span id="btn-save-schedule">Lưu và gửi cập nhật</span>
@@ -2756,11 +2756,13 @@
                         <div class="setting-item" id="duvao_wrapper_${e}">${m}<div class="input-wrapper"><label for="duvaotiet_${e}">TG Dự vào</label><div class="unit-input"><input id="duvaotiet_${e}" type="number" value="3"><span>phút</span></div></div></div>
                         <div class="setting-item">${p}<div class="input-wrapper"><label for="sotiet_${e}">Số tiết học</label><div class="unit-input"><input id="sotiet_${e}" type="number" value="5"><span>tiết</span></div></div></div>
                     </div>
+                    
+                    <button class="modern-btn preview-button" onclick="updatePreviewTable('${e}')" style="height: 40px; font-size: 0.85em; background: #34495e; color: #f1c40f; border: 1px solid #f1c40f; margin-top: 15px;">Cập nhật bảng chi tiết</button>
+
                 </div>
             </div>
 
-            <button class="modern-btn preview-button" onclick="updatePreviewTable('${e}')" style="height: 40px; font-size: 0.85em; background: #34495e; color: #f1c40f; border: 1px solid #f1c40f;">Cập nhật bảng chi tiết</button>
-            <details style="margin-top: 30px;">
+            <details style="margin-top: 15px;">
                 <summary>Xem chi tiết lịch</summary>
                 <div class="details-container" id="details-${e}"></div>
             </details>
@@ -3482,4 +3484,3 @@
   </script>
   </body>
 </html>
-
