@@ -1532,10 +1532,11 @@
         margin-top: 5px;
     }
     .scenario-actions {
-        display: flex;
-        gap: 10px;
-        margin-top: 10px;
-    }
+    display: flex;
+    flex-direction: column; /* <-- DÒNG MỚI THÊM VÀO */
+    gap: 10px;
+    margin-top: 10px;
+}
     #scenario-preview-table-container {
         max-height: 250px;
         overflow-y: auto;
@@ -1643,9 +1644,9 @@
                     </div>
 
                 <div class="scenario-actions">
-                    <button class="modern-btn save-button" onclick="addScenario()" style="background: linear-gradient(90deg, #27ae60, #2ecc71); border-color: #2ecc71; color: white; flex: 2;">Thêm & Gửi Lệnh</button>
-                    <button class="modern-btn logout-button" onclick="clearScenarioInputs()" style="flex: 1;">Xóa</button>
-                </div>
+    <button class="modern-btn save-button" onclick="addScenario()" style="background: linear-gradient(90deg, #27ae60, #2ecc71); border-color: #2ecc71; color: white;">Thêm & Gửi Lệnh</button>
+    <button class="modern-btn logout-button" onclick="clearScenarioInputs()">Xóa</button>
+</div>
             </div>
         </div>
         <div id="tab-cai-dat" class="main-tab-content">
