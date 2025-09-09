@@ -728,6 +728,15 @@
         background: #f1c40f;
         color: #232526;
     }
+    /* [MỚI] CSS cho các nút ưu tiên trong modal cảnh báo */
+    .modal-confirm-btn.priority-scenario {
+        background: #27ae60;
+        color: #fff;
+    }
+    .modal-confirm-btn.priority-schedule {
+        background: #2980b9;
+        color: #fff;
+    }
     .modal-cancel-btn {
         background: #7f8c8d;
         color: #fff;
@@ -746,6 +755,18 @@
     .modal-input:focus {
         outline: none;
         border-color: #f1c40f;
+    }
+    /* [MỚI] CSS cho phần mô tả trong modal */
+    #conflict-modal-description {
+        text-align: center; 
+        margin-top: -10px; 
+        margin-bottom: 20px; 
+        color: #bdc3c7; 
+        font-size: 0.9em; 
+        line-height: 1.5;
+    }
+    #conflict-modal-description strong {
+        color: #e74c3c;
     }
 
     /* === Giao diện cho Modal Cài đặt Nâng cao === */
@@ -1998,6 +2019,19 @@
       </div>
   </div>
 
+  <div class="modal-overlay" id="conflict-modal-overlay">
+      <div class="modal-content" style="border-top-color: #e74c3c;">
+          <h4 style="color: #e74c3c;">Cảnh báo: Phát hiện xung đột!</h4>
+          <div id="conflict-modal-description">Nội dung xung đột sẽ được hiển thị ở đây.</div>
+          <p style="text-align: center; font-size: 0.9em; color: #f1c40f; font-weight: bold;">Ông muốn ưu tiên thực hiện lệnh nào?</p>
+          <div class="modal-buttons" style="flex-direction: column; gap: 10px;">
+              <button class="modal-confirm-btn priority-scenario" onclick="handleConflictChoice('scenario')">Ưu tiên Kịch Bản Hẹn Giờ</button>
+              <button class="modal-confirm-btn priority-schedule" onclick="handleConflictChoice('schedule')">Ưu tiên Lịch Học Hôm Nay</button>
+              <button class="modal-cancel-btn" onclick="handleConflictChoice('cancel')">Hủy bỏ</button>
+          </div>
+      </div>
+  </div>
+
   <div class="modal-overlay" id="interface-settings-modal">
     <div class="modal-content">
         <h4>Cài đặt Giao diện</h4>
@@ -2067,7 +2101,7 @@
         document.getElementById(tabName).classList.add("active");
         evt.currentTarget.classList.add("active");
 
-        // [SỬA ĐỔI] Ẩn thanh hành động khi ở các tab không cần thiết
+        // [SỬA ĐỔI] Ẩn/hiện thanh hành động tùy theo tab
         const actionBar = document.querySelector('.sticky-action-bar');
         if (tabName === 'tab-lich-hoc' || tabName === 'tab-cai-dat') {
             actionBar.style.display = 'flex';
@@ -2075,10 +2109,91 @@
             actionBar.style.display = 'none';
         }
     }
+    
+    // =======================================================
+    // === [BẮT ĐẦU] JS MỚI CHO HẸN GIỜ & CẢNH BÁO XUNG ĐỘT ===
+    // =======================================================
 
-    // =======================================================
-    // === [BẮT ĐẦU] JS MỚI CHO HẸN GIỜ THEO KỊCH BẢN ===
-    // =======================================================
+    // Biến toàn cục để xử lý Promise của modal
+    let resolveConflictPromise = null;
+
+    /**
+     * Mở modal cảnh báo xung đột và trả về một Promise
+     * @param {string} message - Nội dung HTML của cảnh báo
+     * @returns {Promise<string>} - Promise sẽ resolve với lựa chọn của người dùng ('scenario', 'schedule', 'cancel')
+     */
+    function openConflictModal(message) {
+        const modal = document.getElementById('conflict-modal-overlay');
+        const description = document.getElementById('conflict-modal-description');
+        
+        description.innerHTML = message;
+        modal.classList.add('visible');
+
+        return new Promise(resolve => {
+            resolveConflictPromise = resolve;
+        });
+    }
+
+    /**
+     * Đóng modal cảnh báo xung đột
+     */
+    function closeConflictModal() {
+        const modal = document.getElementById('conflict-modal-overlay');
+        modal.classList.remove('visible');
+    }
+
+    /**
+     * Xử lý lựa chọn của người dùng từ modal cảnh báo
+     * @param {string} choice - Lựa chọn ('scenario', 'schedule', 'cancel')
+     */
+    function handleConflictChoice(choice) {
+        if (resolveConflictPromise) {
+            resolveConflictPromise(choice);
+            resolveConflictPromise = null;
+        }
+        closeConflictModal();
+    }
+
+    /**
+     * Kiểm tra xung đột giữa kịch bản và lịch học của ngày hôm nay
+     * @param {Array<Object>} scenario - Mảng các sự kiện từ kịch bản đã tính toán
+     * @returns {Promise<Object>} - Object chứa trạng thái xung đột và thông điệp
+     */
+    async function checkForConflicts(scenario) {
+        if (!scenario || scenario.length === 0) {
+            return { conflicting: false };
+        }
+
+        // Xác định ngày hiện tại
+        const today = new Date();
+        const dayMap = ['cn', 't2', 't3', 't4', 't5', 't6', 't7'];
+        const currentDayId = dayMap[today.getDay()];
+
+        // Lấy lịch học buổi sáng và chiều của ngày hôm nay
+        const morningSchedule = calculateSchedule(`${currentDayId}_sang`);
+        const afternoonSchedule = calculateSchedule(`${currentDayId}_chieu`);
+        const fullDaySchedule = [...morningSchedule, ...afternoonSchedule];
+
+        if (fullDaySchedule.length === 0) {
+            return { conflicting: false }; // Không có lịch học để so sánh
+        }
+
+        // Tìm kiếm xung đột
+        for (const scenarioEvent of scenario) {
+            const conflictEvent = fullDaySchedule.find(scheduleEvent => scheduleEvent.timeInMinutes === timeToMinute(scenarioEvent.time));
+            
+            if (conflictEvent) {
+                const message = `Sự kiện lúc <strong>${scenarioEvent.time}</strong> trong kịch bản của ông trùng với sự kiện <strong>"${conflictEvent.description}"</strong> của lịch học hôm nay.`;
+                return {
+                    conflicting: true,
+                    message: message
+                };
+            }
+        }
+        
+        return { conflicting: false };
+    }
+
     function calculateScenario() {
         const startTimeEl = document.getElementById('scenario-start-time');
         const intervalsEl = document.getElementById('scenario-intervals');
@@ -2100,6 +2215,7 @@
         const intervals = intervalsStr === '' ? [] : intervalsStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
         const bells = bellsStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
         
+        // Chuyển đổi thời gian bắt đầu thành phút
         let currentTimeInMinutes = timeToMinute(startTimeEl.value);
         let scenario = [];
 
@@ -2126,14 +2242,25 @@
 
         return scenario;
     }
-
-    function previewScenario() {
+    
+    // [SỬA ĐỔI] Chuyển thành hàm async để xử lý modal
+    async function previewScenario() {
         const scenario = calculateScenario();
         const container = document.getElementById('scenario-preview-table-container');
         
         if (!scenario) {
             container.innerHTML = ''; // Xóa bảng nếu có lỗi
             return;
+        }
+
+        // [MỚI] Kiểm tra xung đột trước khi hiển thị
+        const conflict = await checkForConflicts(scenario);
+        if (conflict.conflicting) {
+            const userChoice = await openConflictModal(conflict.message);
+            if (userChoice === 'cancel') {
+                showNotification("Đã hủy xem trước do có xung đột.", "info");
+                return; // Dừng lại nếu người dùng hủy
+            }
         }
 
         let tableHTML = `
@@ -2161,24 +2288,45 @@
         container.innerHTML = tableHTML;
     }
 
-    function addScenario() {
+    // [SỬA ĐỔI] Chuyển thành hàm async và tích hợp logic xử lý xung đột
+    async function addScenario() {
         if (!client || !client.connected) {
             return showNotification("Chưa kết nối máy chủ!", 'error');
         }
 
         const scenario = calculateScenario();
-        if (scenario && scenario.length > 0) {
-            // Đây là nơi để gửi dữ liệu qua MQTT
-            // Cần định nghĩa một topic mới, ví dụ: "esp32/bell/scenario/set"
-            // const SCENARIO_SET_TOPIC = "esp32/bell/scenario/set";
-            // client.publish(SCENARIO_SET_TOPIC, JSON.stringify(scenario), { qos: 1 });
-            
-            showNotification("Đã gửi kịch bản hẹn giờ đến thiết bị!", "success");
-            console.log("Dữ liệu kịch bản sẽ được gửi đi:", scenario);
-        } else {
-            showNotification("Không có kịch bản hợp lệ để gửi đi!", "error");
+        if (!scenario || scenario.length === 0) {
+            return showNotification("Không có kịch bản hợp lệ để gửi đi!", "error");
         }
+        
+        let userPriority = 'none'; // Mặc định không có ưu tiên
+
+        // [MỚI] Kiểm tra xung đột trước khi gửi
+        const conflict = await checkForConflicts(scenario);
+        if (conflict.conflicting) {
+            const userChoice = await openConflictModal(conflict.message);
+            if (userChoice === 'cancel') {
+                showNotification("Đã hủy gửi lệnh do có xung đột.", "info");
+                return; // Dừng lại nếu người dùng hủy
+            }
+            userPriority = userChoice; // Gán ưu tiên do người dùng chọn
+        }
+        
+        // [SỬA ĐỔI] Tạo payload chứa cả kịch bản và độ ưu tiên
+        const payload = {
+            scenario: scenario,
+            priority: userPriority 
+        };
+
+        // Gửi dữ liệu qua MQTT
+        // Cần định nghĩa một topic mới, ví dụ: "esp32/bell/scenario/set"
+        const SCENARIO_SET_TOPIC = "esp32/bell/scenario/set"; // Đây là topic ví dụ
+        client.publish(SCENARIO_SET_TOPIC, JSON.stringify(payload), { qos: 1 });
+        
+        showNotification("Đã gửi kịch bản hẹn giờ đến thiết bị!", "success");
+        console.log("Dữ liệu kịch bản đã gửi đi:", payload);
     }
+
 
     function clearScenarioInputs() {
         document.getElementById('scenario-start-time').value = '';
@@ -2189,7 +2337,7 @@
     }
 
     // =======================================================
-    // === [KẾT THÚC] JS MỚI CHO HẸN GIỜ THEO KỊCH BẢN ===
+    // === [KẾT THÚC] JS MỚI CHO HẸN GIỜ & CẢNH BÁO XUNG ĐỘT ===
     // =======================================================
 
 
@@ -3170,6 +3318,9 @@
             const el = document.getElementById(id);
             return el ? (parseInt(el.value) || defaultValue) : defaultValue;
         };
+        
+        const isEnabled = document.getElementById(`enable_${dayId}`)?.checked;
+        if (!isEnabled) return []; // [MỚI] Trả về mảng rỗng nếu lịch bị tắt
 
         const hasSpecial = document.getElementById(`has_special_${dayId}`)?.checked;
         const hasDuVao = document.getElementById(`has_duvao_${dayId}`)?.checked;
@@ -3714,7 +3865,7 @@
 
         initializeTabs();
         generateCalendar(currentDisplayDate.getFullYear(), currentDisplayDate.getMonth());
-        // Mặc định ẩn thanh hành động khi tải trang, vì tab đầu tiên không cần nó
+        // Hiển thị thanh hành động mặc định vì tab đầu tiên (Lịch học) cần nó
         document.querySelector('.sticky-action-bar').style.display = 'flex';
     };
   </script>
