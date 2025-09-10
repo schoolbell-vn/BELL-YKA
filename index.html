@@ -321,7 +321,8 @@
         box-shadow: 0 8px 24px #e74c3c55;
     }
     
-.tab { display: flex; justify-content: space-around; border-bottom: 2px solid #414345; margin: 0 15px 0 15px; position: relative; z-index: 1; }
+    /* --- TAB NGÀY & NỘI DUNG TAB --- */
+    .tab { display: flex; justify-content: space-around; border-bottom: 2px solid #414345; margin: 0 15px 0 15px; position: relative; z-index: 1; }
     .tab button {
         flex-grow: 1; border: none; outline: none; cursor: pointer; padding: 10px 5px 8px 5px;
         transition: all 0.2s ease-out;
@@ -406,33 +407,7 @@
         opacity: 1;
         margin-top: 10px;
     }
-/* === [THÊM MỚI] CSS CHO BẢNG KỊCH BẢN HẸN GIỜ === */
-    .scenario-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 10px;
-    }
-    .scenario-table th, .scenario-table td {
-        border: 1px solid #414345;
-        padding: 9px 5px;
-        text-align: center; /* Căn giữa nội dung trong ô */
-        font-size: 0.9em;
-    }
-    .scenario-table th {
-        background-color: #3498db;
-        color: #fff;
-        font-weight: bold;
-    }
-    .scenario-table tbody tr:nth-child(odd) {
-        background-color: #2c3e50;
-    }
-    .scenario-table tbody tr:nth-child(even) {
-        background-color: #34495e;
-    }
-    /* Phân chia độ rộng các cột cho đều */
-    .scenario-table th:nth-child(1), .scenario-table td:nth-child(1) { width: 15%; } /* Cột STT */
-    .scenario-table th:nth-child(2), .scenario-table td:nth-child(2) { width: 42.5%; } /* Cột Thời gian */
-    .scenario-table th:nth-child(3), .scenario-table td:nth-child(3) { width: 42.5%; } /* Cột Số hồi */
+
     /* === CÀI ĐẶT NÚT GẠT (TOGGLE SWITCH) DẠNG BOX === */
     .toggle-actions-group {
         display: flex;
@@ -754,15 +729,6 @@
         background: #f1c40f;
         color: #232526;
     }
-    /* [MỚI] CSS cho các nút ưu tiên trong modal cảnh báo */
-    .modal-confirm-btn.priority-scenario {
-        background: #27ae60;
-        color: #fff;
-    }
-    .modal-confirm-btn.priority-schedule {
-        background: #2980b9;
-        color: #fff;
-    }
     .modal-cancel-btn {
         background: #7f8c8d;
         color: #fff;
@@ -781,18 +747,6 @@
     .modal-input:focus {
         outline: none;
         border-color: #f1c40f;
-    }
-    /* [MỚI] CSS cho phần mô tả trong modal */
-    #conflict-modal-description {
-        text-align: center; 
-        margin-top: -10px; 
-        margin-bottom: 20px; 
-        color: #bdc3c7; 
-        font-size: 0.9em; 
-        line-height: 1.5;
-    }
-    #conflict-modal-description strong {
-        color: #e74c3c;
     }
 
     /* === Giao diện cho Modal Cài đặt Nâng cao === */
@@ -1514,76 +1468,6 @@
         font-size: 0.9em;
         cursor: pointer;
     }
-
-    /* === [THÊM MỚI] CSS CHO TÍNH NĂNG HẸN GIỜ THEO KỊCH BẢN === */
-    .scenario-timer-container {
-        padding: 0 15px;
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-    }
-    .scenario-input-group {
-        background: #232526;
-        border: 1px solid #414345;
-        border-radius: 8px;
-        padding: 12px;
-    }
-    .scenario-input-group label {
-        display: flex;
-        align-items: center;
-        font-size: 1em;
-        font-weight: 600;
-        color: #bdc3c7;
-        margin-bottom: 8px;
-    }
-    .scenario-input-group label svg {
-        width: 20px;
-        height: 20px;
-        margin-right: 8px;
-        color: #f1c40f;
-    }
-    .scenario-input-group input {
-        width: 100%;
-        padding: 10px;
-        border-radius: 6px;
-        border: 1px solid #7f8c8d;
-        background-color: #2c3e50;
-        color: #ecf0f1;
-        font-size: 1.1em;
-    }
-    .scenario-helper-text {
-        font-size: 0.8em;
-        color: #7f8c8d;
-        font-style: italic;
-        margin-top: 5px;
-    }
-    .scenario-actions {
-    display: flex;
-    flex-direction: column; /* <-- DÒNG MỚI THÊM VÀO */
-    gap: 10px;
-    margin-top: 10px;
-}
-    #scenario-preview-table-container {
-        max-height: 250px;
-        overflow-y: auto;
-    }
-    #scenario-preview-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 10px;
-        font-size: 0.9em;
-    }
-    #scenario-preview-table th, #scenario-preview-table td {
-        border: 1px solid #414345;
-        padding: 8px;
-        text-align: center;
-    }
-    #scenario-preview-table th {
-        background: #f1c40f;
-        color: #232526;
-    }
-    /* === KẾT THÚC CSS MỚI === */
-    
   </style>
 </head>
 <body>
@@ -1602,13 +1486,13 @@
       
       <div class="main-tabs">
         <button class="main-tab-button active" onclick="openMainTab(event, 'tab-lich-hoc')">🗓️ Lịch Học</button>
-        <button class="main-tab-button" onclick="openMainTab(event, 'tab-hen-gio')">⏱️ Hẹn Giờ</button>
         <button class="main-tab-button" onclick="openMainTab(event, 'tab-cai-dat')">⚙️ Cài Đặt</button>
         <button class="main-tab-button" onclick="openMainTab(event, 'tab-phat-nhac')">🎶 Phát Nhạc</button>
         <button class="main-tab-button" onclick="openMainTab(event, 'tab-he-thong')">🛠️ Hệ Thống</button>
       </div>
 
       <div class="main-tab-content-container">
+
         <div id="tab-lich-hoc" class="main-tab-content active">
           <h3 id="index-schedule-title" style="text-align: center; font-size: 1.15em; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: #ecf0f1; background: none; border: none; box-shadow: none; margin-bottom: 10px; margin-top: 5px;">
             CÀI ĐẶT LỊCH HỌC
@@ -1632,55 +1516,6 @@
           <div id="tab-content-wrapper"></div>
         </div>
 
-        <div id="tab-hen-gio" class="main-tab-content">
-            <h3 style="text-align: center; font-size: 1.15em; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: #ecf0f1; background: none; border: none; box-shadow: none; margin-bottom: 15px; margin-top: 5px;">
-                HẸN GIỜ THEO KỊCH BẢN
-            </h3>
-
-            <div class="scenario-timer-container">
-                <div class="scenario-input-group">
-                    <label for="scenario-start-time">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586z"></path></svg>
-                        Thời gian bắt đầu
-                    </label>
-                    <input type="time" id="scenario-start-time">
-                </div>
-
-                <div class="scenario-input-group">
-                    <label for="scenario-intervals">
-                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 9a3 3 0 0 0-3 3h6a3 3 0 0 0-3-3z"></path><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path></svg>
-                        Lặp lại sau (phút)
-                    </label>
-                    <input type="text" id="scenario-intervals" placeholder="Ví dụ: 45,7,4,10">
-                    <p class="scenario-helper-text">Nhập các khoảng thời gian chờ, cách nhau bằng dấu phẩy (,)</p>
-                </div>
-
-                <div class="scenario-input-group">
-                    <label for="scenario-bells">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13.586V10c0-3.217-2.185-5.927-5-6.758V2h-4v1.242C7.185 4.073 5 6.783 5 10v3.586l-1.707 1.707A.996.996 0 0 0 3 16v2a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-2a.996.996 0 0 0-.293-.707L19 13.586zM19 17H5v-.586l1.707-1.707A.996.996 0 0 0 7 14v-4c0-2.757 2.243-5 5-5s5 2.243 5 5v4c0 .266.105.52.293.707L19 16.414V17zM12 22a2.98 2.98 0 0 0 2.818-2H9.182A2.98 2.98 0 0 0 12 22z"></path></svg>
-                        Số hồi chuông tương ứng
-                    </label>
-                    <input type="text" id="scenario-bells" placeholder="Ví dụ: 6,3,2,6,3">
-                    <p class="scenario-helper-text">Nhập số hồi chuông cho giờ bắt đầu và các lần lặp lại</p>
-                </div>
-                
-                <div class="scenario-actions">
-                    <button class="modern-btn save-button" onclick="addScenario()" style="background: linear-gradient(90deg, #27ae60, #2ecc71); border-color: #2ecc71; color: white;">Tạo & Gửi Lệnh</button>
-                    </div>
-                
-                <div id="saved-scenario-container" style="padding: 0; margin-top: 20px;">
-                    <h5 style="text-align: center; color: #3498db; text-transform: uppercase; margin: 10px 0 15px 0;">
-                        KỊCH BẢN HIỆN TẠI ĐANG LƯU TRÊN THIẾT BỊ
-                    </h5>
-                    <div id="saved-scenario-table-wrapper" style="max-height: 250px; overflow-y: auto;">
-                        <p id="saved-scenario-placeholder" class="list-placeholder" style="padding: 10px;">Đang chờ dữ liệu từ thiết bị...</p>
-                    </div>
-                    <div id="saved-scenario-priority" style="text-align: center; font-size: 0.9em; color: #bdc3c7; margin-top: 10px; font-style: italic;">
-
-                    </div>
-                </div>
-            </div>
-        </div>
         <div id="tab-cai-dat" class="main-tab-content">
             <div class="sohoi-container" style="margin-top: 5px;">
               <details> <summary id="header-sohoi">
@@ -1947,7 +1782,8 @@
         </div>
 
       </div>
-      </div>
+
+    </div>
   </div>
 <div class="sticky-action-bar">
   <button class="modern-btn save-button" onclick="publishUpdate()">
@@ -2052,19 +1888,6 @@
       </div>
   </div>
 
-  <div class="modal-overlay" id="conflict-modal-overlay">
-      <div class="modal-content" style="border-top-color: #e74c3c;">
-          <h4 style="color: #e74c3c;">Cảnh báo: Phát hiện xung đột!</h4>
-          <div id="conflict-modal-description">Nội dung xung đột sẽ được hiển thị ở đây.</div>
-          <p style="text-align: center; font-size: 0.9em; color: #f1c40f; font-weight: bold;">Ông muốn ưu tiên thực hiện lệnh nào?</p>
-          <div class="modal-buttons" style="flex-direction: column; gap: 10px;">
-              <button class="modal-confirm-btn priority-scenario" onclick="handleConflictChoice('scenario')">Ưu tiên Kịch Bản Hẹn Giờ</button>
-              <button class="modal-confirm-btn priority-schedule" onclick="handleConflictChoice('schedule')">Ưu tiên Lịch Học Hôm Nay</button>
-              <button class="modal-cancel-btn" onclick="handleConflictChoice('cancel')">Hủy bỏ</button>
-          </div>
-      </div>
-  </div>
-
   <div class="modal-overlay" id="interface-settings-modal">
     <div class="modal-content">
         <h4>Cài đặt Giao diện</h4>
@@ -2133,284 +1956,7 @@
         // Hiển thị tab hiện tại và thêm một class "active" vào nút đã mở tab
         document.getElementById(tabName).classList.add("active");
         evt.currentTarget.classList.add("active");
-
-        // [SỬA ĐỔI] Ẩn/hiện thanh hành động tùy theo tab
-        const actionBar = document.querySelector('.sticky-action-bar');
-        if (tabName === 'tab-lich-hoc' || tabName === 'tab-cai-dat') {
-            actionBar.style.display = 'flex';
-        } else {
-            actionBar.style.display = 'none';
-        }
     }
-    
-    // =======================================================
-    // === [BẮT ĐẦU] JS MỚI CHO HẸN GIỜ & CẢNH BÁO XUNG ĐỘT ===
-    // =======================================================
-
-    // Biến toàn cục để xử lý Promise của modal
-    let resolveConflictPromise = null;
-
-    /**
-     * Mở modal cảnh báo xung đột và trả về một Promise
-     * @param {string} message - Nội dung HTML của cảnh báo
-     * @returns {Promise<string>} - Promise sẽ resolve với lựa chọn của người dùng ('scenario', 'schedule', 'cancel')
-     */
-    function openConflictModal(message) {
-        const modal = document.getElementById('conflict-modal-overlay');
-        const description = document.getElementById('conflict-modal-description');
-        
-        description.innerHTML = message;
-        modal.classList.add('visible');
-
-        return new Promise(resolve => {
-            resolveConflictPromise = resolve;
-        });
-    }
-
-    /**
-     * Đóng modal cảnh báo xung đột
-     */
-    function closeConflictModal() {
-        const modal = document.getElementById('conflict-modal-overlay');
-        modal.classList.remove('visible');
-    }
-
-    /**
-     * Xử lý lựa chọn của người dùng từ modal cảnh báo
-     * @param {string} choice - Lựa chọn ('scenario', 'schedule', 'cancel')
-     */
-    function handleConflictChoice(choice) {
-        if (resolveConflictPromise) {
-            resolveConflictPromise(choice);
-            resolveConflictPromise = null;
-        }
-        closeConflictModal();
-    }
-
-    /**
-     * Kiểm tra xung đột giữa kịch bản và lịch học của ngày hôm nay
-     * @param {Array<Object>} scenario - Mảng các sự kiện từ kịch bản đã tính toán
-     * @returns {Promise<Object>} - Object chứa trạng thái xung đột và thông điệp
-     */
-    // File: index full.html
-
-/**
- * [PHIÊN BẢN SỬA LỖI]
- * Hàm này sẽ tính toán lịch học từ đối tượng dữ liệu JSON thay vì đọc từ form,
- * giúp việc kiểm tra xung đột chính xác và đáng tin cậy hơn.
- */
-function calculateScheduleFromData(scheduleObject) {
-    if (!scheduleObject || !scheduleObject.enabled) return [];
-
-    const hasSpecial = scheduleObject.has_special_event || false;
-    const hasDuVao = scheduleObject.has_duvao_bell === undefined ? true : scheduleObject.has_duvao_bell;
-
-    const startTime = timeToMinute(scheduleObject.gio);
-    const lessonTime = scheduleObject.tiethoc || 45;
-    const lessonCount = scheduleObject.sotiet || 0;
-    const prepareTime = hasDuVao ? (scheduleObject.duvaotiet || 3) : 0;
-
-    const breakTimeStr = scheduleObject.rachoi || '5';
-    const breakTimes = breakTimeStr.split(',').map(s => parseInt(s.trim()) || 0);
-
-    const specialEventTime = hasSpecial ? (scheduleObject.chaoco || scheduleObject.chunhiem || 0) : 0;
-    const specialPrepareTime = hasSpecial ? (scheduleObject.prepare_after_special || 2) : 0;
-
-    if (startTime === 0 || lessonTime === 0 || lessonCount === 0) return [];
-
-    let schedule = [];
-    let currentTime = startTime;
-
-    if (hasSpecial && specialEventTime > 0) {
-        schedule.push({ time: currentTime, description: "Sự kiện đặc biệt" });
-        currentTime += specialEventTime;
-        if (specialPrepareTime > 0) {
-            schedule.push({ time: currentTime, description: "Nghỉ sau sự kiện" });
-            currentTime += specialPrepareTime;
-        }
-    }
-
-    for (let i = 1; i <= lessonCount; i++) {
-        schedule.push({ time: currentTime, description: `Vào tiết ${i}` });
-        currentTime += lessonTime;
-        if (i < lessonCount) {
-            const currentBreakTime = breakTimes[i - 1] ?? breakTimes[breakTimes.length - 1];
-            if (currentBreakTime > 0) {
-                schedule.push({ time: currentTime, description: `Ra chơi tiết ${i}` });
-                currentTime += currentBreakTime;
-                if (prepareTime > 0) {
-                    schedule.push({ time: currentTime, description: `Dự vào tiết ${i + 1}` });
-                    currentTime += prepareTime;
-                }
-            }
-        }
-    }
-    schedule.push({ time: currentTime, description: "Ra về" });
-
-    const uniqueSchedule = Array.from(new Map(schedule.map(item => [item.time, item])).values());
-    return uniqueSchedule.map(item => ({ ...item, timeInMinutes: item.time }));
-}
-
-/**
- * [PHIÊN BẢN SỬA LỖI]
- * Kiểm tra xung đột giữa kịch bản và lịch học của ngày hôm nay.
- * Sử dụng dữ liệu gốc từ `allData` để đảm bảo tính chính xác.
- */
-async function checkForConflicts(scenario) {
-    if (!scenario || scenario.length === 0 || !window.allData) {
-        return { conflicting: false };
-    }
-
-    const today = new Date();
-    const dayMap = ['cn', 't2', 't3', 't4', 't5', 't6', 't7'];
-    const currentDayId = dayMap[today.getDay()];
-
-    const morningScheduleData = window.allData.lich.sang[currentDayId];
-    const afternoonScheduleData = window.allData.lich.chieu[currentDayId];
-
-    const morningEvents = calculateScheduleFromData(morningScheduleData);
-    const afternoonEvents = calculateScheduleFromData(afternoonScheduleData);
-    const fullDaySchedule = [...morningEvents, ...afternoonEvents];
-
-    if (fullDaySchedule.length === 0) {
-        return { conflicting: false }; // Không có lịch học để so sánh
-    }
-
-    for (const scenarioEvent of scenario) {
-        const scenarioTimeInMinutes = timeToMinute(scenarioEvent.time);
-        const conflictEvent = fullDaySchedule.find(scheduleEvent => scheduleEvent.timeInMinutes === scenarioTimeInMinutes);
-
-        if (conflictEvent) {
-            const message = `Sự kiện lúc <strong>${scenarioEvent.time}</strong> trong kịch bản của ông trùng với sự kiện <strong>"${conflictEvent.description}"</strong> của lịch học hôm nay.`;
-            return { conflicting: true, message: message };
-        }
-    }
-
-    return { conflicting: false };
-}
-
-    function calculateScenario() {
-        const startTimeEl = document.getElementById('scenario-start-time');
-        const intervalsEl = document.getElementById('scenario-intervals');
-        const bellsEl = document.getElementById('scenario-bells');
-
-        if (!startTimeEl.value) {
-            showNotification("Vui lòng nhập thời gian bắt đầu!", "error");
-            return null;
-        }
-
-        const intervalsStr = intervalsEl.value.trim();
-        const bellsStr = bellsEl.value.trim();
-
-        if (!bellsStr) {
-            showNotification("Vui lòng nhập chuỗi số hồi chuông!", "error");
-            return null;
-        }
-        
-        const intervals = intervalsStr === '' ? [] : intervalsStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
-        const bells = bellsStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
-        
-        // Chuyển đổi thời gian bắt đầu thành phút
-        let currentTimeInMinutes = timeToMinute(startTimeEl.value);
-        let scenario = [];
-
-        if (bells.length === 0) {
-            showNotification("Chuỗi số hồi chuông không hợp lệ!", "error");
-            return null;
-        }
-
-        // Lần reo đầu tiên tại thời điểm bắt đầu
-        scenario.push({
-            time: minuteToTime(currentTimeInMinutes),
-            bell: bells[0]
-        });
-
-        // Các lần reo tiếp theo
-        const loopCount = Math.min(intervals.length, bells.length - 1);
-        for (let i = 0; i < loopCount; i++) {
-            currentTimeInMinutes += intervals[i];
-            scenario.push({
-                time: minuteToTime(currentTimeInMinutes),
-                bell: bells[i + 1]
-            });
-        }
-
-        return scenario;
-    }
-    
-    // [SỬA ĐỔI] Chuyển thành hàm async để xử lý modal
-    // HÀM MỚI (Hàm previewScenario() có thể xóa đi vì logic đã được tích hợp vào đây)
-    async function addScenario() {
-        if (!client || !client.connected) {
-            return showNotification("Chưa kết nối máy chủ!", 'error');
-        }
-
-        // Bước 1: Tính toán kịch bản từ input người dùng
-        const scenario = calculateScenario();
-        if (!scenario || scenario.length === 0) {
-            // Không cần showNotification ở đây vì calculateScenario đã làm rồi
-            return; 
-        }
-        
-        // Bước 2: [THAY ĐỔI QUAN TRỌNG] Vẽ lại bảng kết quả ngay lập tức
-        // Chúng ta sẽ dùng hàm renderSavedScenario để cập nhật giao diện
-        // mà không cần chờ dữ liệu từ ESP32.
-        const immediateDisplayData = {
-            scenario: scenario,
-            priority: 'none' // Tạm thời chưa có ưu tiên
-        };
-        renderSavedScenario(immediateDisplayData);
-        showNotification("Đã tạo kịch bản xem trước trên giao diện.", "info");
-
-        // Bước 3: Kiểm tra xung đột như cũ
-        let userPriority = 'none';
-        const conflict = await checkForConflicts(scenario);
-        if (conflict.conflicting) {
-            const userChoice = await openConflictModal(conflict.message);
-            if (userChoice === 'cancel') {
-                showNotification("Đã hủy gửi lệnh do có xung đột.", "info");
-                // Nếu người dùng hủy, ta xóa bảng vừa hiển thị để tránh hiểu lầm
-                renderSavedScenario(null); 
-                return;
-            }
-            userPriority = userChoice;
-        }
-        
-        // Bước 4: Tạo payload và gửi đi MQTT như cũ
-        const payload = {
-            scenario: scenario,
-            priority: userPriority 
-        };
-
-        const SCENARIO_SET_TOPIC = "esp32/bell/scenario/set"; 
-        client.publish(SCENARIO_SET_TOPIC, JSON.stringify(payload), { qos: 1 });
-        
-        showNotification("Đã gửi kịch bản hẹn giờ đến thiết bị!", "success");
-        console.log("Dữ liệu kịch bản đã gửi đi:", payload);
-
-        // [Cải tiến] Cập nhật lại giao diện với lựa chọn ưu tiên của người dùng
-        if (userPriority !== 'none') {
-            const priorityDiv = document.getElementById('saved-scenario-priority');
-            priorityDiv.textContent = `Ưu tiên được chọn: ${userPriority === 'scenario' ? 'Kịch Bản' : 'Lịch Học'}`;
-            priorityDiv.style.color = userPriority === 'scenario' ? '#2ecc71' : '#3498db';
-        }
-    }
-
-    // Hàm previewScenario() cũ bây giờ không cần thiết nữa và có thể được XÓA.
-
-
-    function clearScenarioInputs() {
-        document.getElementById('scenario-start-time').value = '';
-        document.getElementById('scenario-intervals').value = '';
-        document.getElementById('scenario-bells').value = '';
-        document.getElementById('scenario-preview-table-container').innerHTML = '';
-        showNotification("Đã xóa nội dung.", "info");
-    }
-
-    // =======================================================
-    // === [KẾT THÚC] JS MỚI CHO HẸN GIỜ & CẢNH BÁO XUNG ĐỘT ===
-    // =======================================================
-
 
     // =======================================================
     // PHẦN MÃ GỐC (GIỮ NGUYÊN)
@@ -3035,39 +2581,19 @@ async function checkForConflicts(scenario) {
         }
     }
     
- // File: index full.html
-
-// File: index full.html
-
-function _load(e) {
+   function _load(e) {
     try {
         const t = JSON.parse(e);
-
-        // [SỬA LỖI] Kiểm tra và đọc dữ liệu từ bên trong đối tượng "data"
-        if (t.data) {
-            if (t.data.epoch) {
-                setTime(t.data.epoch);
-            }
-            if (t.data.schedule) {
-                window.allData = t.data.schedule;
-                populateForm(t.data.schedule);
-            }
-            if (t.data.holidays) {
-                // Dòng này sẽ gọi hàm hiển thị lịch nghỉ với dữ liệu đúng
-                loadHolidayData(t.data.holidays); 
-            }
-            if (t.data.scenario) {
-                renderSavedScenario(t.data.scenario);
-            }
-        } else {
-             // Fallback cho cấu trúc dữ liệu cũ nếu cần
-             if (t.epoch) setTime(t.epoch);
-             if (t.schedule) populateForm(t.schedule);
-             if (t.holidays) loadHolidayData(t.holidays);
+        if (t.schedule && t.epoch) {
+            setTime(t.epoch);
+            populateForm(t.schedule); 
+        }
+        if (t.holidays) {
+            loadHolidayData(t.holidays);
         }
 
-    } catch (error) {
-        console.error("Lỗi parse JSON từ MQTT:", error);
+    } catch (t) {
+        console.error("Lỗi parse JSON từ MQTT:", t);
     }
 }
     
@@ -3409,9 +2935,6 @@ function _load(e) {
             const el = document.getElementById(id);
             return el ? (parseInt(el.value) || defaultValue) : defaultValue;
         };
-        
-        const isEnabled = document.getElementById(`enable_${dayId}`)?.checked;
-        if (!isEnabled) return []; // [MỚI] Trả về mảng rỗng nếu lịch bị tắt
 
         const hasSpecial = document.getElementById(`has_special_${dayId}`)?.checked;
         const hasDuVao = document.getElementById(`has_duvao_${dayId}`)?.checked;
@@ -3901,32 +3424,24 @@ function _load(e) {
         generateCalendar(currentDisplayDate.getFullYear(), currentDisplayDate.getMonth());
     }
 
-    // File: index full.html
-
-function toggleHoliday(dateString) {
-    const cell = document.querySelector(`.calendar-day[data-date="${dateString}"]`);
-    if (holidayData[dateString]) {
-        delete holidayData[dateString];
-        if(cell) cell.classList.remove('holiday');
-    } else {
-        holidayData[dateString] = true; // Giá trị có thể là true hoặc một object rỗng
-        if(cell) cell.classList.add('holiday');
+    function toggleHoliday(dateString) {
+        const cell = document.querySelector(`.calendar-day[data-date="${dateString}"]`);
+        if (holidayData[dateString]) {
+            delete holidayData[dateString];
+            cell.classList.remove('holiday');
+        } else {
+            holidayData[dateString] = true;
+            cell.classList.add('holiday');
+        }
+        showNotification(`Đã cập nhật ngày nghỉ. Nhấn "Lưu và gửi cập nhật" để áp dụng.`, 'info');
     }
 
-    // [THÊM MỚI] Gửi cập nhật lịch nghỉ lễ ngay lập tức
-    if (!client || !client.connected) {
-        return showNotification("Chưa kết nối máy chủ! Thay đổi chưa được lưu.", 'error');
+    function loadHolidayData(data) {
+        if (typeof data === 'object' && data !== null) {
+            holidayData = data;
+            generateCalendar(currentDisplayDate.getFullYear(), currentDisplayDate.getMonth());
+        }
     }
-
-    // Tạo một payload chỉ chứa thông tin ngày nghỉ
-    const payload = {
-        holidays: holidayData 
-    };
-
-    // Gửi lên topic SET_DATA_TOPIC, ESP32 sẽ tự biết cách xử lý
-    client.publish(SET_DATA_TOPIC, JSON.stringify(payload), { qos: 1, retain: true });
-    showNotification(`Đã cập nhật ngày nghỉ ${dateString}`, 'success');
-}
     // =======================================================
 
     window.onload = function() { 
@@ -3964,59 +3479,7 @@ function toggleHoliday(dateString) {
 
         initializeTabs();
         generateCalendar(currentDisplayDate.getFullYear(), currentDisplayDate.getMonth());
-        // Hiển thị thanh hành động mặc định vì tab đầu tiên (Lịch học) cần nó
-        document.querySelector('.sticky-action-bar').style.display = 'flex';
     };
-    // =======================================================
-// [THÊM MỚI] HÀM HIỂN THỊ KỊCH BẢN ĐÃ LƯU TỪ ESP32
-// =======================================================
-
-function renderSavedScenario(savedData) {
-    const wrapper = document.getElementById('saved-scenario-table-wrapper');
-    const priorityDiv = document.getElementById('saved-scenario-priority');
-    const placeholder = document.getElementById('saved-scenario-placeholder');
-
-    if (!savedData || !savedData.scenario || savedData.scenario.length === 0) {
-        placeholder.style.display = 'block';
-        wrapper.innerHTML = ''; 
-        wrapper.appendChild(placeholder);
-        priorityDiv.innerHTML = '';
-        return;
-    }
-
-    placeholder.style.display = 'none';
-    const scenario = savedData.scenario;
-
-    let tableHTML = `<table class="scenario-table">
-            <thead>
-                <tr>
-                    <th>STT</th>
-                    <th>Thời gian</th>
-                    <th>Số hồi</th>
-                </tr>
-            </thead>
-            <tbody>`;
-    scenario.forEach((event, index) => {
-        tableHTML += `<tr>
-                    <td>${index + 1}</td>
-                    <td>${event.time}</td>
-                    <td>${event.bell} hồi</td>
-                </tr>`;
-    });
-    tableHTML += `</tbody></table>`;
-    wrapper.innerHTML = tableHTML;
-
-    if (savedData.priority === 'scenario') {
-        priorityDiv.textContent = 'Ưu tiên hiện tại: Kịch Bản';
-        priorityDiv.style.color = '#2ecc71';
-    } else if (savedData.priority === 'schedule') {
-        priorityDiv.textContent = 'Ưu tiên hiện tại: Lịch Học';
-        priorityDiv.style.color = '#3498db';
-    } else {
-        priorityDiv.textContent = 'Không có ưu tiên nào được đặt.';
-        priorityDiv.style.color = '#bdc3c7';
-    }
-}
   </script>
   </body>
 </html>
