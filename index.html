@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -407,7 +406,33 @@
         opacity: 1;
         margin-top: 10px;
     }
-
+/* === [THÊM MỚI] CSS CHO BẢNG KỊCH BẢN HẸN GIỜ === */
+    .scenario-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+    .scenario-table th, .scenario-table td {
+        border: 1px solid #414345;
+        padding: 9px 5px;
+        text-align: center; /* Căn giữa nội dung trong ô */
+        font-size: 0.9em;
+    }
+    .scenario-table th {
+        background-color: #3498db;
+        color: #fff;
+        font-weight: bold;
+    }
+    .scenario-table tbody tr:nth-child(odd) {
+        background-color: #2c3e50;
+    }
+    .scenario-table tbody tr:nth-child(even) {
+        background-color: #34495e;
+    }
+    /* Phân chia độ rộng các cột cho đều */
+    .scenario-table th:nth-child(1), .scenario-table td:nth-child(1) { width: 15%; } /* Cột STT */
+    .scenario-table th:nth-child(2), .scenario-table td:nth-child(2) { width: 42.5%; } /* Cột Thời gian */
+    .scenario-table th:nth-child(3), .scenario-table td:nth-child(3) { width: 42.5%; } /* Cột Số hồi */
     /* === CÀI ĐẶT NÚT GẠT (TOGGLE SWITCH) DẠNG BOX === */
     .toggle-actions-group {
         display: flex;
@@ -1639,26 +1664,22 @@
                     <p class="scenario-helper-text">Nhập số hồi chuông cho giờ bắt đầu và các lần lặp lại</p>
                 </div>
                 
-                <button class="modern-btn test-button" onclick="previewScenario()" style="height: 40px;">Xem trước kịch bản</button>
-
-                <div id="scenario-preview-table-container">
-                    </div>
-
                 <div class="scenario-actions">
-    <button class="modern-btn save-button" onclick="addScenario()" style="background: linear-gradient(90deg, #27ae60, #2ecc71); border-color: #2ecc71; color: white;">Thêm & Gửi Lệnh</button>
-    <button class="modern-btn logout-button" onclick="clearScenarioInputs()">Xóa</button>
-</div>
+                    <button class="modern-btn save-button" onclick="addScenario()" style="background: linear-gradient(90deg, #27ae60, #2ecc71); border-color: #2ecc71; color: white;">Tạo & Gửi Lệnh</button>
+                    </div>
+                
+                <div id="saved-scenario-container" style="padding: 0; margin-top: 20px;">
+                    <h5 style="text-align: center; color: #3498db; text-transform: uppercase; margin: 10px 0 15px 0;">
+                        KỊCH BẢN HIỆN TẠI ĐANG LƯU TRÊN THIẾT BỊ
+                    </h5>
+                    <div id="saved-scenario-table-wrapper" style="max-height: 250px; overflow-y: auto;">
+                        <p id="saved-scenario-placeholder" class="list-placeholder" style="padding: 10px;">Đang chờ dữ liệu từ thiết bị...</p>
+                    </div>
+                    <div id="saved-scenario-priority" style="text-align: center; font-size: 0.9em; color: #bdc3c7; margin-top: 10px; font-style: italic;">
+
+                    </div>
+                </div>
             </div>
-            <hr style="margin: 25px 15px; background: #414345; height: 1px; opacity: 0.5;">
-<div id="saved-scenario-container" style="padding: 0 15px;">
-    <h5 style="text-align: center; color: #3498db; text-transform: uppercase; margin: 10px 0 15px 0;">
-        KỊCH BẢN HIỆN TẠI ĐANG LƯU TRÊN THIẾT BỊ
-    </h5>
-    <div id="saved-scenario-table-wrapper" style="max-height: 250px; overflow-y: auto;">
-        <p id="saved-scenario-placeholder" class="list-placeholder" style="padding: 10px;">Đang chờ dữ liệu từ thiết bị...</p>
-    </div>
-    <div id="saved-scenario-priority" style="text-align: center; font-size: 0.9em; color: #bdc3c7; margin-top: 10px; font-style: italic;"></div>
-</div>
         </div>
         <div id="tab-cai-dat" class="main-tab-content">
             <div class="sohoi-container" style="margin-top: 5px;">
@@ -2171,40 +2192,102 @@
      * @param {Array<Object>} scenario - Mảng các sự kiện từ kịch bản đã tính toán
      * @returns {Promise<Object>} - Object chứa trạng thái xung đột và thông điệp
      */
-    async function checkForConflicts(scenario) {
-        if (!scenario || scenario.length === 0) {
-            return { conflicting: false };
+    // File: index full.html
+
+/**
+ * [PHIÊN BẢN SỬA LỖI]
+ * Hàm này sẽ tính toán lịch học từ đối tượng dữ liệu JSON thay vì đọc từ form,
+ * giúp việc kiểm tra xung đột chính xác và đáng tin cậy hơn.
+ */
+function calculateScheduleFromData(scheduleObject) {
+    if (!scheduleObject || !scheduleObject.enabled) return [];
+
+    const hasSpecial = scheduleObject.has_special_event || false;
+    const hasDuVao = scheduleObject.has_duvao_bell === undefined ? true : scheduleObject.has_duvao_bell;
+
+    const startTime = timeToMinute(scheduleObject.gio);
+    const lessonTime = scheduleObject.tiethoc || 45;
+    const lessonCount = scheduleObject.sotiet || 0;
+    const prepareTime = hasDuVao ? (scheduleObject.duvaotiet || 3) : 0;
+
+    const breakTimeStr = scheduleObject.rachoi || '5';
+    const breakTimes = breakTimeStr.split(',').map(s => parseInt(s.trim()) || 0);
+
+    const specialEventTime = hasSpecial ? (scheduleObject.chaoco || scheduleObject.chunhiem || 0) : 0;
+    const specialPrepareTime = hasSpecial ? (scheduleObject.prepare_after_special || 2) : 0;
+
+    if (startTime === 0 || lessonTime === 0 || lessonCount === 0) return [];
+
+    let schedule = [];
+    let currentTime = startTime;
+
+    if (hasSpecial && specialEventTime > 0) {
+        schedule.push({ time: currentTime, description: "Sự kiện đặc biệt" });
+        currentTime += specialEventTime;
+        if (specialPrepareTime > 0) {
+            schedule.push({ time: currentTime, description: "Nghỉ sau sự kiện" });
+            currentTime += specialPrepareTime;
         }
+    }
 
-        // Xác định ngày hiện tại
-        const today = new Date();
-        const dayMap = ['cn', 't2', 't3', 't4', 't5', 't6', 't7'];
-        const currentDayId = dayMap[today.getDay()];
-
-        // Lấy lịch học buổi sáng và chiều của ngày hôm nay
-        const morningSchedule = calculateSchedule(`${currentDayId}_sang`);
-        const afternoonSchedule = calculateSchedule(`${currentDayId}_chieu`);
-        const fullDaySchedule = [...morningSchedule, ...afternoonSchedule];
-
-        if (fullDaySchedule.length === 0) {
-            return { conflicting: false }; // Không có lịch học để so sánh
-        }
-
-        // Tìm kiếm xung đột
-        for (const scenarioEvent of scenario) {
-            const conflictEvent = fullDaySchedule.find(scheduleEvent => scheduleEvent.timeInMinutes === timeToMinute(scenarioEvent.time));
-            
-            if (conflictEvent) {
-                const message = `Sự kiện lúc <strong>${scenarioEvent.time}</strong> trong kịch bản của ông trùng với sự kiện <strong>"${conflictEvent.description}"</strong> của lịch học hôm nay.`;
-                return {
-                    conflicting: true,
-                    message: message
-                };
+    for (let i = 1; i <= lessonCount; i++) {
+        schedule.push({ time: currentTime, description: `Vào tiết ${i}` });
+        currentTime += lessonTime;
+        if (i < lessonCount) {
+            const currentBreakTime = breakTimes[i - 1] ?? breakTimes[breakTimes.length - 1];
+            if (currentBreakTime > 0) {
+                schedule.push({ time: currentTime, description: `Ra chơi tiết ${i}` });
+                currentTime += currentBreakTime;
+                if (prepareTime > 0) {
+                    schedule.push({ time: currentTime, description: `Dự vào tiết ${i + 1}` });
+                    currentTime += prepareTime;
+                }
             }
         }
-        
+    }
+    schedule.push({ time: currentTime, description: "Ra về" });
+
+    const uniqueSchedule = Array.from(new Map(schedule.map(item => [item.time, item])).values());
+    return uniqueSchedule.map(item => ({ ...item, timeInMinutes: item.time }));
+}
+
+/**
+ * [PHIÊN BẢN SỬA LỖI]
+ * Kiểm tra xung đột giữa kịch bản và lịch học của ngày hôm nay.
+ * Sử dụng dữ liệu gốc từ `allData` để đảm bảo tính chính xác.
+ */
+async function checkForConflicts(scenario) {
+    if (!scenario || scenario.length === 0 || !window.allData) {
         return { conflicting: false };
     }
+
+    const today = new Date();
+    const dayMap = ['cn', 't2', 't3', 't4', 't5', 't6', 't7'];
+    const currentDayId = dayMap[today.getDay()];
+
+    const morningScheduleData = window.allData.lich.sang[currentDayId];
+    const afternoonScheduleData = window.allData.lich.chieu[currentDayId];
+
+    const morningEvents = calculateScheduleFromData(morningScheduleData);
+    const afternoonEvents = calculateScheduleFromData(afternoonScheduleData);
+    const fullDaySchedule = [...morningEvents, ...afternoonEvents];
+
+    if (fullDaySchedule.length === 0) {
+        return { conflicting: false }; // Không có lịch học để so sánh
+    }
+
+    for (const scenarioEvent of scenario) {
+        const scenarioTimeInMinutes = timeToMinute(scenarioEvent.time);
+        const conflictEvent = fullDaySchedule.find(scheduleEvent => scheduleEvent.timeInMinutes === scenarioTimeInMinutes);
+
+        if (conflictEvent) {
+            const message = `Sự kiện lúc <strong>${scenarioEvent.time}</strong> trong kịch bản của ông trùng với sự kiện <strong>"${conflictEvent.description}"</strong> của lịch học hôm nay.`;
+            return { conflicting: true, message: message };
+        }
+    }
+
+    return { conflicting: false };
+}
 
     function calculateScenario() {
         const startTimeEl = document.getElementById('scenario-start-time');
@@ -2256,88 +2339,64 @@
     }
     
     // [SỬA ĐỔI] Chuyển thành hàm async để xử lý modal
-    async function previewScenario() {
-        const scenario = calculateScenario();
-        const container = document.getElementById('scenario-preview-table-container');
-        
-        if (!scenario) {
-            container.innerHTML = ''; // Xóa bảng nếu có lỗi
-            return;
-        }
-
-        // [MỚI] Kiểm tra xung đột trước khi hiển thị
-        const conflict = await checkForConflicts(scenario);
-        if (conflict.conflicting) {
-            const userChoice = await openConflictModal(conflict.message);
-            if (userChoice === 'cancel') {
-                showNotification("Đã hủy xem trước do có xung đột.", "info");
-                return; // Dừng lại nếu người dùng hủy
-            }
-        }
-
-        let tableHTML = `
-            <table id="scenario-preview-table">
-                <thead>
-                    <tr>
-                        <th>Lần reo</th>
-                        <th>Thời gian dự kiến</th>
-                        <th>Số hồi chuông</th>
-                    </tr>
-                </thead>
-                <tbody>
-        `;
-        scenario.forEach((event, index) => {
-            tableHTML += `
-                <tr>
-                    <td>${index + 1}</td>
-                    <td>${event.time}</td>
-                    <td>${event.bell} hồi</td>
-                </tr>
-            `;
-        });
-        tableHTML += `</tbody></table>`;
-
-        container.innerHTML = tableHTML;
-    }
-
-    // [SỬA ĐỔI] Chuyển thành hàm async và tích hợp logic xử lý xung đột
+    // HÀM MỚI (Hàm previewScenario() có thể xóa đi vì logic đã được tích hợp vào đây)
     async function addScenario() {
         if (!client || !client.connected) {
             return showNotification("Chưa kết nối máy chủ!", 'error');
         }
 
+        // Bước 1: Tính toán kịch bản từ input người dùng
         const scenario = calculateScenario();
         if (!scenario || scenario.length === 0) {
-            return showNotification("Không có kịch bản hợp lệ để gửi đi!", "error");
+            // Không cần showNotification ở đây vì calculateScenario đã làm rồi
+            return; 
         }
         
-        let userPriority = 'none'; // Mặc định không có ưu tiên
+        // Bước 2: [THAY ĐỔI QUAN TRỌNG] Vẽ lại bảng kết quả ngay lập tức
+        // Chúng ta sẽ dùng hàm renderSavedScenario để cập nhật giao diện
+        // mà không cần chờ dữ liệu từ ESP32.
+        const immediateDisplayData = {
+            scenario: scenario,
+            priority: 'none' // Tạm thời chưa có ưu tiên
+        };
+        renderSavedScenario(immediateDisplayData);
+        showNotification("Đã tạo kịch bản xem trước trên giao diện.", "info");
 
-        // [MỚI] Kiểm tra xung đột trước khi gửi
+        // Bước 3: Kiểm tra xung đột như cũ
+        let userPriority = 'none';
         const conflict = await checkForConflicts(scenario);
         if (conflict.conflicting) {
             const userChoice = await openConflictModal(conflict.message);
             if (userChoice === 'cancel') {
                 showNotification("Đã hủy gửi lệnh do có xung đột.", "info");
-                return; // Dừng lại nếu người dùng hủy
+                // Nếu người dùng hủy, ta xóa bảng vừa hiển thị để tránh hiểu lầm
+                renderSavedScenario(null); 
+                return;
             }
-            userPriority = userChoice; // Gán ưu tiên do người dùng chọn
+            userPriority = userChoice;
         }
         
-        // [SỬA ĐỔI] Tạo payload chứa cả kịch bản và độ ưu tiên
+        // Bước 4: Tạo payload và gửi đi MQTT như cũ
         const payload = {
             scenario: scenario,
             priority: userPriority 
         };
 
-        // Gửi dữ liệu qua MQTT
-        // Cần định nghĩa một topic mới, ví dụ: "esp32/bell/scenario/set"
-        const SCENARIO_SET_TOPIC = "esp32/bell/scenario/set"; // Đây là topic ví dụ
+        const SCENARIO_SET_TOPIC = "esp32/bell/scenario/set"; 
         client.publish(SCENARIO_SET_TOPIC, JSON.stringify(payload), { qos: 1 });
         
         showNotification("Đã gửi kịch bản hẹn giờ đến thiết bị!", "success");
         console.log("Dữ liệu kịch bản đã gửi đi:", payload);
+
+        // [Cải tiến] Cập nhật lại giao diện với lựa chọn ưu tiên của người dùng
+        if (userPriority !== 'none') {
+            const priorityDiv = document.getElementById('saved-scenario-priority');
+            priorityDiv.textContent = `Ưu tiên được chọn: ${userPriority === 'scenario' ? 'Kịch Bản' : 'Lịch Học'}`;
+            priorityDiv.style.color = userPriority === 'scenario' ? '#2ecc71' : '#3498db';
+        }
     }
+
+    // Hàm previewScenario() cũ bây giờ không cần thiết nữa và có thể được XÓA.
 
 
     function clearScenarioInputs() {
@@ -2976,25 +3035,39 @@
         }
     }
     
-   function _load(e) {
+ // File: index full.html
+
+// File: index full.html
+
+function _load(e) {
     try {
         const t = JSON.parse(e);
-        if (t.schedule && t.epoch) {
-            setTime(t.epoch);
-            populateForm(t.schedule); 
-        }
-        if (t.holidays) {
-            loadHolidayData(t.holidays);
+
+        // [SỬA LỖI] Kiểm tra và đọc dữ liệu từ bên trong đối tượng "data"
+        if (t.data) {
+            if (t.data.epoch) {
+                setTime(t.data.epoch);
+            }
+            if (t.data.schedule) {
+                window.allData = t.data.schedule;
+                populateForm(t.data.schedule);
+            }
+            if (t.data.holidays) {
+                // Dòng này sẽ gọi hàm hiển thị lịch nghỉ với dữ liệu đúng
+                loadHolidayData(t.data.holidays); 
+            }
+            if (t.data.scenario) {
+                renderSavedScenario(t.data.scenario);
+            }
+        } else {
+             // Fallback cho cấu trúc dữ liệu cũ nếu cần
+             if (t.epoch) setTime(t.epoch);
+             if (t.schedule) populateForm(t.schedule);
+             if (t.holidays) loadHolidayData(t.holidays);
         }
 
-        // [THÊM MỚI] Lắng nghe và hiển thị dữ liệu kịch bản đã lưu
-        // Dữ liệu này được gửi từ ESP32 mỗi khi có cập nhật
-        if (t.data && t.data.scenario) {
-            renderSavedScenario(t.data.scenario);
-        }
-
-    } catch (t) {
-        console.error("Lỗi parse JSON từ MQTT:", t);
+    } catch (error) {
+        console.error("Lỗi parse JSON từ MQTT:", error);
     }
 }
     
@@ -3828,24 +3901,32 @@
         generateCalendar(currentDisplayDate.getFullYear(), currentDisplayDate.getMonth());
     }
 
-    function toggleHoliday(dateString) {
-        const cell = document.querySelector(`.calendar-day[data-date="${dateString}"]`);
-        if (holidayData[dateString]) {
-            delete holidayData[dateString];
-            cell.classList.remove('holiday');
-        } else {
-            holidayData[dateString] = true;
-            cell.classList.add('holiday');
-        }
-        showNotification(`Đã cập nhật ngày nghỉ. Nhấn "Lưu và gửi cập nhật" để áp dụng.`, 'info');
+    // File: index full.html
+
+function toggleHoliday(dateString) {
+    const cell = document.querySelector(`.calendar-day[data-date="${dateString}"]`);
+    if (holidayData[dateString]) {
+        delete holidayData[dateString];
+        if(cell) cell.classList.remove('holiday');
+    } else {
+        holidayData[dateString] = true; // Giá trị có thể là true hoặc một object rỗng
+        if(cell) cell.classList.add('holiday');
     }
 
-    function loadHolidayData(data) {
-        if (typeof data === 'object' && data !== null) {
-            holidayData = data;
-            generateCalendar(currentDisplayDate.getFullYear(), currentDisplayDate.getMonth());
-        }
+    // [THÊM MỚI] Gửi cập nhật lịch nghỉ lễ ngay lập tức
+    if (!client || !client.connected) {
+        return showNotification("Chưa kết nối máy chủ! Thay đổi chưa được lưu.", 'error');
     }
+
+    // Tạo một payload chỉ chứa thông tin ngày nghỉ
+    const payload = {
+        holidays: holidayData 
+    };
+
+    // Gửi lên topic SET_DATA_TOPIC, ESP32 sẽ tự biết cách xử lý
+    client.publish(SET_DATA_TOPIC, JSON.stringify(payload), { qos: 1, retain: true });
+    showNotification(`Đã cập nhật ngày nghỉ ${dateString}`, 'success');
+}
     // =======================================================
 
     window.onload = function() { 
@@ -3890,9 +3971,6 @@
 // [THÊM MỚI] HÀM HIỂN THỊ KỊCH BẢN ĐÃ LƯU TỪ ESP32
 // =======================================================
 
-/**
- * @param {object} savedData - Đối tượng chứa mảng scenario và priority từ ESP32
- */
 function renderSavedScenario(savedData) {
     const wrapper = document.getElementById('saved-scenario-table-wrapper');
     const priorityDiv = document.getElementById('saved-scenario-priority');
@@ -3900,38 +3978,34 @@ function renderSavedScenario(savedData) {
 
     if (!savedData || !savedData.scenario || savedData.scenario.length === 0) {
         placeholder.style.display = 'block';
-        wrapper.innerHTML = ''; // Xóa bảng cũ nếu có
-        wrapper.appendChild(placeholder); // Đảm bảo placeholder nằm trong wrapper
-        priorityDiv.textContent = '';
+        wrapper.innerHTML = ''; 
+        wrapper.appendChild(placeholder);
+        priorityDiv.innerHTML = '';
         return;
     }
 
     placeholder.style.display = 'none';
     const scenario = savedData.scenario;
 
-    let tableHTML = `
-        <table id="saved-scenario-table" class="music-schedule-table">
+    let tableHTML = `<table class="scenario-table">
             <thead>
                 <tr>
+                    <th>STT</th>
                     <th>Thời gian</th>
                     <th>Số hồi</th>
                 </tr>
             </thead>
-            <tbody>
-    `;
-    scenario.forEach(event => {
-        tableHTML += `
-            <tr>
-                <td>${event.time}</td>
-                <td>${event.bell} hồi</td>
-            </tr>
-        `;
+            <tbody>`;
+    scenario.forEach((event, index) => {
+        tableHTML += `<tr>
+                    <td>${index + 1}</td>
+                    <td>${event.time}</td>
+                    <td>${event.bell} hồi</td>
+                </tr>`;
     });
     tableHTML += `</tbody></table>`;
-
     wrapper.innerHTML = tableHTML;
 
-    // Hiển thị độ ưu tiên
     if (savedData.priority === 'scenario') {
         priorityDiv.textContent = 'Ưu tiên hiện tại: Kịch Bản';
         priorityDiv.style.color = '#2ecc71';
