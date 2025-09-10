@@ -406,7 +406,33 @@
         opacity: 1;
         margin-top: 10px;
     }
-
+/* === [THÊM MỚI] CSS CHO BẢNG KỊCH BẢN HẸN GIỜ === */
+    .scenario-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+    .scenario-table th, .scenario-table td {
+        border: 1px solid #414345;
+        padding: 9px 5px;
+        text-align: center; /* Căn giữa nội dung trong ô */
+        font-size: 0.9em;
+    }
+    .scenario-table th {
+        background-color: #3498db;
+        color: #fff;
+        font-weight: bold;
+    }
+    .scenario-table tbody tr:nth-child(odd) {
+        background-color: #2c3e50;
+    }
+    .scenario-table tbody tr:nth-child(even) {
+        background-color: #34495e;
+    }
+    /* Phân chia độ rộng các cột cho đều */
+    .scenario-table th:nth-child(1), .scenario-table td:nth-child(1) { width: 15%; } /* Cột STT */
+    .scenario-table th:nth-child(2), .scenario-table td:nth-child(2) { width: 42.5%; } /* Cột Thời gian */
+    .scenario-table th:nth-child(3), .scenario-table td:nth-child(3) { width: 42.5%; } /* Cột Số hồi */
     /* === CÀI ĐẶT NÚT GẠT (TOGGLE SWITCH) DẠNG BOX === */
     .toggle-actions-group {
         display: flex;
@@ -2165,39 +2191,43 @@
      * @returns {Promise<Object>} - Object chứa trạng thái xung đột và thông điệp
      */
     async function checkForConflicts(scenario) {
-        if (!scenario || scenario.length === 0) {
-            return { conflicting: false };
-        }
-
-        // Xác định ngày hiện tại
-        const today = new Date();
-        const dayMap = ['cn', 't2', 't3', 't4', 't5', 't6', 't7'];
-        const currentDayId = dayMap[today.getDay()];
-
-        // Lấy lịch học buổi sáng và chiều của ngày hôm nay
-        const morningSchedule = calculateSchedule(`${currentDayId}_sang`);
-        const afternoonSchedule = calculateSchedule(`${currentDayId}_chieu`);
-        const fullDaySchedule = [...morningSchedule, ...afternoonSchedule];
-
-        if (fullDaySchedule.length === 0) {
-            return { conflicting: false }; // Không có lịch học để so sánh
-        }
-
-        // Tìm kiếm xung đột
-        for (const scenarioEvent of scenario) {
-            const conflictEvent = fullDaySchedule.find(scheduleEvent => scheduleEvent.timeInMinutes === timeToMinute(scenarioEvent.time));
-            
-            if (conflictEvent) {
-                const message = `Sự kiện lúc <strong>${scenarioEvent.time}</strong> trong kịch bản của ông trùng với sự kiện <strong>"${conflictEvent.description}"</strong> của lịch học hôm nay.`;
-                return {
-                    conflicting: true,
-                    message: message
-                };
-            }
-        }
-        
+    if (!scenario || scenario.length === 0) {
         return { conflicting: false };
     }
+
+    const today = new Date();
+    const dayMap = ['cn', 't2', 't3', 't4', 't5', 't6', 't7'];
+    const currentDayId = dayMap[today.getDay()];
+
+    console.log(`[DEBUG] Đang kiểm tra xung đột cho ngày: ${currentDayId}`); // Dòng gỡ lỗi 1
+
+    const morningSchedule = calculateSchedule(`${currentDayId}_sang`);
+    const afternoonSchedule = calculateSchedule(`${currentDayId}_chieu`);
+    const fullDaySchedule = [...morningSchedule, ...afternoonSchedule];
+
+    console.log(`[DEBUG] Đã tính được ${fullDaySchedule.length} sự kiện trong lịch học hôm nay.`, fullDaySchedule); // Dòng gỡ lỗi 2
+
+    if (fullDaySchedule.length === 0) {
+        console.log("[DEBUG] Lịch học hôm nay rỗng. Không có gì để so sánh -> Bỏ qua cảnh báo."); // Dòng gỡ lỗi 3
+        return { conflicting: false };
+    }
+
+    for (const scenarioEvent of scenario) {
+        const conflictEvent = fullDaySchedule.find(scheduleEvent => scheduleEvent.timeInMinutes === timeToMinute(scenarioEvent.time));
+
+        if (conflictEvent) {
+            console.log("[DEBUG] ĐÃ TÌM THẤY XUNG ĐỘT!", scenarioEvent, conflictEvent); // Dòng gỡ lỗi 4
+            const message = `Sự kiện lúc <strong>${scenarioEvent.time}</strong> trong kịch bản của ông trùng với sự kiện <strong>"${conflictEvent.description}"</strong> của lịch học hôm nay.`;
+            return {
+                conflicting: true,
+                message: message
+            };
+        }
+    }
+
+    console.log("[DEBUG] Không tìm thấy xung đột nào."); // Dòng gỡ lỗi 5
+    return { conflicting: false };
+}
 
     function calculateScenario() {
         const startTimeEl = document.getElementById('scenario-start-time');
@@ -3881,8 +3911,8 @@ function renderSavedScenario(savedData) {
     const scenario = savedData.scenario;
 
     // Sử dụng class 'details-container table' để có giao diện giống bảng Lịch học
-    let tableHTML = `
-        <table class="details-container table">
+   let tableHTML = `
+    <table class="scenario-table">
             <thead>
                 <tr>
                     <th>STT</th>
