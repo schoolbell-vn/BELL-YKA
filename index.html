@@ -3904,6 +3904,13 @@ function _load(e) {
     // File: index full.html
 
 function toggleHoliday(dateString) {
+    function loadHolidayData(data) {
+    if (data) {
+        holidayData = data; // Cập nhật biến toàn cục với dữ liệu từ thiết bị
+        // Vẽ lại giao diện lịch với dữ liệu mới
+        generateCalendar(currentDisplayDate.getFullYear(), currentDisplayDate.getMonth());
+    }
+}
     const cell = document.querySelector(`.calendar-day[data-date="${dateString}"]`);
     if (holidayData[dateString]) {
         delete holidayData[dateString];
