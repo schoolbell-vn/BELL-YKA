@@ -1607,54 +1607,52 @@
         </div>
 
         <div id="tab-hen-gio" class="main-tab-content">
-    <h3 style="text-align: center; font-size: 1.15em; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: #ecf0f1; background: none; border: none; box-shadow: none; margin-bottom: 15px; margin-top: 5px;">
-        HẸN GIỜ THEO KỊCH BẢN
-    </h3>
+            <h3 style="text-align: center; font-size: 1.15em; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: #ecf0f1; background: none; border: none; box-shadow: none; margin-bottom: 15px; margin-top: 5px;">
+                HẸN GIỜ THEO KỊCH BẢN
+            </h3>
 
-    <div class="scenario-timer-container">
-        <div class="scenario-input-group">
-            <label for="scenario-start-time">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586z"></path></svg>
-                Thời gian bắt đầu
-            </label>
-            <input type="time" id="scenario-start-time">
-        </div>
+            <div class="scenario-timer-container">
+                <div class="scenario-input-group">
+                    <label for="scenario-start-time">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586z"></path></svg>
+                        Thời gian bắt đầu
+                    </label>
+                    <input type="time" id="scenario-start-time">
+                </div>
 
-        <div class="scenario-input-group">
-            <label for="scenario-intervals">
-                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 9a3 3 0 0 0-3 3h6a3 3 0 0 0-3-3z"></path><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path></svg>
-                Lặp lại sau (phút)
-            </label>
-            <input type="text" id="scenario-intervals" placeholder="Ví dụ: 45,7,4,10">
-            <p class="scenario-helper-text">Nhập các khoảng thời gian chờ, cách nhau bằng dấu phẩy (,)</p>
-        </div>
+                <div class="scenario-input-group">
+                    <label for="scenario-intervals">
+                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 9a3 3 0 0 0-3 3h6a3 3 0 0 0-3-3z"></path><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path></svg>
+                        Lặp lại sau (phút)
+                    </label>
+                    <input type="text" id="scenario-intervals" placeholder="Ví dụ: 45,7,4,10">
+                    <p class="scenario-helper-text">Nhập các khoảng thời gian chờ, cách nhau bằng dấu phẩy (,)</p>
+                </div>
 
-        <div class="scenario-input-group">
-            <label for="scenario-bells">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13.586V10c0-3.217-2.185-5.927-5-6.758V2h-4v1.242C7.185 4.073 5 6.783 5 10v3.586l-1.707 1.707A.996.996 0 0 0 3 16v2a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-2a.996.996 0 0 0-.293-.707L19 13.586zM19 17H5v-.586l1.707-1.707A.996.996 0 0 0 7 14v-4c0-2.757 2.243-5 5-5s5 2.243 5 5v4c0 .266.105.52.293.707L19 16.414V17zM12 22a2.98 2.98 0 0 0 2.818-2H9.182A2.98 2.98 0 0 0 12 22z"></path></svg>
-                Số hồi chuông tương ứng
-            </label>
-            <input type="text" id="scenario-bells" placeholder="Ví dụ: 6,3,2,6,3">
-            <p class="scenario-helper-text">Nhập số hồi chuông cho giờ bắt đầu và các lần lặp lại</p>
-        </div>
-
-        <hr style="margin: 20px 0px; background: #414345; height: 1px; opacity: 0.5;">
-        <div id="saved-scenario-container">
-            <h5 style="text-align: center; color: #f1c40f; text-transform: uppercase; margin: 10px 0 15px 0;">
-                KỊCH BẢN SẼ ĐƯỢC ÁP DỤNG
-            </h5>
-            <div id="saved-scenario-table-wrapper" style="max-height: 250px; overflow-y: auto;">
-                <p id="saved-scenario-placeholder" class="list-placeholder" style="padding: 10px;">Nhập thông tin và nhấn "Tạo & Gửi Lệnh" để xem kết quả.</p>
-            </div>
-            <div id="saved-scenario-priority" style="text-align: center; font-size: 0.9em; color: #bdc3c7; margin-top: 10px; font-style: italic;"></div>
-        </div>
-
-        <div class="scenario-actions">
-            <button class="modern-btn save-button" onclick="addScenario()" style="background: linear-gradient(90deg, #27ae60, #2ecc71); border-color: #2ecc71; color: white;">Tạo & Gửi Lệnh</button>
-            <button class="modern-btn logout-button" onclick="clearScenarioInputs()">Xóa Nháp</button>
-        </div>
+                <div class="scenario-input-group">
+                    <label for="scenario-bells">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13.586V10c0-3.217-2.185-5.927-5-6.758V2h-4v1.242C7.185 4.073 5 6.783 5 10v3.586l-1.707 1.707A.996.996 0 0 0 3 16v2a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-2a.996.996 0 0 0-.293-.707L19 13.586zM19 17H5v-.586l1.707-1.707A.996.996 0 0 0 7 14v-4c0-2.757 2.243-5 5-5s5 2.243 5 5v4c0 .266.105.52.293.707L19 16.414V17zM12 22a2.98 2.98 0 0 0 2.818-2H9.182A2.98 2.98 0 0 0 12 22z"></path></svg>
+                        Số hồi chuông tương ứng
+                    </label>
+                    <input type="text" id="scenario-bells" placeholder="Ví dụ: 6,3,2,6,3">
+                    <p class="scenario-helper-text">Nhập số hồi chuông cho giờ bắt đầu và các lần lặp lại</p>
+                </div>
+                
+                <div class="scenario-actions">
+                    <button class="modern-btn save-button" onclick="addScenario()" style="background: linear-gradient(90deg, #27ae60, #2ecc71); border-color: #2ecc71; color: white;">Tạo & Gửi Lệnh</button>
+                    <button class="modern-btn logout-button" onclick="clearScenarioInputs()">Xóa Nội dung</button>
+                </div>
+            <hr style="margin: 25px 15px; background: #414345; height: 1px; opacity: 0.5;">
+<div id="saved-scenario-container" style="padding: 0 15px;">
+    <h5 style="text-align: center; color: #3498db; text-transform: uppercase; margin: 10px 0 15px 0;">
+        KỊCH BẢN HIỆN TẠI ĐANG LƯU TRÊN THIẾT BỊ
+    </h5>
+    <div id="saved-scenario-table-wrapper" style="max-height: 250px; overflow-y: auto;">
+        <p id="saved-scenario-placeholder" class="list-placeholder" style="padding: 10px;">Đang chờ dữ liệu từ thiết bị...</p>
     </div>
+    <div id="saved-scenario-priority" style="text-align: center; font-size: 0.9em; color: #bdc3c7; margin-top: 10px; font-style: italic;"></div>
 </div>
+        </div>
         <div id="tab-cai-dat" class="main-tab-content">
             <div class="sohoi-container" style="margin-top: 5px;">
               <details> <summary id="header-sohoi">
@@ -2250,49 +2248,65 @@
         return scenario;
     }
     
-   
-async function addScenario() {
-    if (!client || !client.connected) {
-        return showNotification("Chưa kết nối máy chủ!", 'error');
-    }
+    // [SỬA ĐỔI] Chuyển thành hàm async để xử lý modal
+    // HÀM MỚI (Hàm previewScenario() có thể xóa đi vì logic đã được tích hợp vào đây)
+    async function addScenario() {
+        if (!client || !client.connected) {
+            return showNotification("Chưa kết nối máy chủ!", 'error');
+        }
 
-    const scenario = calculateScenario();
-    if (!scenario || scenario.length === 0) {
-        // Không cần thông báo lỗi ở đây vì calculateScenario đã làm rồi.
-        return;
-    }
-
-    // Bước 1: Cập nhật giao diện ngay lập tức (hành động giống tab Lịch)
-    renderSavedScenario({ scenario: scenario, priority: 'none' });
-    showNotification("Đã cập nhật bảng kịch bản. Đang gửi lệnh...", "info");
-
-    let userPriority = 'none'; // Mặc định không có ưu tiên
-
-    // Bước 2: Kiểm tra xung đột
-    const conflict = await checkForConflicts(scenario);
-    if (conflict.conflicting) {
-        const userChoice = await openConflictModal(conflict.message);
-        if (userChoice === 'cancel') {
-            showNotification("Đã hủy gửi lệnh do có xung đột.", "info");
-            // Khôi phục lại bảng hiển thị về trạng thái đã lưu trước đó
-            client.publish(GET_DATA_TOPIC, '1', { qos: 1 });
+        // Bước 1: Tính toán kịch bản từ input người dùng
+        const scenario = calculateScenario();
+        if (!scenario || scenario.length === 0) {
+            // Không cần showNotification ở đây vì calculateScenario đã làm rồi
             return; 
         }
-        userPriority = userChoice;
+        
+        // Bước 2: [THAY ĐỔI QUAN TRỌNG] Vẽ lại bảng kết quả ngay lập tức
+        // Chúng ta sẽ dùng hàm renderSavedScenario để cập nhật giao diện
+        // mà không cần chờ dữ liệu từ ESP32.
+        const immediateDisplayData = {
+            scenario: scenario,
+            priority: 'none' // Tạm thời chưa có ưu tiên
+        };
+        renderSavedScenario(immediateDisplayData);
+        showNotification("Đã tạo kịch bản xem trước trên giao diện.", "info");
+
+        // Bước 3: Kiểm tra xung đột như cũ
+        let userPriority = 'none';
+        const conflict = await checkForConflicts(scenario);
+        if (conflict.conflicting) {
+            const userChoice = await openConflictModal(conflict.message);
+            if (userChoice === 'cancel') {
+                showNotification("Đã hủy gửi lệnh do có xung đột.", "info");
+                // Nếu người dùng hủy, ta xóa bảng vừa hiển thị để tránh hiểu lầm
+                renderSavedScenario(null); 
+                return;
+            }
+            userPriority = userChoice;
+        }
+        
+        // Bước 4: Tạo payload và gửi đi MQTT như cũ
+        const payload = {
+            scenario: scenario,
+            priority: userPriority 
+        };
+
+        const SCENARIO_SET_TOPIC = "esp32/bell/scenario/set"; 
+        client.publish(SCENARIO_SET_TOPIC, JSON.stringify(payload), { qos: 1 });
+        
+        showNotification("Đã gửi kịch bản hẹn giờ đến thiết bị!", "success");
+        console.log("Dữ liệu kịch bản đã gửi đi:", payload);
+
+        // [Cải tiến] Cập nhật lại giao diện với lựa chọn ưu tiên của người dùng
+        if (userPriority !== 'none') {
+            const priorityDiv = document.getElementById('saved-scenario-priority');
+            priorityDiv.textContent = `Ưu tiên được chọn: ${userPriority === 'scenario' ? 'Kịch Bản' : 'Lịch Học'}`;
+            priorityDiv.style.color = userPriority === 'scenario' ? '#2ecc71' : '#3498db';
+        }
     }
 
-    // Bước 3: Gửi dữ liệu đi
-    const payload = {
-        scenario: scenario,
-        priority: userPriority 
-    };
-
-    const SCENARIO_SET_TOPIC = "esp32/bell/scenario/set";
-    client.publish(SCENARIO_SET_TOPIC, JSON.stringify(payload), { qos: 1 });
-
-    showNotification("Đã gửi kịch bản hẹn giờ đến thiết bị!", "success");
-    console.log("Dữ liệu kịch bản đã gửi đi:", payload);
-}
+    // Hàm previewScenario() cũ bây giờ không cần thiết nữa và có thể được XÓA.
 
 
     function clearScenarioInputs() {
@@ -3848,6 +3862,7 @@ async function addScenario() {
 /**
  * @param {object} savedData - Đối tượng chứa mảng scenario và priority từ ESP32
  */
+// HÀM MỚI (ĐÃ THÊM CỘT STT)
 function renderSavedScenario(savedData) {
     const wrapper = document.getElementById('saved-scenario-table-wrapper');
     const priorityDiv = document.getElementById('saved-scenario-priority');
@@ -3855,28 +3870,32 @@ function renderSavedScenario(savedData) {
 
     if (!savedData || !savedData.scenario || savedData.scenario.length === 0) {
         placeholder.style.display = 'block';
-        wrapper.innerHTML = ''; // Xóa bảng cũ nếu có
-        wrapper.appendChild(placeholder); // Đảm bảo placeholder nằm trong wrapper
-        priorityDiv.textContent = '';
+        // Đảm bảo xóa nội dung cũ và chỉ hiển thị placeholder
+        wrapper.innerHTML = ''; 
+        wrapper.appendChild(placeholder);
+        priorityDiv.innerHTML = ''; // Xóa cả text ưu tiên
         return;
     }
 
     placeholder.style.display = 'none';
     const scenario = savedData.scenario;
 
+    // Sử dụng class 'details-container table' để có giao diện giống bảng Lịch học
     let tableHTML = `
-        <table id="saved-scenario-table" class="music-schedule-table">
+        <table class="details-container table">
             <thead>
                 <tr>
+                    <th>STT</th>
                     <th>Thời gian</th>
                     <th>Số hồi</th>
                 </tr>
             </thead>
             <tbody>
     `;
-    scenario.forEach(event => {
+    scenario.forEach((event, index) => {
         tableHTML += `
             <tr>
+                <td>${index + 1}</td>
                 <td>${event.time}</td>
                 <td>${event.bell} hồi</td>
             </tr>
