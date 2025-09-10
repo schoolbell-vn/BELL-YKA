@@ -2200,94 +2200,89 @@
  * giúp việc kiểm tra xung đột chính xác và đáng tin cậy hơn.
  */
 function calculateScheduleFromData(scheduleObject) {
-    if (!scheduleObject || !scheduleObject.enabled) return [];
-
-    const hasSpecial = scheduleObject.has_special_event || false;
-    const hasDuVao = scheduleObject.has_duvao_bell === undefined ? true : scheduleObject.has_duvao_bell;
-
-    const startTime = timeToMinute(scheduleObject.gio);
-    const lessonTime = scheduleObject.tiethoc || 45;
-    const lessonCount = scheduleObject.sotiet || 0;
-    const prepareTime = hasDuVao ? (scheduleObject.duvaotiet || 3) : 0;
-
-    const breakTimeStr = scheduleObject.rachoi || '5';
-    const breakTimes = breakTimeStr.split(',').map(s => parseInt(s.trim()) || 0);
-
-    const specialEventTime = hasSpecial ? (scheduleObject.chaoco || scheduleObject.chunhiem || 0) : 0;
-    const specialPrepareTime = hasSpecial ? (scheduleObject.prepare_after_special || 2) : 0;
-
-    if (startTime === 0 || lessonTime === 0 || lessonCount === 0) return [];
-
-    let schedule = [];
-    let currentTime = startTime;
-
-    if (hasSpecial && specialEventTime > 0) {
-        schedule.push({ time: currentTime, description: "Sự kiện đặc biệt" });
-        currentTime += specialEventTime;
-        if (specialPrepareTime > 0) {
-            schedule.push({ time: currentTime, description: "Nghỉ sau sự kiện" });
-            currentTime += specialPrepareTime;
+        if (!scheduleObject || !scheduleObject.enabled) return [];
+    
+        const hasSpecial = scheduleObject.has_special_event || false;
+        const hasDuVao = scheduleObject.has_duvao_bell === undefined ? true : scheduleObject.has_duvao_bell;
+    
+        const startTime = timeToMinute(scheduleObject.gio);
+        const lessonTime = scheduleObject.tiethoc || 45;
+        const lessonCount = scheduleObject.sotiet || 0;
+        const prepareTime = hasDuVao ? (scheduleObject.duvaotiet || 3) : 0;
+    
+        const breakTimeStr = scheduleObject.rachoi || '5';
+        const breakTimes = breakTimeStr.split(',').map(s => parseInt(s.trim()) || 0);
+    
+        const specialEventTime = hasSpecial ? (scheduleObject.chaoco || scheduleObject.chunhiem || 0) : 0;
+        const specialPrepareTime = hasSpecial ? (scheduleObject.prepare_after_special || 2) : 0;
+    
+        if (startTime === 0 || lessonTime === 0 || lessonCount === 0) return [];
+    
+        let schedule = [];
+        let currentTime = startTime;
+    
+        if (hasSpecial && specialEventTime > 0) {
+            schedule.push({ time: currentTime, description: "Sự kiện đặc biệt" });
+            currentTime += specialEventTime;
+            if (specialPrepareTime > 0) {
+                schedule.push({ time: currentTime, description: "Nghỉ sau sự kiện" });
+                currentTime += specialPrepareTime;
+            }
         }
-    }
-
-    for (let i = 1; i <= lessonCount; i++) {
-        schedule.push({ time: currentTime, description: `Vào tiết ${i}` });
-        currentTime += lessonTime;
-        if (i < lessonCount) {
-            const currentBreakTime = breakTimes[i - 1] ?? breakTimes[breakTimes.length - 1];
-            if (currentBreakTime > 0) {
-                schedule.push({ time: currentTime, description: `Ra chơi tiết ${i}` });
-                currentTime += currentBreakTime;
-                if (prepareTime > 0) {
-                    schedule.push({ time: currentTime, description: `Dự vào tiết ${i + 1}` });
-                    currentTime += prepareTime;
+    
+        for (let i = 1; i <= lessonCount; i++) {
+            schedule.push({ time: currentTime, description: `Vào tiết ${i}` });
+            currentTime += lessonTime;
+            if (i < lessonCount) {
+                const currentBreakTime = breakTimes[i - 1] ?? breakTimes[breakTimes.length - 1];
+                if (currentBreakTime > 0) {
+                    schedule.push({ time: currentTime, description: `Ra chơi tiết ${i}` });
+                    currentTime += currentBreakTime;
+                    if (prepareTime > 0) {
+                        schedule.push({ time: currentTime, description: `Dự vào tiết ${i + 1}` });
+                        currentTime += prepareTime;
+                    }
                 }
             }
         }
+        schedule.push({ time: currentTime, description: "Ra về" });
+    
+        const uniqueSchedule = Array.from(new Map(schedule.map(item => [item.time, item])).values());
+        return uniqueSchedule.map(item => ({ ...item, timeInMinutes: item.time }));
     }
-    schedule.push({ time: currentTime, description: "Ra về" });
 
-    const uniqueSchedule = Array.from(new Map(schedule.map(item => [item.time, item])).values());
-    return uniqueSchedule.map(item => ({ ...item, timeInMinutes: item.time }));
-}
-
-/**
- * [PHIÊN BẢN SỬA LỖI]
- * Kiểm tra xung đột giữa kịch bản và lịch học của ngày hôm nay.
- * Sử dụng dữ liệu gốc từ `allData` để đảm bảo tính chính xác.
- */
 async function checkForConflicts(scenario) {
-    if (!scenario || scenario.length === 0 || !window.allData) {
+        if (!scenario || scenario.length === 0 || !window.allData) {
+            return { conflicting: false };
+        }
+    
+        const today = new Date();
+        const dayMap = ['cn', 't2', 't3', 't4', 't5', 't6', 't7'];
+        const currentDayId = dayMap[today.getDay()];
+    
+        const morningScheduleData = window.allData.lich.sang[currentDayId];
+        const afternoonScheduleData = window.allData.lich.chieu[currentDayId];
+    
+        const morningEvents = calculateScheduleFromData(morningScheduleData);
+        const afternoonEvents = calculateScheduleFromData(afternoonScheduleData);
+        const fullDaySchedule = [...morningEvents, ...afternoonEvents];
+    
+        if (fullDaySchedule.length === 0) {
+            return { conflicting: false }; // Không có lịch học để so sánh
+        }
+    
+        for (const scenarioEvent of scenario) {
+            const scenarioTimeInMinutes = timeToMinute(scenarioEvent.time);
+            const conflictEvent = fullDaySchedule.find(scheduleEvent => scheduleEvent.timeInMinutes === scenarioTimeInMinutes);
+    
+            if (conflictEvent) {
+                const message = `Sự kiện lúc <strong>${scenarioEvent.time}</strong> trong kịch bản của ông trùng với sự kiện <strong>"${conflictEvent.description}"</strong> của lịch học hôm nay.`;
+                return { conflicting: true, message: message };
+            }
+        }
+    
         return { conflicting: false };
     }
-
-    const today = new Date();
-    const dayMap = ['cn', 't2', 't3', 't4', 't5', 't6', 't7'];
-    const currentDayId = dayMap[today.getDay()];
-
-    const morningScheduleData = window.allData.lich.sang[currentDayId];
-    const afternoonScheduleData = window.allData.lich.chieu[currentDayId];
-
-    const morningEvents = calculateScheduleFromData(morningScheduleData);
-    const afternoonEvents = calculateScheduleFromData(afternoonScheduleData);
-    const fullDaySchedule = [...morningEvents, ...afternoonEvents];
-
-    if (fullDaySchedule.length === 0) {
-        return { conflicting: false }; // Không có lịch học để so sánh
-    }
-
-    for (const scenarioEvent of scenario) {
-        const scenarioTimeInMinutes = timeToMinute(scenarioEvent.time);
-        const conflictEvent = fullDaySchedule.find(scheduleEvent => scheduleEvent.timeInMinutes === scenarioTimeInMinutes);
-
-        if (conflictEvent) {
-            const message = `Sự kiện lúc <strong>${scenarioEvent.time}</strong> trong kịch bản của ông trùng với sự kiện <strong>"${conflictEvent.description}"</strong> của lịch học hôm nay.`;
-            return { conflicting: true, message: message };
-        }
-    }
-
-    return { conflicting: false };
-}
 
     function calculateScenario() {
         const startTimeEl = document.getElementById('scenario-start-time');
@@ -2338,66 +2333,63 @@ async function checkForConflicts(scenario) {
         return scenario;
     }
     
-    // [SỬA ĐỔI] Chuyển thành hàm async để xử lý modal
-    // HÀM MỚI (Hàm previewScenario() có thể xóa đi vì logic đã được tích hợp vào đây)
-    // [SỬA ĐỔI HOÀN TOÀN]
-// Hàm này được nâng cấp để cập nhật giao diện ngay lập tức và xử lý xung đột
+
 async function addScenario() {
-    if (!client || !client.connected) {
-        return showNotification("Chưa kết nối máy chủ!", 'error');
-    }
-
-    // Bước 1: Tính toán kịch bản từ input của ông
-    const scenario = calculateScenario();
-    if (!scenario || scenario.length === 0) {
-        // Không cần thông báo ở đây vì calculateScenario đã làm rồi
-        return; 
-    }
-
-    // Bước 2: [THAY ĐỔI QUAN TRỌNG] Cập nhật giao diện ngay lập tức
-    // Hiển thị kịch bản vừa tạo lên bảng "KỊCH BẢN HIỆN TẠI" mà không cần chờ ESP32 phản hồi.
-    const immediateDisplayData = {
-        scenario: scenario,
-        priority: 'none' // Tạm thời chưa biết ưu tiên là gì
-    };
-    renderSavedScenario(immediateDisplayData);
-    showNotification("Đã tạo kịch bản xem trước. Đang kiểm tra xung đột...", "info");
-
-    // Bước 3: Kiểm tra xem kịch bản mới có trùng giờ với lịch học không
-    let userPriority = 'none'; // Mặc định là không có ưu tiên (ưu tiên lịch học)
-    const conflict = await checkForConflicts(scenario);
-
-    if (conflict.conflicting) {
-        // Nếu có xung đột, hiển thị hộp thoại hỏi ông muốn ưu tiên cái nào
-        const userChoice = await openConflictModal(conflict.message);
-        if (userChoice === 'cancel') {
-            showNotification("Đã hủy gửi lệnh do có xung đột.", "info");
-            // Nếu hủy, xóa bảng vừa hiển thị để tránh hiểu lầm
-            renderSavedScenario(null); 
-            return;
+        if (!client || !client.connected) {
+            return showNotification("Chưa kết nối máy chủ!", 'error');
         }
-        userPriority = userChoice; // Gán ưu tiên do ông chọn ('scenario' hoặc 'schedule')
+    
+        // Bước 1: Tính toán kịch bản từ input của ông
+        const scenario = calculateScenario();
+        if (!scenario || scenario.length === 0) {
+            // Không cần thông báo ở đây vì calculateScenario đã làm rồi
+            return; 
+        }
+    
+        // Bước 2: [THAY ĐỔI QUAN TRỌNG] Cập nhật giao diện ngay lập tức
+        // Hiển thị kịch bản vừa tạo lên bảng "KỊCH BẢN HIỆN TẠI" mà không cần chờ ESP32 phản hồi.
+        const immediateDisplayData = {
+            scenario: scenario,
+            priority: 'none' // Tạm thời chưa biết ưu tiên là gì
+        };
+        renderSavedScenario(immediateDisplayData);
+        showNotification("Đã tạo kịch bản xem trước. Đang kiểm tra xung đột...", "info");
+    
+        // Bước 3: Kiểm tra xem kịch bản mới có trùng giờ với lịch học không
+        let userPriority = 'none'; // Mặc định là không có ưu tiên (ưu tiên lịch học)
+        const conflict = await checkForConflicts(scenario);
+    
+        if (conflict.conflicting) {
+            // Nếu có xung đột, hiển thị hộp thoại hỏi ông muốn ưu tiên cái nào
+            const userChoice = await openConflictModal(conflict.message);
+            if (userChoice === 'cancel') {
+                showNotification("Đã hủy gửi lệnh do có xung đột.", "info");
+                // Nếu hủy, xóa bảng vừa hiển thị để tránh hiểu lầm
+                renderSavedScenario(null); 
+                return;
+            }
+            userPriority = userChoice; // Gán ưu tiên do ông chọn ('scenario' hoặc 'schedule')
+        }
+    
+        // Bước 4: Tạo gói dữ liệu cuối cùng để gửi đi
+        const payload = {
+            scenario: scenario,
+            priority: userPriority 
+        };
+    
+        const SCENARIO_SET_TOPIC = "esp32/bell/scenario/set"; 
+        client.publish(SCENARIO_SET_TOPIC, JSON.stringify(payload), { qos: 1 });
+    
+        showNotification("Đã gửi kịch bản hẹn giờ đến thiết bị!", "success");
+        console.log("Dữ liệu kịch bản đã gửi đi:", payload);
+    
+        // [Cải tiến] Cập nhật lại phần hiển thị ưu tiên trên giao diện
+        if (userPriority !== 'none') {
+            const priorityDiv = document.getElementById('saved-scenario-priority');
+            priorityDiv.textContent = `Ưu tiên được chọn: ${userPriority === 'scenario' ? 'Kịch Bản' : 'Lịch Học'}`;
+            priorityDiv.style.color = userPriority === 'scenario' ? '#2ecc71' : '#3498db';
+        }
     }
-
-    // Bước 4: Tạo gói dữ liệu cuối cùng để gửi đi
-    const payload = {
-        scenario: scenario,
-        priority: userPriority 
-    };
-
-    const SCENARIO_SET_TOPIC = "esp32/bell/scenario/set"; 
-    client.publish(SCENARIO_SET_TOPIC, JSON.stringify(payload), { qos: 1 });
-
-    showNotification("Đã gửi kịch bản hẹn giờ đến thiết bị!", "success");
-    console.log("Dữ liệu kịch bản đã gửi đi:", payload);
-
-    // [Cải tiến] Cập nhật lại phần hiển thị ưu tiên trên giao diện
-    if (userPriority !== 'none') {
-        const priorityDiv = document.getElementById('saved-scenario-priority');
-        priorityDiv.textContent = `Ưu tiên được chọn: ${userPriority === 'scenario' ? 'Kịch Bản' : 'Lịch Học'}`;
-        priorityDiv.style.color = userPriority === 'scenario' ? '#2ecc71' : '#3498db';
-    }
-}
     function clearScenarioInputs() {
         document.getElementById('scenario-start-time').value = '';
         document.getElementById('scenario-intervals').value = '';
