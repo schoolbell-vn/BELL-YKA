@@ -2192,8 +2192,72 @@
      * @param {Array<Object>} scenario - Mảng các sự kiện từ kịch bản đã tính toán
      * @returns {Promise<Object>} - Object chứa trạng thái xung đột và thông điệp
      */
-    async function checkForConflicts(scenario) {
-    if (!scenario || scenario.length === 0) {
+    // File: index full.html
+
+/**
+ * [PHIÊN BẢN SỬA LỖI]
+ * Hàm này sẽ tính toán lịch học từ đối tượng dữ liệu JSON thay vì đọc từ form,
+ * giúp việc kiểm tra xung đột chính xác và đáng tin cậy hơn.
+ */
+function calculateScheduleFromData(scheduleObject) {
+    if (!scheduleObject || !scheduleObject.enabled) return [];
+
+    const hasSpecial = scheduleObject.has_special_event || false;
+    const hasDuVao = scheduleObject.has_duvao_bell === undefined ? true : scheduleObject.has_duvao_bell;
+
+    const startTime = timeToMinute(scheduleObject.gio);
+    const lessonTime = scheduleObject.tiethoc || 45;
+    const lessonCount = scheduleObject.sotiet || 0;
+    const prepareTime = hasDuVao ? (scheduleObject.duvaotiet || 3) : 0;
+
+    const breakTimeStr = scheduleObject.rachoi || '5';
+    const breakTimes = breakTimeStr.split(',').map(s => parseInt(s.trim()) || 0);
+
+    const specialEventTime = hasSpecial ? (scheduleObject.chaoco || scheduleObject.chunhiem || 0) : 0;
+    const specialPrepareTime = hasSpecial ? (scheduleObject.prepare_after_special || 2) : 0;
+
+    if (startTime === 0 || lessonTime === 0 || lessonCount === 0) return [];
+
+    let schedule = [];
+    let currentTime = startTime;
+
+    if (hasSpecial && specialEventTime > 0) {
+        schedule.push({ time: currentTime, description: "Sự kiện đặc biệt" });
+        currentTime += specialEventTime;
+        if (specialPrepareTime > 0) {
+            schedule.push({ time: currentTime, description: "Nghỉ sau sự kiện" });
+            currentTime += specialPrepareTime;
+        }
+    }
+
+    for (let i = 1; i <= lessonCount; i++) {
+        schedule.push({ time: currentTime, description: `Vào tiết ${i}` });
+        currentTime += lessonTime;
+        if (i < lessonCount) {
+            const currentBreakTime = breakTimes[i - 1] ?? breakTimes[breakTimes.length - 1];
+            if (currentBreakTime > 0) {
+                schedule.push({ time: currentTime, description: `Ra chơi tiết ${i}` });
+                currentTime += currentBreakTime;
+                if (prepareTime > 0) {
+                    schedule.push({ time: currentTime, description: `Dự vào tiết ${i + 1}` });
+                    currentTime += prepareTime;
+                }
+            }
+        }
+    }
+    schedule.push({ time: currentTime, description: "Ra về" });
+
+    const uniqueSchedule = Array.from(new Map(schedule.map(item => [item.time, item])).values());
+    return uniqueSchedule.map(item => ({ ...item, timeInMinutes: item.time }));
+}
+
+/**
+ * [PHIÊN BẢN SỬA LỖI]
+ * Kiểm tra xung đột giữa kịch bản và lịch học của ngày hôm nay.
+ * Sử dụng dữ liệu gốc từ `allData` để đảm bảo tính chính xác.
+ */
+async function checkForConflicts(scenario) {
+    if (!scenario || scenario.length === 0 || !window.allData) {
         return { conflicting: false };
     }
 
@@ -2201,33 +2265,27 @@
     const dayMap = ['cn', 't2', 't3', 't4', 't5', 't6', 't7'];
     const currentDayId = dayMap[today.getDay()];
 
-    console.log(`[DEBUG] Đang kiểm tra xung đột cho ngày: ${currentDayId}`); // Dòng gỡ lỗi 1
+    const morningScheduleData = window.allData.lich.sang[currentDayId];
+    const afternoonScheduleData = window.allData.lich.chieu[currentDayId];
 
-    const morningSchedule = calculateSchedule(`${currentDayId}_sang`);
-    const afternoonSchedule = calculateSchedule(`${currentDayId}_chieu`);
-    const fullDaySchedule = [...morningSchedule, ...afternoonSchedule];
-
-    console.log(`[DEBUG] Đã tính được ${fullDaySchedule.length} sự kiện trong lịch học hôm nay.`, fullDaySchedule); // Dòng gỡ lỗi 2
+    const morningEvents = calculateScheduleFromData(morningScheduleData);
+    const afternoonEvents = calculateScheduleFromData(afternoonScheduleData);
+    const fullDaySchedule = [...morningEvents, ...afternoonEvents];
 
     if (fullDaySchedule.length === 0) {
-        console.log("[DEBUG] Lịch học hôm nay rỗng. Không có gì để so sánh -> Bỏ qua cảnh báo."); // Dòng gỡ lỗi 3
-        return { conflicting: false };
+        return { conflicting: false }; // Không có lịch học để so sánh
     }
 
     for (const scenarioEvent of scenario) {
-        const conflictEvent = fullDaySchedule.find(scheduleEvent => scheduleEvent.timeInMinutes === timeToMinute(scenarioEvent.time));
+        const scenarioTimeInMinutes = timeToMinute(scenarioEvent.time);
+        const conflictEvent = fullDaySchedule.find(scheduleEvent => scheduleEvent.timeInMinutes === scenarioTimeInMinutes);
 
         if (conflictEvent) {
-            console.log("[DEBUG] ĐÃ TÌM THẤY XUNG ĐỘT!", scenarioEvent, conflictEvent); // Dòng gỡ lỗi 4
             const message = `Sự kiện lúc <strong>${scenarioEvent.time}</strong> trong kịch bản của ông trùng với sự kiện <strong>"${conflictEvent.description}"</strong> của lịch học hôm nay.`;
-            return {
-                conflicting: true,
-                message: message
-            };
+            return { conflicting: true, message: message };
         }
     }
 
-    console.log("[DEBUG] Không tìm thấy xung đột nào."); // Dòng gỡ lỗi 5
     return { conflicting: false };
 }
 
@@ -2977,16 +3035,27 @@
         }
     }
     
-   function _load(e) {
+ // File: index full.html
+
+function _load(e) {
     try {
         const t = JSON.parse(e);
-        // ... các dòng code cũ xử lý schedule, epoch, holidays ...
 
-        // [QUAN TRỌNG] Đảm bảo có đoạn mã này
+        // Sửa dòng này:
+        // setTime(t.epoch); // Dòng cũ bị lỗi
+        if (t.data && t.data.epoch) {
+             setTime(t.data.epoch); // Dòng mới chính xác
+        }
+
+        if (t.data && t.data.schedule) {
+            window.allData = t.data.schedule; // << Thêm dòng này
+            populateForm(t.data.schedule);
+        }
+        if (t.data && t.data.holidays) {
+            loadHolidayData(t.data.holidays);
+        }
         if (t.data && t.data.scenario) {
             renderSavedScenario(t.data.scenario);
-        } else if (t.scenario) { // Dự phòng trường hợp ESP gửi dữ liệu không có key "data"
-            renderSavedScenario(t);
         }
 
     } catch (t) {
@@ -3824,24 +3893,32 @@
         generateCalendar(currentDisplayDate.getFullYear(), currentDisplayDate.getMonth());
     }
 
-    function toggleHoliday(dateString) {
-        const cell = document.querySelector(`.calendar-day[data-date="${dateString}"]`);
-        if (holidayData[dateString]) {
-            delete holidayData[dateString];
-            cell.classList.remove('holiday');
-        } else {
-            holidayData[dateString] = true;
-            cell.classList.add('holiday');
-        }
-        showNotification(`Đã cập nhật ngày nghỉ. Nhấn "Lưu và gửi cập nhật" để áp dụng.`, 'info');
+    // File: index full.html
+
+function toggleHoliday(dateString) {
+    const cell = document.querySelector(`.calendar-day[data-date="${dateString}"]`);
+    if (holidayData[dateString]) {
+        delete holidayData[dateString];
+        if(cell) cell.classList.remove('holiday');
+    } else {
+        holidayData[dateString] = true; // Giá trị có thể là true hoặc một object rỗng
+        if(cell) cell.classList.add('holiday');
     }
 
-    function loadHolidayData(data) {
-        if (typeof data === 'object' && data !== null) {
-            holidayData = data;
-            generateCalendar(currentDisplayDate.getFullYear(), currentDisplayDate.getMonth());
-        }
+    // [THÊM MỚI] Gửi cập nhật lịch nghỉ lễ ngay lập tức
+    if (!client || !client.connected) {
+        return showNotification("Chưa kết nối máy chủ! Thay đổi chưa được lưu.", 'error');
     }
+
+    // Tạo một payload chỉ chứa thông tin ngày nghỉ
+    const payload = {
+        holidays: holidayData 
+    };
+
+    // Gửi lên topic SET_DATA_TOPIC, ESP32 sẽ tự biết cách xử lý
+    client.publish(SET_DATA_TOPIC, JSON.stringify(payload), { qos: 1, retain: true });
+    showNotification(`Đã cập nhật ngày nghỉ ${dateString}`, 'success');
+}
     // =======================================================
 
     window.onload = function() { 
