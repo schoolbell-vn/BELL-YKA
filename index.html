@@ -3037,29 +3037,37 @@ async function checkForConflicts(scenario) {
     
  // File: index full.html
 
+// File: index full.html
+
 function _load(e) {
     try {
         const t = JSON.parse(e);
 
-        // Sửa dòng này:
-        // setTime(t.epoch); // Dòng cũ bị lỗi
-        if (t.data && t.data.epoch) {
-             setTime(t.data.epoch); // Dòng mới chính xác
+        // [SỬA LỖI] Kiểm tra và đọc dữ liệu từ bên trong đối tượng "data"
+        if (t.data) {
+            if (t.data.epoch) {
+                setTime(t.data.epoch);
+            }
+            if (t.data.schedule) {
+                window.allData = t.data.schedule;
+                populateForm(t.data.schedule);
+            }
+            if (t.data.holidays) {
+                // Dòng này sẽ gọi hàm hiển thị lịch nghỉ với dữ liệu đúng
+                loadHolidayData(t.data.holidays); 
+            }
+            if (t.data.scenario) {
+                renderSavedScenario(t.data.scenario);
+            }
+        } else {
+             // Fallback cho cấu trúc dữ liệu cũ nếu cần
+             if (t.epoch) setTime(t.epoch);
+             if (t.schedule) populateForm(t.schedule);
+             if (t.holidays) loadHolidayData(t.holidays);
         }
 
-        if (t.data && t.data.schedule) {
-            window.allData = t.data.schedule; // << Thêm dòng này
-            populateForm(t.data.schedule);
-        }
-        if (t.data && t.data.holidays) {
-            loadHolidayData(t.data.holidays);
-        }
-        if (t.data && t.data.scenario) {
-            renderSavedScenario(t.data.scenario);
-        }
-
-    } catch (t) {
-        console.error("Lỗi parse JSON từ MQTT:", t);
+    } catch (error) {
+        console.error("Lỗi parse JSON từ MQTT:", error);
     }
 }
     
