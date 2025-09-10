@@ -1666,18 +1666,20 @@
                 
                 <div class="scenario-actions">
                     <button class="modern-btn save-button" onclick="addScenario()" style="background: linear-gradient(90deg, #27ae60, #2ecc71); border-color: #2ecc71; color: white;">Tạo & Gửi Lệnh</button>
-                    <button class="modern-btn logout-button" onclick="clearScenarioInputs()">Xóa Nội dung</button>
+                    </div>
+                
+                <div id="saved-scenario-container" style="padding: 0; margin-top: 20px;">
+                    <h5 style="text-align: center; color: #3498db; text-transform: uppercase; margin: 10px 0 15px 0;">
+                        KỊCH BẢN HIỆN TẠI ĐANG LƯU TRÊN THIẾT BỊ
+                    </h5>
+                    <div id="saved-scenario-table-wrapper" style="max-height: 250px; overflow-y: auto;">
+                        <p id="saved-scenario-placeholder" class="list-placeholder" style="padding: 10px;">Đang chờ dữ liệu từ thiết bị...</p>
+                    </div>
+                    <div id="saved-scenario-priority" style="text-align: center; font-size: 0.9em; color: #bdc3c7; margin-top: 10px; font-style: italic;">
+
+                    </div>
                 </div>
-            <hr style="margin: 25px 15px; background: #414345; height: 1px; opacity: 0.5;">
-<div id="saved-scenario-container" style="padding: 0 15px;">
-    <h5 style="text-align: center; color: #3498db; text-transform: uppercase; margin: 10px 0 15px 0;">
-        KỊCH BẢN HIỆN TẠI ĐANG LƯU TRÊN THIẾT BỊ
-    </h5>
-    <div id="saved-scenario-table-wrapper" style="max-height: 250px; overflow-y: auto;">
-        <p id="saved-scenario-placeholder" class="list-placeholder" style="padding: 10px;">Đang chờ dữ liệu từ thiết bị...</p>
-    </div>
-    <div id="saved-scenario-priority" style="text-align: center; font-size: 0.9em; color: #bdc3c7; margin-top: 10px; font-style: italic;"></div>
-</div>
+            </div>
         </div>
         <div id="tab-cai-dat" class="main-tab-content">
             <div class="sohoi-container" style="margin-top: 5px;">
@@ -2978,18 +2980,13 @@
    function _load(e) {
     try {
         const t = JSON.parse(e);
-        if (t.schedule && t.epoch) {
-            setTime(t.epoch);
-            populateForm(t.schedule); 
-        }
-        if (t.holidays) {
-            loadHolidayData(t.holidays);
-        }
+        // ... các dòng code cũ xử lý schedule, epoch, holidays ...
 
-        // [THÊM MỚI] Lắng nghe và hiển thị dữ liệu kịch bản đã lưu
-        // Dữ liệu này được gửi từ ESP32 mỗi khi có cập nhật
+        // [QUAN TRỌNG] Đảm bảo có đoạn mã này
         if (t.data && t.data.scenario) {
             renderSavedScenario(t.data.scenario);
+        } else if (t.scenario) { // Dự phòng trường hợp ESP gửi dữ liệu không có key "data"
+            renderSavedScenario(t);
         }
 
     } catch (t) {
@@ -3889,10 +3886,6 @@
 // [THÊM MỚI] HÀM HIỂN THỊ KỊCH BẢN ĐÃ LƯU TỪ ESP32
 // =======================================================
 
-/**
- * @param {object} savedData - Đối tượng chứa mảng scenario và priority từ ESP32
- */
-// HÀM MỚI (ĐÃ THÊM CỘT STT)
 function renderSavedScenario(savedData) {
     const wrapper = document.getElementById('saved-scenario-table-wrapper');
     const priorityDiv = document.getElementById('saved-scenario-priority');
@@ -3900,19 +3893,16 @@ function renderSavedScenario(savedData) {
 
     if (!savedData || !savedData.scenario || savedData.scenario.length === 0) {
         placeholder.style.display = 'block';
-        // Đảm bảo xóa nội dung cũ và chỉ hiển thị placeholder
         wrapper.innerHTML = ''; 
         wrapper.appendChild(placeholder);
-        priorityDiv.innerHTML = ''; // Xóa cả text ưu tiên
+        priorityDiv.innerHTML = '';
         return;
     }
 
     placeholder.style.display = 'none';
     const scenario = savedData.scenario;
 
-    // Sử dụng class 'details-container table' để có giao diện giống bảng Lịch học
-   let tableHTML = `
-    <table class="scenario-table">
+    let tableHTML = `<table class="scenario-table">
             <thead>
                 <tr>
                     <th>STT</th>
@@ -3920,22 +3910,17 @@ function renderSavedScenario(savedData) {
                     <th>Số hồi</th>
                 </tr>
             </thead>
-            <tbody>
-    `;
+            <tbody>`;
     scenario.forEach((event, index) => {
-        tableHTML += `
-            <tr>
-                <td>${index + 1}</td>
-                <td>${event.time}</td>
-                <td>${event.bell} hồi</td>
-            </tr>
-        `;
+        tableHTML += `<tr>
+                    <td>${index + 1}</td>
+                    <td>${event.time}</td>
+                    <td>${event.bell} hồi</td>
+                </tr>`;
     });
     tableHTML += `</tbody></table>`;
-
     wrapper.innerHTML = tableHTML;
 
-    // Hiển thị độ ưu tiên
     if (savedData.priority === 'scenario') {
         priorityDiv.textContent = 'Ưu tiên hiện tại: Kịch Bản';
         priorityDiv.style.color = '#2ecc71';
