@@ -3034,21 +3034,26 @@ function _load(e) {
     try {
         const t = JSON.parse(e);
 
-        // Phiên bản sửa lỗi: Gộp logic và đảm bảo window.allData luôn được gán
-        if (t.data) { // Nếu là cấu trúc mới
-            if (t.data.epoch) setTime(t.data.epoch);
+        // [SỬA LỖI] Kiểm tra và đọc dữ liệu từ bên trong đối tượng "data"
+        if (t.data) {
+            if (t.data.epoch) {
+                setTime(t.data.epoch);
+            }
             if (t.data.schedule) {
-                window.allData = t.data.schedule; // Gán biến quan trọng
+                window.allData = t.data.schedule;
                 populateForm(t.data.schedule);
             }
-            if (t.data.holidays) loadHolidayData(t.data.holidays);
-            if (t.data.scenario) renderSavedScenario(t.data.scenario);
-        } else { // Nếu là cấu trúc cũ
+            if (t.data.holidays) {
+                // Dòng này sẽ gọi hàm hiển thị lịch nghỉ với dữ liệu đúng
+                loadHolidayData(t.data.holidays); 
+            }
+            if (t.data.scenario) {
+                renderSavedScenario(t.data.scenario);
+            }
+        } else {
+             // Fallback cho cấu trúc dữ liệu cũ nếu cần
              if (t.epoch) setTime(t.epoch);
-             if (t.schedule) {
-                window.allData = t.schedule; // THÊM DÒNG NÀY ĐỂ SỬA LỖI
-                populateForm(t.schedule);
-             }
+             if (t.schedule) populateForm(t.schedule);
              if (t.holidays) loadHolidayData(t.holidays);
         }
 
@@ -4028,23 +4033,54 @@ function renderSavedScenario(savedData) {
 <script>
 function addScenario() {
   const startTime = document.getElementById("scenario-start-time").value;
-  const intervals = document.getElementById("scenario-intervals").value;
-  const bells = document.getElementById("scenario-bells").value;
+  const intervalsRaw = document.getElementById("scenario-intervals").value;
+  const bellsRaw = document.getElementById("scenario-bells").value;
 
-  if (!startTime || !bells) {
+  if (!startTime || !bellsRaw) {
     showNotification("Vui lòng nhập đủ thông tin!", "error");
     return;
   }
 
-  const scenario = { startTime, intervals, bells };
+  const intervals = intervalsRaw.split(',').map(x => parseInt(x.trim())).filter(x => !isNaN(x));
+  const bells = bellsRaw.split(',').map(x => parseInt(x.trim())).filter(x => !isNaN(x));
 
-  if (typeof client !== 'undefined' && client && client.connected) {
-    client.publish("device/command/saveScenario", JSON.stringify(scenario));
-    showNotification("Đã gửi kịch bản lên thiết bị", "success");
-  } else {
-    showNotification("Mất kết nối MQTT", "error");
+  // Tính danh sách mốc giờ của kịch bản
+  const times = [];
+  let [h, m] = startTime.split(':').map(Number);
+  let currentMinutes = h * 60 + m;
+  times.push(currentMinutes);
+  intervals.forEach(iv => {
+    currentMinutes += iv;
+    times.push(currentMinutes);
+  });
+
+  // Lấy danh sách lịch từ Tab Lịch (giả sử đã lưu trong localStorage)
+  const calendarList = JSON.parse(localStorage.getItem("calendarSchedules") || "[]");
+
+  // Kiểm tra trùng lịch
+  const conflict = times.some(t => {
+    const hh = String(Math.floor(t/60)).padStart(2,'0');
+    const mm = String(t%60).padStart(2,'0');
+    return calendarList.includes(`${hh}:${mm}`);
+  });
+
+  if (conflict) {
+    if (!confirm("Thời gian này đã trùng với lịch ở Tab Lịch. Bạn có muốn dùng lịch hẹn giờ làm ưu tiên không?")) {
+      showNotification("Đã hủy lưu kịch bản do trùng với Tab Lịch", "error");
+      return;
+    }
   }
 
+  // Lưu & gửi MQTT
+  const scenario = { start: startTime, intervals, bells };
+  localStorage.setItem("scenarioData", JSON.stringify(scenario));
+
+  if (typeof client !== 'undefined' && client && client.connected) {
+    client.publish("device/command/saveScenario", JSON.stringify({scenario}));
+    showNotification("Đã gửi kịch bản lên thiết bị", "success");
+  }
+
+  // Cập nhật bảng hiển thị
   const tableHtml = `
     <table class="scenario-table">
       <thead>
@@ -4053,8 +4089,8 @@ function addScenario() {
       <tbody>
         <tr>
           <td>1</td>
-          <td>${startTime}${intervals ? " +" + intervals : ""}</td>
-          <td>${bells} hồi</td>
+          <td>${startTime}${intervals.length ? " +" + intervals.join(",") : ""}</td>
+          <td>${bells.join(",")} hồi</td>
         </tr>
       </tbody>
     </table>
