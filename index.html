@@ -4026,93 +4026,54 @@ function renderSavedScenario(savedData) {
   </script>
   
 <script>
-/**
- * [PHIÊN BẢN SỬA LỖI HOÀN CHỈNH]
- * Hàm này được viết lại hoàn toàn để thực hiện chính xác yêu cầu:
- * 1. Lấy dữ liệu lịch học của ngày hôm nay.
- * 2. So sánh từng mốc thời gian của kịch bản hẹn giờ mới với lịch học.
- * 3. Nếu trùng, hiển thị hộp thoại confirm() để người dùng quyết định.
- * 4. Gửi dữ liệu đi nếu không trùng hoặc người dùng đồng ý ưu tiên.
- */
 function addScenario() {
-    // --- Bước 1: Kiểm tra kết nối và tính toán kịch bản mới ---
-    if (!client || !client.connected) {
-        return showNotification("Chưa kết nối máy chủ!", 'error');
-    }
+  const startTime = document.getElementById("scenario-start-time").value;
+  const intervals = document.getElementById("scenario-intervals").value;
+  const bells = document.getElementById("scenario-bells").value;
 
-    const newScenario = calculateScenario();
-    if (!newScenario || newScenario.length === 0) {
-        // Hàm calculateScenario đã tự thông báo lỗi nếu cần
-        return;
-    }
+  if (!startTime || !bells) {
+    showNotification("Vui lòng nhập đủ thông tin!", "error");
+    return;
+  }
 
-    // --- Bước 2: Lấy dữ liệu lịch học của ngày hôm nay để so sánh ---
-    // Kiểm tra xem dữ liệu lịch học đã được tải chưa
-    if (!window.allData || !window.allData.lich) {
-        showNotification("Lỗi: Dữ liệu lịch học chưa được tải. Không thể kiểm tra xung đột.", 'error');
-        // Vẫn cho phép gửi đi mà không kiểm tra
-        client.publish("esp32/bell/scenario/set", JSON.stringify({ scenario: newScenario, priority: 'none' }), { qos: 1 });
-        showNotification("Đã gửi kịch bản (không kiểm tra xung đột).", "info");
-        return;
-    }
+  const scenario = { startTime, intervals, bells };
 
-    const today = new Date();
-    const dayMap = ['cn', 't2', 't3', 't4', 't5', 't6', 't7'];
-    const currentDayId = dayMap[today.getDay()];
+  if (typeof client !== 'undefined' && client && client.connected) {
+    client.publish("device/command/saveScenario", JSON.stringify(scenario));
+    showNotification("Đã gửi kịch bản lên thiết bị", "success");
+  } else {
+    showNotification("Mất kết nối MQTT", "error");
+  }
 
-    const morningScheduleData = window.allData.lich.sang[currentDayId];
-    const afternoonScheduleData = window.allData.lich.chieu[currentDayId];
+  const tableHtml = `
+    <table class="scenario-table">
+      <thead>
+        <tr><th>STT</th><th>Thời gian</th><th>Số hồi</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>${startTime}${intervals ? " +" + intervals : ""}</td>
+          <td>${bells} hồi</td>
+        </tr>
+      </tbody>
+    </table>
+  `;
+  document.getElementById("saved-scenario-table-wrapper").innerHTML = tableHtml;
+}
 
-    // Tính toán tất cả các mốc thời gian của lịch học hôm nay
-    const morningEvents = calculateScheduleFromData(morningScheduleData);
-    const afternoonEvents = calculateScheduleFromData(afternoonScheduleData);
-    const fullDayScheduleEvents = [...morningEvents, ...afternoonEvents];
-
-    // --- Bước 3: Thực hiện so sánh ---
-    let conflictFound = false;
-    // Chỉ kiểm tra nếu lịch học hôm nay có sự kiện
-    if (fullDayScheduleEvents.length > 0) {
-        // Dùng Set để tra cứu nhanh hơn
-        const scheduleTimesInMinutes = new Set(fullDayScheduleEvents.map(event => event.timeInMinutes));
-
-        for (const scenarioEvent of newScenario) {
-            const scenarioTimeInMinutes = timeToMinute(scenarioEvent.time);
-            if (scheduleTimesInMinutes.has(scenarioTimeInMinutes)) {
-                conflictFound = true;
-                break; // Dừng lại ngay khi tìm thấy xung đột đầu tiên
-            }
-        }
-    }
-
-    // --- Bước 4: Xử lý kết quả so sánh ---
-    let userPriority = 'none'; // Mặc định là không ưu tiên
-    if (conflictFound) {
-        const userConfirmation = window.confirm(
-            "Cảnh báo: Thời gian bạn chọn đã trùng với lịch học hôm nay.\n\nBạn có muốn dùng lịch hẹn giờ làm ưu tiên không?"
-        );
-
-        if (userConfirmation) {
-            // Người dùng chọn OK
-            userPriority = 'scenario'; // Đặt cờ ưu tiên cho kịch bản
-        } else {
-            // Người dùng chọn Cancel
-            showNotification("Đã hủy thao tác, kịch bản chưa được gửi.", "info");
-            return; // Dừng hoàn toàn, không làm gì cả
-        }
-    }
-
-    // --- Bước 5: Gửi dữ liệu đến thiết bị ---
-    const payload = {
-        scenario: newScenario,
-        priority: userPriority
-    };
-
-    client.publish("esp32/bell/scenario/set", JSON.stringify(payload), { qos: 1 });
-
-    // Cập nhật giao diện và thông báo thành công
-    renderSavedScenario(payload);
-    showNotification("Đã gửi thành công kịch bản hẹn giờ!", "success");
-    console.log("Dữ liệu kịch bản đã gửi đi:", payload);
+function showNotification(msg, type="info") {
+  const area = document.getElementById("notification-area");
+  if (!area) return;
+  const div = document.createElement("div");
+  div.className = `notification ${type}`;
+  div.textContent = msg;
+  area.appendChild(div);
+  setTimeout(() => div.classList.add("show"), 50);
+  setTimeout(() => {
+    div.classList.remove("show");
+    if (div.parentNode) div.parentNode.removeChild(div);
+  }, 3000);
 }
 </script>
 
