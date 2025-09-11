@@ -4054,8 +4054,11 @@ function addScenario() {
     times.push(currentMinutes);
   });
 
-  // Lấy danh sách lịch từ Tab Lịch (giả sử đã lưu trong localStorage)
-  const calendarList = JSON.parse(localStorage.getItem("calendarSchedules") || "[]");
+  // Lấy danh sách lịch từ Tab Lịch (dựa vào biến toàn cục scheduleData nếu có)
+  let calendarList = [];
+  if (typeof scheduleData !== "undefined" && Array.isArray(scheduleData)) {
+    calendarList = scheduleData.map(e => e.time); // giả định mỗi entry có thuộc tính time dạng "HH:MM"
+  }
 
   // Kiểm tra trùng lịch
   const conflict = times.some(t => {
