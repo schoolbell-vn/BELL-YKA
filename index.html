@@ -3034,26 +3034,21 @@ function _load(e) {
     try {
         const t = JSON.parse(e);
 
-        // [SỬA LỖI] Kiểm tra và đọc dữ liệu từ bên trong đối tượng "data"
-        if (t.data) {
-            if (t.data.epoch) {
-                setTime(t.data.epoch);
-            }
+        // Phiên bản sửa lỗi: Gộp logic và đảm bảo window.allData luôn được gán
+        if (t.data) { // Nếu là cấu trúc mới
+            if (t.data.epoch) setTime(t.data.epoch);
             if (t.data.schedule) {
-                window.allData = t.data.schedule;
+                window.allData = t.data.schedule; // Gán biến quan trọng
                 populateForm(t.data.schedule);
             }
-            if (t.data.holidays) {
-                // Dòng này sẽ gọi hàm hiển thị lịch nghỉ với dữ liệu đúng
-                loadHolidayData(t.data.holidays); 
-            }
-            if (t.data.scenario) {
-                renderSavedScenario(t.data.scenario);
-            }
-        } else {
-             // Fallback cho cấu trúc dữ liệu cũ nếu cần
+            if (t.data.holidays) loadHolidayData(t.data.holidays);
+            if (t.data.scenario) renderSavedScenario(t.data.scenario);
+        } else { // Nếu là cấu trúc cũ
              if (t.epoch) setTime(t.epoch);
-             if (t.schedule) populateForm(t.schedule);
+             if (t.schedule) {
+                window.allData = t.schedule; // THÊM DÒNG NÀY ĐỂ SỬA LỖI
+                populateForm(t.schedule);
+             }
              if (t.holidays) loadHolidayData(t.holidays);
         }
 
