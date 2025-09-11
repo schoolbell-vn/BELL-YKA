@@ -1660,7 +1660,18 @@
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13.586V10c0-3.217-2.185-5.927-5-6.758V2h-4v1.242C7.185 4.073 5 6.783 5 10v3.586l-1.707 1.707A.996.996 0 0 0 3 16v2a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-2a.996.996 0 0 0-.293-.707L19 13.586zM19 17H5v-.586l1.707-1.707A.996.996 0 0 0 7 14v-4c0-2.757 2.243-5 5-5s5 2.243 5 5v4c0 .266.105.52.293.707L19 16.414V17zM12 22a2.98 2.98 0 0 0 2.818-2H9.182A2.98 2.98 0 0 0 12 22z"></path></svg>
                         Số hồi chuông tương ứng
                     </label>
-                    <input type="text" id="scenario-bells" placeholder="Ví dụ: 6,3,2,6,3">
+                    \1
+<div id="day-selector" class="day-selector">
+  <label>Chọn ngày áp dụng:</label><br>
+  <button type="button" class="day-btn" data-day="2">T2</button>
+  <button type="button" class="day-btn" data-day="3">T3</button>
+  <button type="button" class="day-btn" data-day="4">T4</button>
+  <button type="button" class="day-btn" data-day="5">T5</button>
+  <button type="button" class="day-btn" data-day="6">T6</button>
+  <button type="button" class="day-btn" data-day="7">T7</button>
+  <button type="button" class="day-btn" data-day="CN">CN</button>
+</div>
+
                     <p class="scenario-helper-text">Nhập số hồi chuông cho giờ bắt đầu và các lần lặp lại</p>
                 </div>
                 
@@ -3034,26 +3045,21 @@ function _load(e) {
     try {
         const t = JSON.parse(e);
 
-        // [SỬA LỖI] Kiểm tra và đọc dữ liệu từ bên trong đối tượng "data"
-        if (t.data) {
-            if (t.data.epoch) {
-                setTime(t.data.epoch);
-            }
+        // Phiên bản sửa lỗi: Gộp logic và đảm bảo window.allData luôn được gán
+        if (t.data) { // Nếu là cấu trúc mới
+            if (t.data.epoch) setTime(t.data.epoch);
             if (t.data.schedule) {
-                window.allData = t.data.schedule;
+                window.allData = t.data.schedule; // Gán biến quan trọng
                 populateForm(t.data.schedule);
             }
-            if (t.data.holidays) {
-                // Dòng này sẽ gọi hàm hiển thị lịch nghỉ với dữ liệu đúng
-                loadHolidayData(t.data.holidays); 
-            }
-            if (t.data.scenario) {
-                renderSavedScenario(t.data.scenario);
-            }
-        } else {
-             // Fallback cho cấu trúc dữ liệu cũ nếu cần
+            if (t.data.holidays) loadHolidayData(t.data.holidays);
+            if (t.data.scenario) renderSavedScenario(t.data.scenario);
+        } else { // Nếu là cấu trúc cũ
              if (t.epoch) setTime(t.epoch);
-             if (t.schedule) populateForm(t.schedule);
+             if (t.schedule) {
+                window.allData = t.schedule; // THÊM DÒNG NÀY ĐỂ SỬA LỖI
+                populateForm(t.schedule);
+             }
              if (t.holidays) loadHolidayData(t.holidays);
         }
 
@@ -4033,57 +4039,23 @@ function renderSavedScenario(savedData) {
 <script>
 function addScenario() {
   const startTime = document.getElementById("scenario-start-time").value;
-  const intervalsRaw = document.getElementById("scenario-intervals").value;
-  const bellsRaw = document.getElementById("scenario-bells").value;
+  const intervals = document.getElementById("scenario-intervals").value;
+  const bells = document.getElementById("scenario-bells").value;
 
-  if (!startTime || !bellsRaw) {
+  if (!startTime || !bells) {
     showNotification("Vui lòng nhập đủ thông tin!", "error");
     return;
   }
 
-  const intervals = intervalsRaw.split(',').map(x => parseInt(x.trim())).filter(x => !isNaN(x));
-  const bells = bellsRaw.split(',').map(x => parseInt(x.trim())).filter(x => !isNaN(x));
-
-  // Tính danh sách mốc giờ của kịch bản
-  const times = [];
-  let [h, m] = startTime.split(':').map(Number);
-  let currentMinutes = h * 60 + m;
-  times.push(currentMinutes);
-  intervals.forEach(iv => {
-    currentMinutes += iv;
-    times.push(currentMinutes);
-  });
-
-  // Lấy danh sách lịch từ Tab Lịch (dựa vào biến toàn cục scheduleData nếu có)
-  let calendarList = [];
-  if (typeof scheduleData !== "undefined" && Array.isArray(scheduleData)) {
-    calendarList = scheduleData.map(e => e.time); // giả định mỗi entry có thuộc tính time dạng "HH:MM"
-  }
-
-  // Kiểm tra trùng lịch
-  const conflict = times.some(t => {
-    const hh = String(Math.floor(t/60)).padStart(2,'0');
-    const mm = String(t%60).padStart(2,'0');
-    return calendarList.includes(`${hh}:${mm}`);
-  });
-
-  if (conflict) {
-    if (!confirm("Thời gian này đã trùng với lịch ở Tab Lịch. Bạn có muốn dùng lịch hẹn giờ làm ưu tiên không?")) {
-      showNotification("Đã hủy lưu kịch bản do trùng với Tab Lịch", "error");
-      return;
-    }
-  }
-
-  // Lưu & gửi MQTT
-  const scenario = { start: startTime, intervals, bells };
-  localStorage.setItem("scenarioData", JSON.stringify(scenario));
+  const scenario = { startTime, intervals, bells };
 
   if (typeof client !== 'undefined' && client && client.connected) {
-    client.publish("device/command/saveScenario", JSON.stringify({scenario}));
+    client.publish("device/command/saveScenario", JSON.stringify(scenario));
     showNotification("Đã gửi kịch bản lên thiết bị", "success");
+  } else {
+    showNotification("Mất kết nối MQTT", "error");
   }
 
-  // Cập nhật bảng hiển thị
   const tableHtml = `
     <table class="scenario-table">
       <thead>
@@ -4092,8 +4064,8 @@ function addScenario() {
       <tbody>
         <tr>
           <td>1</td>
-          <td>${startTime}${intervals.length ? " +" + intervals.join(",") : ""}</td>
-          <td>${bells.join(",")} hồi</td>
+          <td>${startTime}${intervals ? " +" + intervals : ""}</td>
+          <td>${bells} hồi</td>
         </tr>
       </tbody>
     </table>
@@ -4113,6 +4085,98 @@ function showNotification(msg, type="info") {
     div.classList.remove("show");
     if (div.parentNode) div.parentNode.removeChild(div);
   }, 3000);
+}
+</script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  document.querySelectorAll(".day-btn").forEach(btn => {
+    btn.addEventListener("click", function() {
+      this.classList.toggle("selected");
+      if(this.classList.contains("selected")){
+        this.style.backgroundColor = "green";
+        this.style.color = "white";
+      } else {
+        this.style.backgroundColor = "";
+        this.style.color = "";
+      }
+    });
+  });
+});
+
+function calculateScenario(startTime, intervals, bells) {
+  const results = [];
+  if (!startTime) return results;
+  let [h, m] = startTime.split(":").map(Number);
+  let currentMinutes = h * 60 + m;
+  for (let i=0; i<bells.length; i++) {
+    const hh = String(Math.floor(currentMinutes/60)).padStart(2,"0");
+    const mm = String(currentMinutes % 60).padStart(2,"0");
+    results.push({time: hh+":"+mm, bells: bells[i]});
+    if (i < intervals.length) {
+      currentMinutes += intervals[i];
+    }
+  }
+  return results;
+}
+
+function addScenario() {
+  const startTime = document.getElementById("scenario-start-time").value;
+  const intervalsRaw = document.getElementById("scenario-intervals").value;
+  const bellsRaw = document.getElementById("scenario-bells").value;
+  if (!startTime || !bellsRaw) {
+    showNotification("Vui lòng nhập đủ thông tin!", "error");
+    return;
+  }
+  const intervals = intervalsRaw.split(",").map(x=>parseInt(x.trim())).filter(x=>!isNaN(x));
+  const bells = bellsRaw.split(",").map(x=>parseInt(x.trim())).filter(x=>!isNaN(x));
+  const events = calculateScenario(startTime, intervals, bells);
+
+  const selectedDays = Array.from(document.querySelectorAll(".day-btn.selected")).map(b=>b.dataset.day);
+
+  let conflictMsg = "";
+  if (typeof scheduleData !== "undefined" && Array.isArray(scheduleData)) {
+    events.forEach(ev => {
+      scheduleData.forEach(item => {
+        if (item.time === ev.time) {
+          conflictMsg += `Cảnh báo: Thời gian ${ev.time} trùng với lịch học.\n`;
+        }
+      });
+    });
+  }
+  if (conflictMsg) {
+    if (!confirm(conflictMsg + "Bạn có muốn ưu tiên Kịch Bản Hẹn Giờ không?")) {
+      showNotification("Đã hủy lưu kịch bản do trùng lịch", "error");
+      return;
+    }
+  }
+
+  const scenario = { start: startTime, intervals: intervals, bells: bells, days: selectedDays };
+  localStorage.setItem("scenarioData", JSON.stringify(scenario));
+
+  if (typeof client !== "undefined" && client && client.connected) {
+    client.publish("device/command/saveScenario", JSON.stringify({scenario}));
+    showNotification("Đã gửi kịch bản lên thiết bị", "success");
+  }
+
+  let html = "<table class='scenario-table'><thead><tr><th>STT</th><th>Thời gian</th><th>Số hồi</th></tr></thead><tbody>";
+  events.forEach((ev,i)=>{
+    html += `<tr><td>${i+1}</td><td>${ev.time}</td><td>${ev.bells} hồi</td></tr>`;
+  });
+  html += "</tbody></table>";
+  document.getElementById("saved-scenario-table-wrapper").innerHTML = html;
+}
+
+function showNotification(msg, type="info") {
+  const area = document.getElementById("notification-area");
+  if (!area) return;
+  const div = document.createElement("div");
+  div.className = `notification ${type}`;
+  div.textContent = msg;
+  area.appendChild(div);
+  setTimeout(()=>div.classList.add("show"),50);
+  setTimeout(()=>{div.classList.remove("show"); div.remove();},3000);
 }
 </script>
 
