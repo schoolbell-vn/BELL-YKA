@@ -2438,65 +2438,58 @@
 
     // [CHỈNH SỬA THEO YÊU CẦU] Hàm mới dùng để gửi lệnh (trước đây là addScenario)
     async function sendScenario() {
-        if (!client || !client.connected) {
-            return showNotification("Chưa kết nối máy chủ!", 'error');
-        }
-
-        if (!previewedScenarioData) {
-            showNotification("Vui lòng nhấn 'Xem Trước Kịch Bản' trước khi gửi lệnh.", "error");
-            return;
-        }
-
-        const { scenario, days } = previewedScenarioData;
-
-        if (days.length === 0) {
-            return showNotification("Vui lòng chọn ít nhất một ngày để áp dụng kịch bản!", "error");
-        }
-        if (!scenario || scenario.length === 0) {
-            return; 
-        }
-    
-        let userPriority = 'none'; 
-        const conflict = await checkForConflicts(scenario, days);
-    
-        if (conflict.conflicting) {
-            const userChoice = await openConflictModal(conflict.message);
-            if (userChoice === 'cancel') {
-                showNotification("Đã hủy gửi lệnh do có xung đột.", "info");
-                return;
-            }
-            userPriority = userChoice;
-        }
-    
-        const payload = {
-            scenario: scenario,
-            priority: userPriority,
-            days: days
-        };
-    
-        const SCENARIO_SET_TOPIC = "esp32/bell/scenario/set"; 
-        client.publish(SCENARIO_SET_TOPIC, JSON.stringify(payload), { qos: 1 });
-    
-        showNotification("Đã gửi kịch bản hẹn giờ đến thiết bị!", "success");
-        console.log("Dữ liệu kịch bản đã gửi đi:", payload);
-
-        // [SỬA LỖI] Lưu kịch bản vào bộ nhớ trình duyệt để tải lại trang không bị mất
-        try {
-            localStorage.setItem('savedScenario', JSON.stringify(payload));
-        } catch (e) {
-            console.error("Lỗi khi lưu kịch bản vào localStorage:", e);
-        }
-        
-        renderSavedScenario(payload);
-    // Giữ lại preview và trạng thái ngày, không xóa ngay
-    previewedScenarioData = payload;
+    if (!client || !client.connected) {
+        return showNotification("Chưa kết nối máy chủ!", 'error');
     }
 
-    // =======================================================
-    // === KẾT THÚC JS MỚI CHO HẸN GIỜ & CẢNH BÁO XUNG ĐỘT ===
-    // =======================================================
+    if (!previewedScenarioData) {
+        showNotification("Vui lòng nhấn 'Xem Trước Kịch Bản' trước khi gửi lệnh.", "error");
+        return;
+    }
 
+    const { scenario, days } = previewedScenarioData;
 
+    if (days.length === 0) {
+        return showNotification("Vui lòng chọn ít nhất một ngày để áp dụng kịch bản!", "error");
+    }
+    if (!scenario || scenario.length === 0) {
+        return;
+    }
+
+    let userPriority = 'none'; 
+    const conflict = await checkForConflicts(scenario, days);
+
+    if (conflict.conflicting) {
+        const userChoice = await openConflictModal(conflict.message);
+        if (userChoice === 'cancel') {
+            showNotification("Đã hủy gửi lệnh do có xung đột.", "info");
+            return;
+        }
+        userPriority = userChoice;
+    }
+
+    const payload = {
+        scenario: scenario,
+        priority: userPriority,
+        days: days
+    };
+
+    const SCENARIO_SET_TOPIC = "esp32/bell/scenario/set"; 
+    client.publish(SCENARIO_SET_TOPIC, JSON.stringify(payload), { qos: 1 });
+
+    showNotification("Đã gửi kịch bản hẹn giờ đến thiết bị!", "success");
+    
+    // [SỬA LỖI] Cập nhật giao diện và LƯU VÀO BỘ NHỚ TRÌNH DUYỆT NGAY LẬP TỨC
+    renderSavedScenario(payload);
+    try {
+        localStorage.setItem('savedScenario', JSON.stringify(payload));
+    } catch (e) {
+        console.error("Lỗi khi lưu kịch bản vào localStorage:", e);
+    }
+
+    document.getElementById('scenario-preview-table-container').innerHTML = '';
+    previewedScenarioData = null;
+}
     // =======================================================
     // PHẦN MÃ GỐC (GIỮ NGUYÊN)
     // =======================================================
@@ -3127,30 +3120,33 @@
 function _load(e) {
     try {
         const t = JSON.parse(e);
-        window.allData = null; // Reset before loading
+        window.allData = null; 
 
-        // Phiên bản sửa lỗi: Gộp logic và đảm bảo window.allData luôn được gán
-        if (t.data) { // Nếu là cấu trúc mới
+        if (t.data) { // Cấu trúc mới
             if (t.data.epoch) setTime(t.data.epoch);
             if (t.data.schedule) {
-                window.allData = t.data.schedule; // Gán biến quan trọng
+                window.allData = t.data.schedule; 
                 populateForm(t.data.schedule);
             }
             if (t.data.holidays) loadHolidayData(t.data.holidays);
-            // Sửa lỗi: Cần đảm bảo `t.data.scenario` tồn tại trước khi render
+            
+            // [SỬA LỖI] Chỉ cập nhật kịch bản NẾU có dữ liệu mới từ thiết bị
             if (t.data.scenario) {
                 renderSavedScenario(t.data.scenario);
-            } else {
-                 renderSavedScenario(null); // Xóa bảng kịch bản nếu không có dữ liệu
+                // Đồng bộ bộ nhớ đệm với dữ liệu mới nhất từ thiết bị
+                try {
+                    localStorage.setItem('savedScenario', JSON.stringify(t.data.scenario));
+                } catch (err) {
+                    console.error("Lỗi cập nhật localStorage từ MQTT:", err);
+                }
             }
-        } else { // Nếu là cấu trúc cũ
+        } else { // Cấu trúc cũ (dự phòng)
              if (t.epoch) setTime(t.epoch);
              if (t.schedule) {
                 window.allData = t.schedule;
                 populateForm(t.schedule);
              }
              if (t.holidays) loadHolidayData(t.holidays);
-             renderSavedScenario(null); // Cấu trúc cũ không có kịch bản
         }
 
     } catch (error) {
