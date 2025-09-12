@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -1583,25 +1582,59 @@
         background: #f1c40f;
         color: #232526;
     }
-    /* === [BỔ SUNG] CSS CHO BỘ CHỌN NGÀY CỦA TAB HẸN GIỜ === */
     /* === [CHỈNH SỬA THEO YÊU CẦU] === */
-    #scenario-day-selector input:checked + span {
-        background: linear-gradient(90deg, #3498db, #2980b9); /* Đổi sang màu xanh dương cho đẹp hơn */
-        color: #ffffff; /* Chữ trắng để dễ đọc */
-        font-weight: bold;
-        box-shadow: 0 2px 8px rgba(52, 152, 219, 0.4); /* Thêm hiệu ứng đổ bóng nhẹ */
-        transform: scale(1.05); /* Phóng to một chút khi được chọn */
-        transition: all 0.2s ease-out;
+    /* Biến #scenario-day-selector thành thanh tab */
+    #scenario-day-selector {
+        display: flex;
+        justify-content: space-around;
+        border-bottom: 2px solid #414345;
+        position: relative;
+        z-index: 1;
+        background: transparent; /* Bỏ background cũ */
+        padding: 0; /* Bỏ padding cũ */
+        border-radius: 0; /* Bỏ border-radius cũ */
+    }
+    #scenario-day-selector label {
+        flex-grow: 1;
+        margin: 0 2px;
+        padding: 0; /* Bỏ padding cũ */
+        border-radius: 0; /* Bỏ border-radius cũ */
     }
     #scenario-day-selector span {
-        transition: all 0.2s ease-out; /* Thêm hiệu ứng chuyển động mượt mà */
+        display: block; /* Làm cho span chiếm toàn bộ không gian của label */
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 10px 5px 8px 5px;
+        transition: all 0.2s ease-out;
+        font-size: 0.9em;
+        font-weight: 700;
+        border-radius: 8px 8px 0 0;
+        position: relative;
+        top: 2px;
+        border-bottom: 3px solid transparent;
+        background: transparent;
+        color: #bdc3c7;
+        text-align: center;
     }
-    /* === KẾT THÚC CSS MỚI === */
+    #scenario-day-selector label:hover span {
+        background: #414345;
+        color: #fff;
+        transform: translateY(-2px);
+    }
+    #scenario-day-selector input:checked + span {
+        background: #f1c40f; /* Màu vàng như yêu cầu */
+        color: #232526;
+        border-bottom-color: #f39c12;
+        /* Xóa các thuộc tính cũ không cần thiết */
+        box-shadow: none;
+        transform: none;
+    }
     
   </style>
 </head>
 <body>
-  <div id="notification-area"></div>
+    <div id="notification-area"></div>
 
   <div id="main">
     <div id="content">
@@ -1698,6 +1731,9 @@
                     <button class="modern-btn save-button" onclick="sendScenario()" style="background: linear-gradient(90deg, #27ae60, #2ecc71); border-color: #2ecc71; color: white;">Gửi Lệnh Lên Thiết Bị</button>
                 </div>
                 
+                <div id="scenario-preview-table-container" style="margin-top: 20px;">
+                    </div>
+
                 <div id="saved-scenario-container" style="padding: 0; margin-top: 20px;">
                     <h5 style="text-align: center; color: #3498db; text-transform: uppercase; margin: 10px 0 15px 0;">
                         KỊCH BẢN HIỆN TẠI ĐANG LƯU TRÊN THIẾT BỊ
@@ -2364,7 +2400,11 @@
     // [CHỈNH SỬA THEO YÊU CẦU] Hàm mới chỉ để xem trước
     function previewScenario() {
         const scenario = calculateScenario();
+        // SỬA LỖI: Hiển thị bảng xem trước
+        const previewContainer = document.getElementById('scenario-preview-table-container');
+
         if (!scenario || scenario.length === 0) {
+            previewContainer.innerHTML = ''; // Xóa xem trước cũ nếu có lỗi
             // Hàm calculateScenario đã tự thông báo lỗi
             return;
         }
@@ -2376,12 +2416,23 @@
             days: selectedDays
         };
 
-        // Dữ liệu tạm thời để hiển thị trên bảng xem trước
-        const displayData = {
-            scenario: scenario,
-            priority: 'none' // Khi xem trước thì chưa có ưu tiên
-        };
-        renderSavedScenario(displayData); // Cập nhật bảng xem trước
+        // Tạo HTML cho bảng xem trước
+        let tableHTML = `<h5 style="text-align: center; color: #f1c40f; text-transform: uppercase; margin: 10px 0 15px 0;">BẢNG XEM TRƯỚC</h5>
+                         <table class="scenario-table">
+                            <thead>
+                                <tr><th>STT</th><th>Thời gian</th><th>Số hồi</th></tr>
+                            </thead>
+                            <tbody>`;
+        scenario.forEach((event, index) => {
+            tableHTML += `<tr>
+                            <td>${index + 1}</td>
+                            <td>${event.time}</td>
+                            <td>${event.bell} hồi</td>
+                        </tr>`;
+        });
+        tableHTML += `</tbody></table>`;
+        
+        previewContainer.innerHTML = tableHTML;
         showNotification("Đã tạo kịch bản xem trước. Nhấn 'Gửi Lệnh' để lưu.", "info");
     }
 
@@ -2432,6 +2483,10 @@
         showNotification("Đã gửi kịch bản hẹn giờ đến thiết bị!", "success");
         console.log("Dữ liệu kịch bản đã gửi đi:", payload);
     
+        // SỬA LỖI: Cập nhật ngay bảng "Kịch bản hiện tại" và xóa xem trước
+        renderSavedScenario(payload);
+        document.getElementById('scenario-preview-table-container').innerHTML = '';
+
         // Xóa dữ liệu xem trước sau khi gửi thành công
         previewedScenarioData = null;
     }
@@ -3343,9 +3398,9 @@ function loadHolidayData(holidays) {
                         const chunhiemInput = document.getElementById(`chunhiem_${dayId}`);
                         if(chunhiemInput) chunhiemInput.value=n.chunhiem||0;
                         
-                        // [NÂNG CẤP] Tải dữ liệu cho trường mới
+                        // [NÂNG CẤP & SỬA LỖI] Tải dữ liệu cho trường mới và xử lý đúng giá trị 0
                         const prepareSpecialInput = document.getElementById(`prepare_after_special_${dayId}`);
-                        if(prepareSpecialInput) prepareSpecialInput.value = n.prepare_after_special || 2;
+                        if(prepareSpecialInput) prepareSpecialInput.value = n.prepare_after_special ?? 0;
                         
                         const hasSpecialCheckbox = document.getElementById(`has_special_${dayId}`);
                         if (hasSpecialCheckbox) {
@@ -3406,9 +3461,12 @@ function loadHolidayData(holidays) {
                 const chunhiemInput = document.getElementById(`chunhiem_${dayId}`);
                 if(chunhiemInput) n.chunhiem=parseInt(chunhiemInput.value)||0;
                 
-                // [NÂNG CẤP] Thu thập dữ liệu từ trường mới
+                // [NÂNG CẤP & SỬA LỖI] Thu thập dữ liệu từ trường mới và xử lý đúng giá trị 0
                 const prepareSpecialInput = document.getElementById(`prepare_after_special_${dayId}`);
-                if(prepareSpecialInput) n.prepare_after_special = parseInt(prepareSpecialInput.value) || 0;
+                if(prepareSpecialInput) {
+                    const val = parseInt(prepareSpecialInput.value);
+                    n.prepare_after_special = isNaN(val) ? 0 : val;
+                }
 
                 const hasSpecialCheckbox = document.getElementById(`has_special_${dayId}`);
                 if (hasSpecialCheckbox) n.has_special_event = hasSpecialCheckbox.checked;
@@ -3447,13 +3505,16 @@ function loadHolidayData(holidays) {
 
     function timeToMinute(e){if(!e)return 0;const[t,o]=e.split(":").map(Number);return 60*t+o}function minuteToTime(e){const t=Math.floor(e/60).toString().padStart(2,"0"),o=(e%60).toString().padStart(2,"0");return`${t}:${o}`}
     
+    // [SỬA LỖI] Hàm getVal được viết lại để xử lý đúng giá trị 0
+    const getVal = (id, defaultValue = 0) => {
+        const el = document.getElementById(id);
+        if (!el) return defaultValue;
+        const parsedValue = parseInt(el.value);
+        return isNaN(parsedValue) ? defaultValue : parsedValue;
+    };
+
     // [NÂNG CẤP TOÀN BỘ] Hàm tính toán lịch học được viết lại để linh hoạt hơn
     function calculateSchedule(dayId) {
-        const getVal = (id, defaultValue = 0) => {
-            const el = document.getElementById(id);
-            return el ? (parseInt(el.value) || defaultValue) : defaultValue;
-        };
-        
         const isEnabled = document.getElementById(`enable_${dayId}`)?.checked;
         if (!isEnabled) return []; // [MỚI] Trả về mảng rỗng nếu lịch bị tắt
 
@@ -3465,14 +3526,14 @@ function loadHolidayData(holidays) {
         const lessonCount = getVal(`sotiet_${dayId}`, 5);
         const prepareTime = hasDuVao ? getVal(`duvaotiet_${dayId}`, 3) : 0;
         
-        // [GIẢI PHÁP 1] Đọc chuỗi thời gian ra chơi linh hoạt
         const breakTimeStr = document.getElementById(`rachoi_${dayId}`).value || '5';
         const breakTimes = breakTimeStr.split(',').map(s => parseInt(s.trim()) || 0);
 
-        // [GIẢI PHÁP 2] Đọc thời gian chuẩn bị riêng sau sự kiện đặc biệt
         const isMondayMorning = dayId.includes('t2_sang');
         const specialEventTime = hasSpecial ? getVal(isMondayMorning ? `chaoco_${dayId}` : `chunhiem_${dayId}`) : 0;
-        const specialPrepareTime = hasSpecial ? getVal(`prepare_after_special_${dayId}`, 2) : 0;
+        
+        // [SỬA LỖI] Mặc định thời gian chuẩn bị là 0 nếu để trống, theo yêu cầu
+        const specialPrepareTime = hasSpecial ? getVal(`prepare_after_special_${dayId}`, 0) : 0;
         
         if (startTime === 0 || lessonTime === 0 || lessonCount === 0) return [];
 
@@ -3495,16 +3556,13 @@ function loadHolidayData(holidays) {
             schedule.push({ time: currentTime, description: `Vào tiết ${i}` });
             currentTime += lessonTime;
 
-            // Thêm giờ ra chơi sau mỗi tiết, trừ tiết cuối cùng
             if (i < lessonCount) {
-                // Lấy thời gian ra chơi tương ứng, nếu không có thì dùng giá trị cuối cùng trong mảng
                 const currentBreakTime = breakTimes[i - 1] ?? breakTimes[breakTimes.length - 1]; 
                 
                 if (currentBreakTime > 0) {
                     schedule.push({ time: currentTime, description: `Ra chơi tiết ${i}` });
                     currentTime += currentBreakTime;
 
-                    // Thêm thời gian dự vào chung
                     if (prepareTime > 0) {
                         schedule.push({ time: currentTime, description: `Dự vào tiết ${i + 1}` });
                         currentTime += prepareTime;
@@ -3516,7 +3574,6 @@ function loadHolidayData(holidays) {
         // 3. Thêm sự kiện "Ra về"
         schedule.push({ time: currentTime, description: "Ra về" });
         
-        // 4. Lọc các sự kiện trùng giờ, sắp xếp và định dạng lại thời gian
         const uniqueSchedule = Array.from(new Map(schedule.map(item => [item.time, item])).values());
         return uniqueSchedule
             .map(item => ({ ...item, timeInMinutes: item.time, time: minuteToTime(item.time) }))
@@ -4028,7 +4085,7 @@ function toggleHoliday(dateString) {
         const priorityDiv = document.getElementById('saved-scenario-priority');
         const placeholder = document.getElementById('saved-scenario-placeholder');
 
-        // Đầu tiên, bỏ chọn tất cả các ngày trong bộ chọn ngày
+        // SỬA LỖI: Luôn reset trạng thái checkbox trước khi cập nhật
         const dayCheckboxes = document.querySelectorAll('#scenario-day-selector input[type="checkbox"]');
         dayCheckboxes.forEach(cb => cb.checked = false);
 
@@ -4142,4 +4199,3 @@ function showNotification(msg, type="info") {
 
 </body>
 </html>
-
