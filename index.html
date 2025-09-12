@@ -2438,65 +2438,58 @@
 
     // [CHỈNH SỬA THEO YÊU CẦU] Hàm mới dùng để gửi lệnh (trước đây là addScenario)
     async function sendScenario() {
-        if (!client || !client.connected) {
-            return showNotification("Chưa kết nối máy chủ!", 'error');
-        }
-
-        if (!previewedScenarioData) {
-            showNotification("Vui lòng nhấn 'Xem Trước Kịch Bản' trước khi gửi lệnh.", "error");
-            return;
-        }
-
-        const { scenario, days } = previewedScenarioData;
-
-        if (days.length === 0) {
-            return showNotification("Vui lòng chọn ít nhất một ngày để áp dụng kịch bản!", "error");
-        }
-        if (!scenario || scenario.length === 0) {
-            return; 
-        }
-    
-        let userPriority = 'none'; 
-        const conflict = await checkForConflicts(scenario, days);
-    
-        if (conflict.conflicting) {
-            const userChoice = await openConflictModal(conflict.message);
-            if (userChoice === 'cancel') {
-                showNotification("Đã hủy gửi lệnh do có xung đột.", "info");
-                return;
-            }
-            userPriority = userChoice;
-        }
-    
-        const payload = {
-            scenario: scenario,
-            priority: userPriority,
-            days: days
-        };
-    
-        const SCENARIO_SET_TOPIC = "esp32/bell/scenario/set"; 
-        client.publish(SCENARIO_SET_TOPIC, JSON.stringify(payload), { qos: 1 });
-    
-        showNotification("Đã gửi kịch bản hẹn giờ đến thiết bị!", "success");
-        console.log("Dữ liệu kịch bản đã gửi đi:", payload);
-
-        // [SỬA LỖI] Lưu kịch bản vào bộ nhớ trình duyệt để tải lại trang không bị mất
-        try {
-            localStorage.setItem('savedScenario', JSON.stringify(payload));
-        } catch (e) {
-            console.error("Lỗi khi lưu kịch bản vào localStorage:", e);
-        }
-        
-        renderSavedScenario(payload);
-        document.getElementById('scenario-preview-table-container').innerHTML = '';
-        previewedScenarioData = null;
+    if (!client || !client.connected) {
+        return showNotification("Chưa kết nối máy chủ!", 'error');
     }
 
-    // =======================================================
-    // === KẾT THÚC JS MỚI CHO HẸN GIỜ & CẢNH BÁO XUNG ĐỘT ===
-    // =======================================================
+    if (!previewedScenarioData) {
+        showNotification("Vui lòng nhấn 'Xem Trước Kịch Bản' trước khi gửi lệnh.", "error");
+        return;
+    }
 
+    const { scenario, days } = previewedScenarioData;
 
+    if (days.length === 0) {
+        return showNotification("Vui lòng chọn ít nhất một ngày để áp dụng kịch bản!", "error");
+    }
+    if (!scenario || scenario.length === 0) {
+        return;
+    }
+
+    let userPriority = 'none'; 
+    const conflict = await checkForConflicts(scenario, days);
+
+    if (conflict.conflicting) {
+        const userChoice = await openConflictModal(conflict.message);
+        if (userChoice === 'cancel') {
+            showNotification("Đã hủy gửi lệnh do có xung đột.", "info");
+            return;
+        }
+        userPriority = userChoice;
+    }
+
+    const payload = {
+        scenario: scenario,
+        priority: userPriority,
+        days: days
+    };
+
+    const SCENARIO_SET_TOPIC = "esp32/bell/scenario/set"; 
+    client.publish(SCENARIO_SET_TOPIC, JSON.stringify(payload), { qos: 1 });
+
+    showNotification("Đã gửi kịch bản hẹn giờ đến thiết bị!", "success");
+    
+    // [SỬA LỖI] Cập nhật giao diện và LƯU VÀO BỘ NHỚ TRÌNH DUYỆT NGAY LẬP TỨC
+    renderSavedScenario(payload);
+    try {
+        localStorage.setItem('savedScenario', JSON.stringify(payload));
+    } catch (e) {
+        console.error("Lỗi khi lưu kịch bản vào localStorage:", e);
+    }
+
+    document.getElementById('scenario-preview-table-container').innerHTML = '';
+    previewedScenarioData = null;
+}
     // =======================================================
     // PHẦN MÃ GỐC (GIỮ NGUYÊN)
     // =======================================================
@@ -3119,46 +3112,35 @@
             otaDeviceListDiv.innerHTML = '<p class="list-placeholder">Không có thiết bị nào.</p>';
         }
     }
-    
- // File: index full.html
 
-// File: index full.html
-
-// File: index full.html
-
-// =======================================================
-// === [THAY THẾ] HÀM _load ĐỂ SỬA LỖI MẤT TRẠNG THÁI CHECKBOX ===
-// =======================================================
 function _load(e) {
     try {
         const t = JSON.parse(e);
-        window.allData = null; // Reset before loading
+        window.allData = null; 
 
-        // Phiên bản sửa lỗi: Gộp logic và đảm bảo window.allData luôn được gán
-        if (t.data) { // Nếu là cấu trúc mới
+        if (t.data) { // Cấu trúc mới
             if (t.data.epoch) setTime(t.data.epoch);
             if (t.data.schedule) {
-                window.allData = t.data.schedule; // Gán biến quan trọng
+                window.allData = t.data.schedule;
                 populateForm(t.data.schedule);
             }
             if (t.data.holidays) loadHolidayData(t.data.holidays);
-            
-            // [SỬA LỖI] Chỉ cập nhật giao diện kịch bản KHI CÓ DỮ LIỆU.
-            // Không gọi renderSavedScenario(null) nữa.
             if (t.data.scenario) {
+                console.log("Nhan du lieu scenario tu MQTT, dang cap nhat UI...");
                 renderSavedScenario(t.data.scenario);
-            } 
-            // Nếu không có t.data.scenario, chúng ta không làm gì cả, 
-            // giữ nguyên trạng thái đang hiển thị từ localStorage.
+                
+                // Đồng bộ lại localStorage với dữ liệu mới nhất từ thiết bị
+                localStorage.setItem('savedScenario', JSON.stringify(t.data.scenario));
+            }
 
-        } else { // Nếu là cấu trúc cũ
+        } else { // Cấu trúc cũ (dự phòng)
              if (t.epoch) setTime(t.epoch);
              if (t.schedule) {
                 window.allData = t.schedule;
                 populateForm(t.schedule);
              }
              if (t.holidays) loadHolidayData(t.holidays);
-             // Cấu trúc cũ không có kịch bản, nên không cần gọi renderSavedScenario.
+             // Cấu trúc cũ không có kịch bản nên không cần làm gì thêm.
         }
 
     } catch (error) {
@@ -4098,67 +4080,69 @@ function toggleHoliday(dateString) {
     // =======================================================
     
     // [CHỈNH SỬA THEO YÊU CẦU] Cập nhật hàm để hiển thị cả ngày đã lưu
-    function renderSavedScenario(savedData) {
-        const wrapper = document.getElementById('saved-scenario-table-wrapper');
-        const priorityDiv = document.getElementById('saved-scenario-priority');
-        const placeholder = document.getElementById('saved-scenario-placeholder');
+    // File: index 1.html (Dán đè lên hàm renderSavedScenario cũ)
 
-        // SỬA LỖI: Luôn reset trạng thái checkbox trước khi cập nhật
-        const dayCheckboxes = document.querySelectorAll('#scenario-day-selector input[type="checkbox"]');
-        dayCheckboxes.forEach(cb => cb.checked = false);
+function renderSavedScenario(savedData) {
+    const wrapper = document.getElementById('saved-scenario-table-wrapper');
+    const priorityDiv = document.getElementById('saved-scenario-priority');
+    const placeholder = document.getElementById('saved-scenario-placeholder');
 
-        if (!savedData || !savedData.scenario || savedData.scenario.length === 0) {
-            placeholder.style.display = 'block';
-            wrapper.innerHTML = ''; 
-            wrapper.appendChild(placeholder);
-            priorityDiv.innerHTML = '';
-            return;
-        }
+    // Luôn reset (xóa) trạng thái của TẤT CẢ checkbox trước khi áp dụng trạng thái mới.
+    // Đây là bước quan trọng để đảm bảo giao diện luôn sạch sẽ.
+    const dayCheckboxes = document.querySelectorAll('#scenario-day-selector input[type="checkbox"]');
+    dayCheckboxes.forEach(cb => cb.checked = false);
 
-        placeholder.style.display = 'none';
-        const scenario = savedData.scenario;
-
-        let tableHTML = `<table class="scenario-table">
-                <thead>
-                    <tr>
-                        <th>STT</th>
-                        <th>Thời gian</th>
-                        <th>Số hồi</th>
-                    </tr>
-                </thead>
-                <tbody>`;
-        scenario.forEach((event, index) => {
-            tableHTML += `<tr>
-                        <td>${index + 1}</td>
-                        <td>${event.time}</td>
-                        <td>${event.bell} hồi</td>
-                    </tr>`;
-        });
-        tableHTML += `</tbody></table>`;
-        wrapper.innerHTML = tableHTML;
-
-        // Cập nhật trạng thái ưu tiên
-        if (savedData.priority === 'scenario') {
-            priorityDiv.textContent = 'Ưu tiên hiện tại: Kịch Bản';
-            priorityDiv.style.color = '#2ecc71';
-        } else if (savedData.priority === 'schedule') {
-            priorityDiv.textContent = 'Ưu tiên hiện tại: Lịch Học';
-            priorityDiv.style.color = '#3498db';
-        } else {
-            priorityDiv.textContent = 'Không có ưu tiên nào được đặt.';
-            priorityDiv.style.color = '#bdc3c7';
-        }
-
-        // [CHỈNH SỬA THEO YÊU CẦU] Chọn lại các checkbox ngày đã lưu
-        if (savedData && Array.isArray(savedData.days)) {
-            savedData.days.forEach(dayId => {
-                const checkbox = document.querySelector(`#scenario-day-selector input[value="${dayId}"]`);
-                if (checkbox) {
-                    checkbox.checked = true;
-                }
-            });
-        }
+    // Nếu không có dữ liệu, hoặc dữ liệu rỗng, thì hiển thị thông báo và dừng lại.
+    if (!savedData || !savedData.scenario || savedData.scenario.length === 0) {
+        placeholder.style.display = 'block';
+        wrapper.innerHTML = ''; 
+        wrapper.appendChild(placeholder);
+        priorityDiv.innerHTML = 'Không có kịch bản nào được lưu trên thiết bị.';
+        priorityDiv.style.color = '#7f8c8d';
+        return;
     }
+
+    // Nếu có dữ liệu, tiến hành hiển thị bảng kịch bản
+    placeholder.style.display = 'none';
+    const scenario = savedData.scenario;
+    // ... (Phần code tạo bảng HTML giữ nguyên không đổi) ...
+    let tableHTML = `<table class="scenario-table">
+            <thead><tr><th>STT</th><th>Thời gian</th><th>Số hồi</th></tr></thead>
+            <tbody>`;
+    scenario.forEach((event, index) => {
+        tableHTML += `<tr>
+                    <td>${index + 1}</td><td>${event.time}</td><td>${event.bell} hồi</td>
+                </tr>`;
+    });
+    tableHTML += `</tbody></table>`;
+    wrapper.innerHTML = tableHTML;
+    
+    // ... (Phần code hiển thị ưu tiên giữ nguyên không đổi) ...
+    if (savedData.priority === 'scenario') {
+        priorityDiv.textContent = 'Ưu tiên hiện tại: Kịch Bản';
+        priorityDiv.style.color = '#2ecc71';
+    } else if (savedData.priority === 'schedule') {
+        priorityDiv.textContent = 'Ưu tiên hiện tại: Lịch Học';
+        priorityDiv.style.color = '#3498db';
+    } else {
+        priorityDiv.textContent = 'Không có ưu tiên nào được đặt.';
+        priorityDiv.style.color = '#bdc3c7';
+    }
+
+    // === PHẦN QUAN TRỌNG NHẤT: Đặt lại trạng thái MÀU VÀNG ===
+    // Kiểm tra xem dữ liệu có mảng "days" hợp lệ không.
+    if (savedData && Array.isArray(savedData.days)) {
+        // Lặp qua từng ngày đã lưu (ví dụ: 't2', 't4', 'cn')
+        savedData.days.forEach(dayId => {
+            // Tìm chính xác checkbox có value tương ứng
+            const checkbox = document.querySelector(`#scenario-day-selector input[value="${dayId}"]`);
+            if (checkbox) {
+                // Đặt thuộc tính "checked" thành true. CSS sẽ tự động đổi sang màu vàng.
+                checkbox.checked = true;
+            }
+        });
+    }
+}
   </script>
   
 <script>
