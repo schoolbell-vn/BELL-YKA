@@ -2442,7 +2442,6 @@
             return showNotification("Chưa kết nối máy chủ!", 'error');
         }
 
-        // Kiểm tra xem người dùng đã nhấn xem trước chưa
         if (!previewedScenarioData) {
             showNotification("Vui lòng nhấn 'Xem Trước Kịch Bản' trước khi gửi lệnh.", "error");
             return;
@@ -2454,10 +2453,9 @@
             return showNotification("Vui lòng chọn ít nhất một ngày để áp dụng kịch bản!", "error");
         }
         if (!scenario || scenario.length === 0) {
-            return; // Lỗi này không nên xảy ra nếu đã có preview
+            return; 
         }
     
-        // Gọi hàm kiểm tra xung đột
         let userPriority = 'none'; 
         const conflict = await checkForConflicts(scenario, days);
     
@@ -2470,7 +2468,6 @@
             userPriority = userChoice;
         }
     
-        // Tạo gói dữ liệu cuối cùng để gửi đi
         const payload = {
             scenario: scenario,
             priority: userPriority,
@@ -2482,12 +2479,16 @@
     
         showNotification("Đã gửi kịch bản hẹn giờ đến thiết bị!", "success");
         console.log("Dữ liệu kịch bản đã gửi đi:", payload);
-    
-        // SỬA LỖI: Cập nhật ngay bảng "Kịch bản hiện tại" và xóa xem trước
+
+        // [SỬA LỖI] Lưu kịch bản vào bộ nhớ trình duyệt để tải lại trang không bị mất
+        try {
+            localStorage.setItem('savedScenario', JSON.stringify(payload));
+        } catch (e) {
+            console.error("Lỗi khi lưu kịch bản vào localStorage:", e);
+        }
+        
         renderSavedScenario(payload);
         document.getElementById('scenario-preview-table-container').innerHTML = '';
-
-        // Xóa dữ liệu xem trước sau khi gửi thành công
         previewedScenarioData = null;
     }
 
@@ -4041,6 +4042,16 @@ function toggleHoliday(dateString) {
         loadInterfaceSettings();
         connectToMqtt();
         setInterval(updateLocalClock, 1000);
+
+        // [SỬA LỖI] Tải kịch bản đã lưu từ bộ nhớ trình duyệt ngay khi vào trang
+        try {
+            const lastScenario = localStorage.getItem('savedScenario');
+            if (lastScenario) {
+                renderSavedScenario(JSON.parse(lastScenario));
+            }
+        } catch (e) {
+            console.error("Không thể tải kịch bản từ localStorage:", e);
+        }
         
         document.getElementById('admin-password-input').addEventListener('keyup', function(event) {
             if (event.key === "Enter") {
@@ -4072,7 +4083,6 @@ function toggleHoliday(dateString) {
 
         initializeTabs();
         generateCalendar(currentDisplayDate.getFullYear(), currentDisplayDate.getMonth());
-        // Hiển thị thanh hành động mặc định vì tab đầu tiên (Lịch học) cần nó
         document.querySelector('.sticky-action-bar').style.display = 'flex';
     };
     // =======================================================
