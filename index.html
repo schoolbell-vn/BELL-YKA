@@ -36,6 +36,31 @@
         padding-bottom: 24px;
         box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
     }
+    /* File: index 1.html (bên trong thẻ <style>) */
+
+/* === [PHƯƠNG ÁN MỚI] CSS CHO HIỂN THỊ NGÀY ĐÃ LƯU === */
+.saved-days-container {
+    text-align: center;
+    margin-top: 12px;
+    padding: 5px;
+}
+.day-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    background-color: #f1c40f; /* Màu vàng đặc trưng */
+    color: #232526; /* Màu chữ tối cho dễ đọc */
+    font-weight: 700;
+    border-radius: 8px;
+    margin: 3px;
+    font-size: 0.95em;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.day-badge-label {
+    color: #bdc3c7;
+    font-weight: bold;
+    margin-right: 8px;
+}
+/* =================================================== */
 
     /* === [MỚI] THANH HÀNH ĐỘNG CỐ ĐỊNH (STICKY ACTION BAR) === */
     .sticky-action-bar {
@@ -1742,7 +1767,10 @@
                         <p id="saved-scenario-placeholder" class="list-placeholder" style="padding: 10px;">Đang chờ dữ liệu từ thiết bị...</p>
                     </div>
                     <div id="saved-scenario-priority" style="text-align: center; font-size: 0.9em; color: #bdc3c7; margin-top: 10px; font-style: italic;">
+    </div>
 
+<div id="saved-scenario-days-display" class="saved-days-container">
+    </div>
                     </div>
                 </div>
             </div>
@@ -4075,71 +4103,62 @@ function toggleHoliday(dateString) {
         generateCalendar(currentDisplayDate.getFullYear(), currentDisplayDate.getMonth());
         document.querySelector('.sticky-action-bar').style.display = 'flex';
     };
-    // =======================================================
-    // [THÊM MỚI] HÀM HIỂN THỊ KỊCH BẢN ĐÃ LƯU TỪ ESP32
-    // =======================================================
-    
-    // [CHỈNH SỬA THEO YÊU CẦU] Cập nhật hàm để hiển thị cả ngày đã lưu
-    // File: index 1.html (Dán đè lên hàm renderSavedScenario cũ)
 
+// === [PHƯƠNG ÁN MỚI] THAY THẾ TOÀN BỘ HÀM renderSavedScenario ===
 function renderSavedScenario(savedData) {
     const wrapper = document.getElementById('saved-scenario-table-wrapper');
     const priorityDiv = document.getElementById('saved-scenario-priority');
     const placeholder = document.getElementById('saved-scenario-placeholder');
+    // Lấy vùng hiển thị huy hiệu mới
+    const daysDisplayContainer = document.getElementById('saved-scenario-days-display');
 
-    // Luôn reset (xóa) trạng thái của TẤT CẢ checkbox trước khi áp dụng trạng thái mới.
-    // Đây là bước quan trọng để đảm bảo giao diện luôn sạch sẽ.
-    const dayCheckboxes = document.querySelectorAll('#scenario-day-selector input[type="checkbox"]');
-    dayCheckboxes.forEach(cb => cb.checked = false);
+    // Luôn xóa sạch nội dung cũ trước khi cập nhật
+    wrapper.innerHTML = '';
+    priorityDiv.innerHTML = '';
+    daysDisplayContainer.innerHTML = '';
 
-    // Nếu không có dữ liệu, hoặc dữ liệu rỗng, thì hiển thị thông báo và dừng lại.
+    // Nếu không có dữ liệu, hiển thị thông báo và dừng lại
     if (!savedData || !savedData.scenario || savedData.scenario.length === 0) {
-        placeholder.style.display = 'block';
-        wrapper.innerHTML = ''; 
         wrapper.appendChild(placeholder);
-        priorityDiv.innerHTML = 'Không có kịch bản nào được lưu trên thiết bị.';
-        priorityDiv.style.color = '#7f8c8d';
+        placeholder.style.display = 'block';
         return;
     }
 
-    // Nếu có dữ liệu, tiến hành hiển thị bảng kịch bản
+    // 1. Hiển thị bảng kịch bản (như cũ)
     placeholder.style.display = 'none';
-    const scenario = savedData.scenario;
-    // ... (Phần code tạo bảng HTML giữ nguyên không đổi) ...
-    let tableHTML = `<table class="scenario-table">
-            <thead><tr><th>STT</th><th>Thời gian</th><th>Số hồi</th></tr></thead>
-            <tbody>`;
-    scenario.forEach((event, index) => {
-        tableHTML += `<tr>
-                    <td>${index + 1}</td><td>${event.time}</td><td>${event.bell} hồi</td>
-                </tr>`;
+    let tableHTML = `<table class="scenario-table"><thead><tr><th>STT</th><th>Thời gian</th><th>Số hồi</th></tr></thead><tbody>`;
+    savedData.scenario.forEach((event, index) => {
+        tableHTML += `<tr><td>${index + 1}</td><td>${event.time}</td><td>${event.bell} hồi</td></tr>`;
     });
     tableHTML += `</tbody></table>`;
     wrapper.innerHTML = tableHTML;
-    
-    // ... (Phần code hiển thị ưu tiên giữ nguyên không đổi) ...
+
+    // 2. Hiển thị trạng thái ưu tiên (như cũ)
     if (savedData.priority === 'scenario') {
         priorityDiv.textContent = 'Ưu tiên hiện tại: Kịch Bản';
         priorityDiv.style.color = '#2ecc71';
     } else if (savedData.priority === 'schedule') {
         priorityDiv.textContent = 'Ưu tiên hiện tại: Lịch Học';
         priorityDiv.style.color = '#3498db';
-    } else {
-        priorityDiv.textContent = 'Không có ưu tiên nào được đặt.';
-        priorityDiv.style.color = '#bdc3c7';
     }
 
-    // === PHẦN QUAN TRỌNG NHẤT: Đặt lại trạng thái MÀU VÀNG ===
-    // Kiểm tra xem dữ liệu có mảng "days" hợp lệ không.
-    if (savedData && Array.isArray(savedData.days)) {
-        // Lặp qua từng ngày đã lưu (ví dụ: 't2', 't4', 'cn')
+    // 3. [LOGIC MỚI] Hiển thị các huy hiệu ngày đã lưu
+    if (savedData && Array.isArray(savedData.days) && savedData.days.length > 0) {
+        // Tạo nhãn "Áp dụng cho:"
+        const label = document.createElement('span');
+        label.className = 'day-badge-label';
+        label.textContent = 'Đang áp dụng cho:';
+        daysDisplayContainer.appendChild(label);
+        
+        // Tạo map để chuyển 't2' thành 'T2'
+        const dayNameMap = {t2: 'T2', t3: 'T3', t4: 'T4', t5: 'T5', t6: 'T6', t7: 'T7', cn: 'CN'};
+        
+        // Tạo huy hiệu cho mỗi ngày
         savedData.days.forEach(dayId => {
-            // Tìm chính xác checkbox có value tương ứng
-            const checkbox = document.querySelector(`#scenario-day-selector input[value="${dayId}"]`);
-            if (checkbox) {
-                // Đặt thuộc tính "checked" thành true. CSS sẽ tự động đổi sang màu vàng.
-                checkbox.checked = true;
-            }
+            const badge = document.createElement('span');
+            badge.className = 'day-badge';
+            badge.textContent = dayNameMap[dayId] || dayId.toUpperCase();
+            daysDisplayContainer.appendChild(badge);
         });
     }
 }
