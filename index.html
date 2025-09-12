@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -6,7 +7,7 @@
   <script src="https://unpkg.com/mqtt/dist/mqtt.min.js" type="text/javascript"></script>
   
   <style type="text/css">
-  /* --- CÀI ĐẶT CHUNG & SỬA LỖI TRÀN KHUNG --- */
+    /* --- CÀI ĐẶT CHUNG & SỬA LỖI TRÀN KHUNG --- */
     * {
         box-sizing: border-box;
     }
@@ -1595,11 +1596,12 @@
     #scenario-day-selector span {
         transition: all 0.2s ease-out; /* Thêm hiệu ứng chuyển động mượt mà */
     }
- </style>
- </head>
-<body>
     /* === KẾT THÚC CSS MỚI === */
-    <div id="notification-area"></div>
+    
+  </style>
+</head>
+<body>
+  <div id="notification-area"></div>
 
   <div id="main">
     <div id="content">
@@ -2144,8 +2146,7 @@
     </div>
   </div>
   <script>
-    // PHẦN JAVASCRIPT SẼ Ở BƯỚC 3
-    // [MỚI] HÀM ĐIỀU KHIỂN CÁC TAB CHÍNH
+   // [MỚI] HÀM ĐIỀU KHIỂN CÁC TAB CHÍNH
     function openMainTab(evt, tabName) {
         // Lấy tất cả các phần tử có class="main-tab-content" và ẩn chúng đi
         const tabcontent = document.getElementsByClassName("main-tab-content");
@@ -4138,5 +4139,7 @@ function showNotification(msg, type="info") {
   }, 3000);
 }
 </script>
+
 </body>
 </html>
+
