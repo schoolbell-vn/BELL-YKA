@@ -2438,58 +2438,65 @@
 
     // [CHỈNH SỬA THEO YÊU CẦU] Hàm mới dùng để gửi lệnh (trước đây là addScenario)
     async function sendScenario() {
-    if (!client || !client.connected) {
-        return showNotification("Chưa kết nối máy chủ!", 'error');
-    }
+        if (!client || !client.connected) {
+            return showNotification("Chưa kết nối máy chủ!", 'error');
+        }
 
-    if (!previewedScenarioData) {
-        showNotification("Vui lòng nhấn 'Xem Trước Kịch Bản' trước khi gửi lệnh.", "error");
-        return;
-    }
-
-    const { scenario, days } = previewedScenarioData;
-
-    if (days.length === 0) {
-        return showNotification("Vui lòng chọn ít nhất một ngày để áp dụng kịch bản!", "error");
-    }
-    if (!scenario || scenario.length === 0) {
-        return;
-    }
-
-    let userPriority = 'none'; 
-    const conflict = await checkForConflicts(scenario, days);
-
-    if (conflict.conflicting) {
-        const userChoice = await openConflictModal(conflict.message);
-        if (userChoice === 'cancel') {
-            showNotification("Đã hủy gửi lệnh do có xung đột.", "info");
+        if (!previewedScenarioData) {
+            showNotification("Vui lòng nhấn 'Xem Trước Kịch Bản' trước khi gửi lệnh.", "error");
             return;
         }
-        userPriority = userChoice;
-    }
 
-    const payload = {
-        scenario: scenario,
-        priority: userPriority,
-        days: days
-    };
+        const { scenario, days } = previewedScenarioData;
 
-    const SCENARIO_SET_TOPIC = "esp32/bell/scenario/set"; 
-    client.publish(SCENARIO_SET_TOPIC, JSON.stringify(payload), { qos: 1 });
-
-    showNotification("Đã gửi kịch bản hẹn giờ đến thiết bị!", "success");
+        if (days.length === 0) {
+            return showNotification("Vui lòng chọn ít nhất một ngày để áp dụng kịch bản!", "error");
+        }
+        if (!scenario || scenario.length === 0) {
+            return; 
+        }
     
-    // [SỬA LỖI] Cập nhật giao diện và LƯU VÀO BỘ NHỚ TRÌNH DUYỆT NGAY LẬP TỨC
-    renderSavedScenario(payload);
-    try {
-        localStorage.setItem('savedScenario', JSON.stringify(payload));
-    } catch (e) {
-        console.error("Lỗi khi lưu kịch bản vào localStorage:", e);
+        let userPriority = 'none'; 
+        const conflict = await checkForConflicts(scenario, days);
+    
+        if (conflict.conflicting) {
+            const userChoice = await openConflictModal(conflict.message);
+            if (userChoice === 'cancel') {
+                showNotification("Đã hủy gửi lệnh do có xung đột.", "info");
+                return;
+            }
+            userPriority = userChoice;
+        }
+    
+        const payload = {
+            scenario: scenario,
+            priority: userPriority,
+            days: days
+        };
+    
+        const SCENARIO_SET_TOPIC = "esp32/bell/scenario/set"; 
+        client.publish(SCENARIO_SET_TOPIC, JSON.stringify(payload), { qos: 1 });
+    
+        showNotification("Đã gửi kịch bản hẹn giờ đến thiết bị!", "success");
+        console.log("Dữ liệu kịch bản đã gửi đi:", payload);
+
+        // [SỬA LỖI] Lưu kịch bản vào bộ nhớ trình duyệt để tải lại trang không bị mất
+        try {
+            localStorage.setItem('savedScenario', JSON.stringify(payload));
+        } catch (e) {
+            console.error("Lỗi khi lưu kịch bản vào localStorage:", e);
+        }
+        
+        renderSavedScenario(payload);
+        document.getElementById('scenario-preview-table-container').innerHTML = '';
+        previewedScenarioData = null;
     }
 
-    document.getElementById('scenario-preview-table-container').innerHTML = '';
-    previewedScenarioData = null;
-}
+    // =======================================================
+    // === KẾT THÚC JS MỚI CHO HẸN GIỜ & CẢNH BÁO XUNG ĐỘT ===
+    // =======================================================
+
+
     // =======================================================
     // PHẦN MÃ GỐC (GIỮ NGUYÊN)
     // =======================================================
@@ -3117,36 +3124,41 @@
 
 // File: index full.html
 
+// File: index full.html
+
+// =======================================================
+// === [THAY THẾ] HÀM _load ĐỂ SỬA LỖI MẤT TRẠNG THÁI CHECKBOX ===
+// =======================================================
 function _load(e) {
     try {
         const t = JSON.parse(e);
-        window.allData = null; 
+        window.allData = null; // Reset before loading
 
-        if (t.data) { // Cấu trúc mới
+        // Phiên bản sửa lỗi: Gộp logic và đảm bảo window.allData luôn được gán
+        if (t.data) { // Nếu là cấu trúc mới
             if (t.data.epoch) setTime(t.data.epoch);
             if (t.data.schedule) {
-                window.allData = t.data.schedule; 
+                window.allData = t.data.schedule; // Gán biến quan trọng
                 populateForm(t.data.schedule);
             }
             if (t.data.holidays) loadHolidayData(t.data.holidays);
             
-            // [SỬA LỖI] Chỉ cập nhật kịch bản NẾU có dữ liệu mới từ thiết bị
+            // [SỬA LỖI] Chỉ cập nhật giao diện kịch bản KHI CÓ DỮ LIỆU.
+            // Không gọi renderSavedScenario(null) nữa.
             if (t.data.scenario) {
                 renderSavedScenario(t.data.scenario);
-                // Đồng bộ bộ nhớ đệm với dữ liệu mới nhất từ thiết bị
-                try {
-                    localStorage.setItem('savedScenario', JSON.stringify(t.data.scenario));
-                } catch (err) {
-                    console.error("Lỗi cập nhật localStorage từ MQTT:", err);
-                }
-            }
-        } else { // Cấu trúc cũ (dự phòng)
+            } 
+            // Nếu không có t.data.scenario, chúng ta không làm gì cả, 
+            // giữ nguyên trạng thái đang hiển thị từ localStorage.
+
+        } else { // Nếu là cấu trúc cũ
              if (t.epoch) setTime(t.epoch);
              if (t.schedule) {
                 window.allData = t.schedule;
                 populateForm(t.schedule);
              }
              if (t.holidays) loadHolidayData(t.holidays);
+             // Cấu trúc cũ không có kịch bản, nên không cần gọi renderSavedScenario.
         }
 
     } catch (error) {
