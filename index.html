@@ -3127,30 +3127,36 @@
 function _load(e) {
     try {
         const t = JSON.parse(e);
-        window.allData = null; // Reset before loading
+        window.allData = null; 
 
-        // Phiên bản sửa lỗi: Gộp logic và đảm bảo window.allData luôn được gán
-        if (t.data) { // Nếu là cấu trúc mới
+        if (t.data) { // Cấu trúc mới
             if (t.data.epoch) setTime(t.data.epoch);
             if (t.data.schedule) {
-                window.allData = t.data.schedule; // Gán biến quan trọng
+                window.allData = t.data.schedule;
                 populateForm(t.data.schedule);
             }
             if (t.data.holidays) loadHolidayData(t.data.holidays);
-            // Sửa lỗi: Cần đảm bảo `t.data.scenario` tồn tại trước khi render
+            
+            // [SỬA LỖI TRIỆT ĐỂ]
+            // CHỈ cập nhật kịch bản NẾU có dữ liệu kịch bản trong gói tin.
+            // KHÔNG xóa kịch bản nếu gói tin này không chứa nó.
             if (t.data.scenario) {
                 renderSavedScenario(t.data.scenario);
-            } else {
-                 renderSavedScenario(null); // Xóa bảng kịch bản nếu không có dữ liệu
+                // Đồng thời cập nhật bộ nhớ đệm của trình duyệt với dữ liệu mới nhất từ thiết bị
+                try {
+                    localStorage.setItem('savedScenario', JSON.stringify(t.data.scenario));
+                } catch (err) {
+                    console.error("Lỗi cập nhật localStorage từ MQTT:", err);
+                }
             }
-        } else { // Nếu là cấu trúc cũ
+        } else { // Cấu trúc cũ
              if (t.epoch) setTime(t.epoch);
              if (t.schedule) {
                 window.allData = t.schedule;
                 populateForm(t.schedule);
              }
              if (t.holidays) loadHolidayData(t.holidays);
-             renderSavedScenario(null); // Cấu trúc cũ không có kịch bản
+             // Logic của cấu trúc cũ cũng sẽ không xóa kịch bản đang hiển thị
         }
 
     } catch (error) {
