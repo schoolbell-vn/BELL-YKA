@@ -1763,9 +1763,11 @@
                     <h5 style="text-align: center; color: #3498db; text-transform: uppercase; margin: 10px 0 15px 0;">
                         KỊCH BẢN HIỆN TẠI ĐANG LƯU TRÊN THIẾT BỊ
                     </h5>
-                    <div id="saved-scenario-table-wrapper" style="max-height: 250px; overflow-y: auto;">
-                        <p id="saved-scenario-placeholder" class="list-placeholder" style="padding: 10px;">Đang chờ dữ liệu từ thiết bị...</p>
-                    </div>
+                    <div id="saved-scenario-table-wrapper" style="max-height: 250px; overflow-y: auto; display: none;">
+    </div>
+<p id="saved-scenario-placeholder" class="list-placeholder" style="padding: 10px; display: block;">
+    Đang chờ dữ liệu từ thiết bị...
+</p>
                     <div id="saved-scenario-priority" style="text-align: center; font-size: 0.9em; color: #bdc3c7; margin-top: 10px; font-style: italic;">
     </div>
 
@@ -4105,35 +4107,41 @@ function toggleHoliday(dateString) {
     };
 
 // === [PHƯƠNG ÁN MỚI] THAY THẾ TOÀN BỘ HÀM renderSavedScenario ===
+// File: index 4.html (bên trong thẻ <script>)
+
+// === [GIẢI PHÁP DỨT ĐIỂM] THAY THẾ TOÀN BỘ HÀM NÀY ===
 function renderSavedScenario(savedData) {
     const wrapper = document.getElementById('saved-scenario-table-wrapper');
     const priorityDiv = document.getElementById('saved-scenario-priority');
     const placeholder = document.getElementById('saved-scenario-placeholder');
-    // Lấy vùng hiển thị huy hiệu mới
     const daysDisplayContainer = document.getElementById('saved-scenario-days-display');
 
-    // Luôn xóa sạch nội dung cũ trước khi cập nhật
-    wrapper.innerHTML = '';
+    // Luôn xóa nội dung cũ của các phần tử có thể thay đổi
     priorityDiv.innerHTML = '';
     daysDisplayContainer.innerHTML = '';
 
-    // Nếu không có dữ liệu, hiển thị thông báo và dừng lại
+    // Nếu không có dữ liệu, hoặc dữ liệu rỗng:
     if (!savedData || !savedData.scenario || savedData.scenario.length === 0) {
-        wrapper.appendChild(placeholder);
+        // Ẩn bảng và hiện placeholder.
+        wrapper.style.display = 'none';
         placeholder.style.display = 'block';
-        return;
+        return; // Dừng hàm tại đây
     }
 
-    // 1. Hiển thị bảng kịch bản (như cũ)
+    // Nếu có dữ liệu hợp lệ:
+    // Hiện bảng và ẩn placeholder.
+    wrapper.style.display = 'block';
     placeholder.style.display = 'none';
+
+    // 1. Hiển thị bảng kịch bản
     let tableHTML = `<table class="scenario-table"><thead><tr><th>STT</th><th>Thời gian</th><th>Số hồi</th></tr></thead><tbody>`;
     savedData.scenario.forEach((event, index) => {
         tableHTML += `<tr><td>${index + 1}</td><td>${event.time}</td><td>${event.bell} hồi</td></tr>`;
     });
     tableHTML += `</tbody></table>`;
-    wrapper.innerHTML = tableHTML;
+    wrapper.innerHTML = tableHTML; // Đặt nội dung cho bảng
 
-    // 2. Hiển thị trạng thái ưu tiên (như cũ)
+    // 2. Hiển thị trạng thái ưu tiên
     if (savedData.priority === 'scenario') {
         priorityDiv.textContent = 'Ưu tiên hiện tại: Kịch Bản';
         priorityDiv.style.color = '#2ecc71';
@@ -4142,18 +4150,15 @@ function renderSavedScenario(savedData) {
         priorityDiv.style.color = '#3498db';
     }
 
-    // 3. [LOGIC MỚI] Hiển thị các huy hiệu ngày đã lưu
-    if (savedData && Array.isArray(savedData.days) && savedData.days.length > 0) {
-        // Tạo nhãn "Áp dụng cho:"
+    // 3. Hiển thị các huy hiệu ngày đã lưu
+    if (savedData.days && savedData.days.length > 0) {
         const label = document.createElement('span');
         label.className = 'day-badge-label';
         label.textContent = 'Đang áp dụng cho:';
         daysDisplayContainer.appendChild(label);
         
-        // Tạo map để chuyển 't2' thành 'T2'
         const dayNameMap = {t2: 'T2', t3: 'T3', t4: 'T4', t5: 'T5', t6: 'T6', t7: 'T7', cn: 'CN'};
         
-        // Tạo huy hiệu cho mỗi ngày
         savedData.days.forEach(dayId => {
             const badge = document.createElement('span');
             badge.className = 'day-badge';
