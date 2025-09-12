@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -222,6 +223,7 @@
     .date-display { font-size: 0.9em; color: #ecf0f1; margin-top: 5px; font-weight: 500; }
 
     /* --- KHU VỰC NÚT ĐIỀU KHIỂN --- */
+    /* [SỬA ĐỔI] Giữ lại .button-section cho các nút trong tab Hệ thống */
     .button-section {
         display: flex;
         flex-direction: column;
@@ -405,6 +407,7 @@
         opacity: 1;
         margin-top: 10px;
     }
+/* === [THÊM MỚI] CSS CHO BẢNG KỊCH BẢN HẸN GIỜ === */
     .scenario-table {
         width: 100%;
         border-collapse: collapse;
@@ -413,7 +416,7 @@
     .scenario-table th, .scenario-table td {
         border: 1px solid #414345;
         padding: 9px 5px;
-        text-align: center;
+        text-align: center; /* Căn giữa nội dung trong ô */
         font-size: 0.9em;
     }
     .scenario-table th {
@@ -427,10 +430,11 @@
     .scenario-table tbody tr:nth-child(even) {
         background-color: #34495e;
     }
-    .scenario-table th:nth-child(1), .scenario-table td:nth-child(1) { width: 15%; }
-    .scenario-table th:nth-child(2), .scenario-table td:nth-child(2) { width: 42.5%; }
-    .scenario-table th:nth-child(3), .scenario-table td:nth-child(3) { width: 42.5%; }
-
+    /* Phân chia độ rộng các cột cho đều */
+    .scenario-table th:nth-child(1), .scenario-table td:nth-child(1) { width: 15%; } /* Cột STT */
+    .scenario-table th:nth-child(2), .scenario-table td:nth-child(2) { width: 42.5%; } /* Cột Thời gian */
+    .scenario-table th:nth-child(3), .scenario-table td:nth-child(3) { width: 42.5%; } /* Cột Số hồi */
+    /* === CÀI ĐẶT NÚT GẠT (TOGGLE SWITCH) DẠNG BOX === */
     .toggle-actions-group {
         display: flex;
         flex-direction: column;
@@ -475,11 +479,7 @@
     .toggle-action-item.active.chieu-style {
         border-left-color: #3498db;
     }
-    /* [NÂNG CẤP] CSS cho nút gạt chọn ngày trong Tab Hẹn Giờ */
-    .toggle-action-item.active.scenario-style {
-        border-left-color: #f1c40f;
-    }
-    .toggle-action-item.active.scenario-style .toggle-action-icon {
+    .toggle-action-item.active .toggle-action-icon {
         color: #f1c40f;
     }
     .switch {
@@ -505,12 +505,9 @@
     }
     input:checked + .slider { background: linear-gradient(90deg, #27ae60, #2ecc71); }
     .chieu-toggle input:checked + .slider { background: linear-gradient(90deg, #2980b9, #3498db); }
-    /* [NÂNG CẤP] CSS cho nút gạt chọn ngày trong Tab Hẹn Giờ */
-    .scenario-toggle input:checked + .slider {
-        background: linear-gradient(90deg, #f39c12, #f1c40f);
-    }
     input:checked + .slider:before { transform: translateX(22px); background-color: white; }
 
+    /* --- KHU VỰC CÀI ĐẶT (DETAILS) --- */
     details {
         border: 1px solid #414345; border-radius: 10px; margin-bottom: 12px;
         background: #232526; box-shadow: 0 2px 8px rgba(0,0,0, 0.1);
@@ -559,6 +556,7 @@
         color: #232526; 
     }
     
+    /* --- BẢNG LỊCH CHI TIẾT --- */
     .details-container {max-height: 250px;overflow-y: auto;}
     .details-container::-webkit-scrollbar {width: 8px;}
     .details-container::-webkit-scrollbar-track {background: #2c3e50;border-radius: 4px;}
@@ -572,14 +570,20 @@
     .details-container tbody tr:nth-child(even) { background: #414345; color: #ecf0f1; }
     .divider-yellow {width: 90%; height: 2px; background: linear-gradient(90deg, #f1c40f 0%, #fff200 100%);border-radius: 2px; margin: 24px auto 18px auto; box-shadow: 0 2px 8px #f1c40f55;}
 
+    /* --- GIAO DIỆN LƯỚI "THÔNG MINH" CHO CÀI ĐẶT --- */
+/* --- GIAO DIỆN LƯỚI "THÔNG MINH" CHO CÀI ĐẶT --- */
 .settings-grid-container {
+    /* [SỬA ĐỔI] Giới hạn chiều cao và thêm thanh cuộn tự động */
     max-height: 380px; 
     overflow-y: auto;
-    padding-right: 5px;
-    padding-bottom: 30px;
+    padding-right: 5px; /* Thêm khoảng đệm nhỏ để thanh cuộn không quá sát */
+    padding-bottom: 30px; /* THÊM DÒNG NÀY: Tạo khoảng đệm ở cuối vùng cuộn */
+    
+    /* Giữ nguyên các thuộc tính cũ */
     opacity: 1;
     transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out;
 }
+/* [THÊM MỚI] Tùy chỉnh giao diện thanh cuộn cho đồng bộ */
 .settings-grid-container::-webkit-scrollbar {
     width: 8px;
 }
@@ -655,6 +659,7 @@
         padding: 8px;
         font-size: 0.9em;
     }
+    /* [MỚI] CSS cho Hướng dẫn nhỏ */
     .input-helper-text {
         font-size: 0.75em;
         color: #7f8c8d;
@@ -689,6 +694,7 @@
         background: linear-gradient(90deg, #2980b9 0%, #6dd5fa 100%);
     }
 
+    /* === Giao diện cho Modal Chung === */
     .modal-overlay {
         position: fixed;
         top: 0;
@@ -749,6 +755,7 @@
         background: #f1c40f;
         color: #232526;
     }
+    /* [MỚI] CSS cho các nút ưu tiên trong modal cảnh báo */
     .modal-confirm-btn.priority-scenario {
         background: #27ae60;
         color: #fff;
@@ -776,6 +783,7 @@
         outline: none;
         border-color: #f1c40f;
     }
+    /* [MỚI] CSS cho phần mô tả trong modal */
     #conflict-modal-description {
         text-align: center; 
         margin-top: -10px; 
@@ -788,6 +796,7 @@
         color: #e74c3c;
     }
 
+    /* === Giao diện cho Modal Cài đặt Nâng cao === */
     #advanced-settings-modal .modal-content {
         background: #232526;
         border-top-color: #f39c12;
@@ -832,6 +841,7 @@
         font-size: 0.9em;
     }
     
+    /* === Giao diện cho Tab Hệ thống & Reset WiFi === */
     .actions-list {
         display: flex;
         flex-direction: column;
@@ -893,6 +903,7 @@
         color: #fff;
     }
     
+    /* === Giao diện cho Quản lý Vệ tinh === */
     .device-list {
         display: flex;
         flex-direction: column;
@@ -977,6 +988,7 @@
         font-size: 0.9em;
     }
 
+    /* === Giao diện cho Tab OTA === */
     .ota-device-selection {
         background-color: #2c3e50;
         border-radius: 8px;
@@ -1034,6 +1046,7 @@
         font-size: 0.85em;
     }
 
+    /* === CSS CHO CẤU TRÚC TAB GỘP === */
     .tablinks-day {
         background: #414345;
         color: #bdc3c7;
@@ -1091,6 +1104,7 @@
         box-shadow: 0 0 15px #3498db88;
     }
 
+    /* === [MỚI] Giao diện cho Modal Cài đặt Giao diện === */
     #interface-settings-modal .modal-content {
         max-width: 500px;
     }
@@ -1181,6 +1195,7 @@
     .save-btn {
         background: #27ae60; color: #fff;
     }
+    /* === [MỚI] GIAO DIỆN LỊCH NGHỈ LỄ === */
     .holiday-calendar-container {
         padding: 0 15px;
         margin-top: 25px;
@@ -1259,6 +1274,7 @@
         cursor: default;
         opacity: 0.3;
     }
+    /* === [MỚI] GIAO DIỆN ĐIỀU KHIỂN NHẠC (MP3 PLAYER) === */
     .music-player-container {
         padding: 0 15px;
         margin-top: 25px;
@@ -1425,6 +1441,7 @@
     #music-schedule-table th { background: #ab47bc; color: #fff; }
     #music-schedule-table .delete-schedule-btn { background: #c0392b; color: #fff; border: none; cursor: pointer; padding: 3px 6px; border-radius: 4px; }
     
+    /* === [THÊM MỚI] CSS CHO TÍCH HỢP PHÁT NHẠC VÀO LỊCH HỌC === */
     .bell-action-item {
         background: #232526;
         border: 1px solid #414345;
@@ -1466,7 +1483,7 @@
         flex-grow: 1;
     }
     .music-options {
-        display: none;
+        display: none; /* Mặc định ẩn */
         flex-direction: column;
         gap: 12px;
         padding: 10px;
@@ -1476,7 +1493,7 @@
         margin-top: 10px;
     }
     .music-options.visible {
-        display: flex;
+        display: flex; /* Hiện khi cần */
     }
     .music-options .control-group {
         width: 100%;
@@ -1499,6 +1516,7 @@
         cursor: pointer;
     }
 
+    /* === [THÊM MỚI] CSS CHO TÍNH NĂNG HẸN GIỜ THEO KỊCH BẢN === */
     .scenario-timer-container {
         padding: 0 15px;
         display: flex;
@@ -1542,7 +1560,7 @@
     }
     .scenario-actions {
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* <-- DÒNG MỚI THÊM VÀO */
     gap: 10px;
     margin-top: 10px;
 }
@@ -1565,11 +1583,13 @@
         background: #f1c40f;
         color: #232526;
     }
+    /* === [BỔ SUNG] CSS CHO BỘ CHỌN NGÀY CỦA TAB HẸN GIỜ === */
     #scenario-day-selector input:checked + span {
         background-color: #f1c40f;
         color: #232526;
         font-weight: bold;
     }
+    /* === KẾT THÚC CSS MỚI === */
     
   </style>
 </head>
@@ -1656,48 +1676,21 @@
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm-1 15H6V7h12v12z"></path></svg>
                         Áp dụng cho các ngày
                     </label>
-                    <div class="toggle-actions-group" id="scenario-day-selector" style="padding: 5px 0 0 0;">
-                        <div class="toggle-action-item">
-                            <div class="toggle-action-text">Thứ Hai</div>
-                            <label class="switch scenario-toggle"><input type="checkbox" name="scenario-day" value="t2" onchange="toggleScenarioDayStyle(this)"><span class="slider"></span></label>
-                        </div>
-                        <div class="toggle-action-item">
-                            <div class="toggle-action-text">Thứ Ba</div>
-                            <label class="switch scenario-toggle"><input type="checkbox" name="scenario-day" value="t3" onchange="toggleScenarioDayStyle(this)"><span class="slider"></span></label>
-                        </div>
-                        <div class="toggle-action-item">
-                            <div class="toggle-action-text">Thứ Tư</div>
-                            <label class="switch scenario-toggle"><input type="checkbox" name="scenario-day" value="t4" onchange="toggleScenarioDayStyle(this)"><span class="slider"></span></label>
-                        </div>
-                        <div class="toggle-action-item">
-                            <div class="toggle-action-text">Thứ Năm</div>
-                            <label class="switch scenario-toggle"><input type="checkbox" name="scenario-day" value="t5" onchange="toggleScenarioDayStyle(this)"><span class="slider"></span></label>
-                        </div>
-                        <div class="toggle-action-item">
-                            <div class="toggle-action-text">Thứ Sáu</div>
-                            <label class="switch scenario-toggle"><input type="checkbox" name="scenario-day" value="t6" onchange="toggleScenarioDayStyle(this)"><span class="slider"></span></label>
-                        </div>
-                        <div class="toggle-action-item">
-                            <div class="toggle-action-text">Thứ Bảy</div>
-                            <label class="switch scenario-toggle"><input type="checkbox" name="scenario-day" value="t7" onchange="toggleScenarioDayStyle(this)"><span class="slider"></span></label>
-                        </div>
-                        <div class="toggle-action-item">
-                            <div class="toggle-action-text">Chủ Nhật</div>
-                            <label class="switch scenario-toggle"><input type="checkbox" name="scenario-day" value="cn" onchange="toggleScenarioDayStyle(this)"><span class="slider"></span></label>
-                        </div>
+                    <div class="day-selector" id="scenario-day-selector">
+                        <label><input type="checkbox" name="scenario-day" value="t2"><span>T2</span></label>
+                        <label><input type="checkbox" name="scenario-day" value="t3"><span>T3</span></label>
+                        <label><input type="checkbox" name="scenario-day" value="t4"><span>T4</span></label>
+                        <label><input type="checkbox" name="scenario-day" value="t5"><span>T5</span></label>
+                        <label><input type="checkbox" name="scenario-day" value="t6"><span>T6</span></label>
+                        <label><input type="checkbox" name="scenario-day" value="t7"><span>T7</span></label>
+                        <label><input type="checkbox" name="scenario-day" value="cn"><span>CN</span></label>
                     </div>
                 </div>
                 <div class="scenario-actions">
-                    <button class="modern-btn test-button" onclick="previewScenario()">Xem Trước Kịch Bản</button>
-                    <button class="modern-btn save-button" onclick="sendScenarioCommand()" style="background: linear-gradient(90deg, #27ae60, #2ecc71); border-color: #2ecc71; color: white;">Gửi Lệnh Hẹn Giờ</button>
-                </div>
-                
-                <div id="scenario-preview-container" style="padding: 0; margin-top: 15px;">
+                    <button class="modern-btn save-button" onclick="addScenario()" style="background: linear-gradient(90deg, #27ae60, #2ecc71); border-color: #2ecc71; color: white;">Tạo & Gửi Lệnh</button>
                     </div>
                 
-                <hr style="margin: 25px 15px;">
-
-                <div id="saved-scenario-container" style="padding: 0;">
+                <div id="saved-scenario-container" style="padding: 0; margin-top: 20px;">
                     <h5 style="text-align: center; color: #3498db; text-transform: uppercase; margin: 10px 0 15px 0;">
                         KỊCH BẢN HIỆN TẠI ĐANG LƯU TRÊN THIẾT BỊ
                     </h5>
@@ -2147,16 +2140,23 @@
   <script>
     // [MỚI] HÀM ĐIỀU KHIỂN CÁC TAB CHÍNH
     function openMainTab(evt, tabName) {
+        // Lấy tất cả các phần tử có class="main-tab-content" và ẩn chúng đi
         const tabcontent = document.getElementsByClassName("main-tab-content");
         for (let i = 0; i < tabcontent.length; i++) {
             tabcontent[i].classList.remove("active");
         }
+
+        // Lấy tất cả các phần tử có class="main-tab-button" và xóa class "active"
         const tablinks = document.getElementsByClassName("main-tab-button");
         for (let i = 0; i < tablinks.length; i++) {
             tablinks[i].classList.remove("active");
         }
+
+        // Hiển thị tab hiện tại và thêm một class "active" vào nút đã mở tab
         document.getElementById(tabName).classList.add("active");
         evt.currentTarget.classList.add("active");
+
+        // [SỬA ĐỔI] Ẩn/hiện thanh hành động tùy theo tab
         const actionBar = document.querySelector('.sticky-action-bar');
         if (tabName === 'tab-lich-hoc' || tabName === 'tab-cai-dat') {
             actionBar.style.display = 'flex';
@@ -2165,27 +2165,42 @@
         }
     }
     
-    // ====================================================================
-    // === [BẮT ĐẦU] JS NÂNG CẤP CHO HẸN GIỜ & CẢNH BÁO XUNG ĐỘT ===
-    // ====================================================================
+    // =======================================================
+    // === [BẮT ĐẦU] JS MỚI CHO HẸN GIỜ & CẢNH BÁO XUNG ĐỘT ===
+    // =======================================================
 
-    let currentPreviewedScenario = null;
+    // Biến toàn cục để xử lý Promise của modal
     let resolveConflictPromise = null;
 
+    /**
+     * Mở modal cảnh báo xung đột và trả về một Promise
+     * @param {string} message - Nội dung HTML của cảnh báo
+     * @returns {Promise<string>} - Promise sẽ resolve với lựa chọn của người dùng ('scenario', 'schedule', 'cancel')
+     */
     function openConflictModal(message) {
         const modal = document.getElementById('conflict-modal-overlay');
         const description = document.getElementById('conflict-modal-description');
+        
         description.innerHTML = message;
         modal.classList.add('visible');
+
         return new Promise(resolve => {
             resolveConflictPromise = resolve;
         });
     }
 
+    /**
+     * Đóng modal cảnh báo xung đột
+     */
     function closeConflictModal() {
-        document.getElementById('conflict-modal-overlay').classList.remove('visible');
+        const modal = document.getElementById('conflict-modal-overlay');
+        modal.classList.remove('visible');
     }
 
+    /**
+     * Xử lý lựa chọn của người dùng từ modal cảnh báo
+     * @param {string} choice - Lựa chọn ('scenario', 'schedule', 'cancel')
+     */
     function handleConflictChoice(choice) {
         if (resolveConflictPromise) {
             resolveConflictPromise(choice);
@@ -2194,14 +2209,60 @@
         closeConflictModal();
     }
     
-    async function checkForConflicts(scenario, selectedDays) {
-        if (!scenario || scenario.length === 0 || !window.allData || !selectedDays || selectedDays.length === 0) {
-            return { conflicting: false };
+    /**
+     * [NÂNG CẤP] Hàm hỗ trợ tính toán khoảng thời gian hoạt động của một buổi học.
+     * Trả về object chứa thời gian bắt đầu và kết thúc (tính bằng phút).
+     */
+    function getSessionTimeRange(scheduleObject) {
+        if (!scheduleObject || !scheduleObject.enabled) return null;
+
+        const hasSpecial = scheduleObject.has_special_event || false;
+        const hasDuVao = scheduleObject.has_duvao_bell === undefined ? true : scheduleObject.has_duvao_bell;
+
+        const startTime = timeToMinute(scheduleObject.gio);
+        const lessonTime = scheduleObject.tiethoc || 45;
+        const lessonCount = scheduleObject.sotiet || 0;
+        const prepareTime = hasDuVao ? (scheduleObject.duvaotiet || 3) : 0;
+
+        const breakTimeStr = scheduleObject.rachoi || '5';
+        const breakTimes = breakTimeStr.split(',').map(s => parseInt(s.trim()) || 0);
+
+        const specialEventTime = hasSpecial ? (scheduleObject.chaoco || scheduleObject.chunhiem || 0) : 0;
+        const specialPrepareTime = hasSpecial ? (scheduleObject.prepare_after_special || 2) : 0;
+
+        if (startTime === 0 || lessonTime === 0 || lessonCount === 0) return null;
+
+        let totalDuration = 0;
+        if (hasSpecial && specialEventTime > 0) {
+            totalDuration += specialEventTime;
+            if (specialPrepareTime > 0) {
+                totalDuration += specialPrepareTime;
+            }
+        }
+        
+        totalDuration += lessonTime * lessonCount;
+
+        for (let i = 0; i < lessonCount - 1; i++) {
+            const currentBreakTime = breakTimes[i] ?? breakTimes[breakTimes.length - 1];
+            if (currentBreakTime > 0) {
+                totalDuration += currentBreakTime;
+                if (prepareTime > 0) {
+                    totalDuration += prepareTime;
+                }
+            }
         }
 
-        const calculateScheduleFromData = window.calculateScheduleFromData; 
-        if (typeof calculateScheduleFromData !== 'function') {
-            console.error("Hàm calculateScheduleFromData không tồn tại!");
+        const endTime = startTime + totalDuration;
+        return { start: startTime, end: endTime };
+    }
+
+
+    /**
+     * [NÂNG CẤP] Kiểm tra xung đột giữa kịch bản và lịch học của những ngày đã chọn.
+     * Logic mới sẽ kiểm tra xem thời gian kịch bản có nằm TRONG KHOẢNG thời gian bận rộn không.
+     */
+    async function checkForConflicts(scenario, selectedDays) {
+        if (!scenario || scenario.length === 0 || !window.allData || !selectedDays || selectedDays.length === 0) {
             return { conflicting: false };
         }
 
@@ -2209,16 +2270,8 @@
             const morningScheduleData = window.allData.lich.sang[dayId];
             const afternoonScheduleData = window.allData.lich.chieu[dayId];
 
-            const morningEvents = calculateScheduleFromData(morningScheduleData);
-            const afternoonEvents = calculateScheduleFromData(afternoonScheduleData);
-
-            const morningRange = morningEvents.length > 0 
-                ? { start: morningEvents[0].timeInMinutes, end: morningEvents[morningEvents.length - 1].timeInMinutes } 
-                : null;
-            
-            const afternoonRange = afternoonEvents.length > 0
-                ? { start: afternoonEvents[0].timeInMinutes, end: afternoonEvents[afternoonEvents.length - 1].timeInMinutes }
-                : null;
+            const morningRange = getSessionTimeRange(morningScheduleData);
+            const afternoonRange = getSessionTimeRange(afternoonScheduleData);
 
             for (const scenarioEvent of scenario) {
                 const scenarioTimeInMinutes = timeToMinute(scenarioEvent.time);
@@ -2242,9 +2295,15 @@
                 }
             }
         }
+
         return { conflicting: false };
     }
 
+
+    /**
+     * [GIỮ NGUYÊN & ĐẢM BẢO] Hàm tính toán và trả về một danh sách (mảng) các sự kiện,
+     * đảm bảo mỗi sự kiện sẽ được hiển thị trên một dòng riêng.
+     */
     function calculateScenario() {
         const startTimeEl = document.getElementById('scenario-start-time');
         const intervalsEl = document.getElementById('scenario-intervals');
@@ -2287,71 +2346,57 @@
                 bell: bells[i + 1]
             });
         }
+
         return scenario;
     }
     
-    function previewScenario() {
-        const scenario = calculateScenario();
-        const container = document.getElementById('scenario-preview-container');
-        
-        if (!scenario || scenario.length === 0) {
-            container.innerHTML = "";
-            currentPreviewedScenario = null;
-            return;
-        }
 
-        currentPreviewedScenario = scenario;
-
-        let tableHTML = `<h5 style="text-align: center; color: #f1c40f; text-transform: uppercase; margin: 10px 0 10px 0;">BẢNG XEM TRƯỚC</h5>
-                         <table class="scenario-table">
-                         <thead>
-                             <tr>
-                                 <th>STT</th>
-                                 <th>Thời gian</th>
-                                 <th>Số hồi</th>
-                             </tr>
-                         </thead>
-                         <tbody>`;
-        scenario.forEach((event, index) => {
-            tableHTML += `<tr>
-                         <td>${index + 1}</td>
-                         <td>${event.time}</td>
-                         <td>${event.bell} hồi</td>
-                     </tr>`;
-        });
-        tableHTML += `</tbody></table>`;
-        container.innerHTML = tableHTML;
-        showNotification("Đã tạo bảng xem trước thành công!", "info");
-    }
-
-    async function sendScenarioCommand() {
+    /**
+     * [NÂNG CẤP] Gửi kịch bản hẹn giờ lên thiết bị, có kèm theo các ngày được chọn
+     * và sử dụng logic kiểm tra xung đột mới.
+     */
+    async function addScenario() {
         if (!client || !client.connected) {
             return showNotification("Chưa kết nối máy chủ!", 'error');
         }
-        
-        if (!currentPreviewedScenario) {
-            return showNotification("Ông vui lòng nhấn \"Xem Trước Kịch Bản\" trước khi gửi lệnh.", "error");
-        }
 
+        // Bước 1: Lấy danh sách các ngày được chọn từ giao diện
         const selectedDays = Array.from(document.querySelectorAll('input[name="scenario-day"]:checked')).map(cb => cb.value);
         if (selectedDays.length === 0) {
             return showNotification("Vui lòng chọn ít nhất một ngày để áp dụng kịch bản!", "error");
         }
     
+        // Bước 2: Tính toán kịch bản đa dòng từ input của ông
+        const scenario = calculateScenario();
+        if (!scenario || scenario.length === 0) {
+            return; 
+        }
+    
+        // Bước 3: Cập nhật giao diện xem trước ngay lập tức
+        const immediateDisplayData = {
+            scenario: scenario,
+            priority: 'none'
+        };
+        renderSavedScenario(immediateDisplayData);
+        showNotification("Đã tạo kịch bản xem trước. Đang kiểm tra xung đột...", "info");
+    
+        // Bước 4: Gọi hàm kiểm tra xung đột mới
         let userPriority = 'none'; 
-        const conflict = await checkForConflicts(currentPreviewedScenario, selectedDays);
+        const conflict = await checkForConflicts(scenario, selectedDays);
     
         if (conflict.conflicting) {
             const userChoice = await openConflictModal(conflict.message);
             if (userChoice === 'cancel') {
                 showNotification("Đã hủy gửi lệnh do có xung đột.", "info");
+                renderSavedScenario(null); 
                 return;
             }
             userPriority = userChoice;
         }
     
+        // Bước 5: Tạo gói dữ liệu cuối cùng, có chứa cả các ngày đã chọn
         const payload = {
-            scenario: currentPreviewedScenario,
+            scenario: scenario,
             priority: userPriority,
             days: selectedDays 
         };
@@ -2361,24 +2406,21 @@
     
         showNotification("Đã gửi kịch bản hẹn giờ đến thiết bị!", "success");
         console.log("Dữ liệu kịch bản đã gửi đi:", payload);
-    }
-
-    // [NÂNG CẤP] Hàm cập nhật giao diện nút gạt khi người dùng bấm
-    function toggleScenarioDayStyle(checkbox) {
-        const item = checkbox.closest('.toggle-action-item');
-        if (item) {
-            item.classList.toggle('active', checkbox.checked);
-            item.classList.toggle('scenario-style', checkbox.checked);
+    
+        if (userPriority !== 'none') {
+            const priorityDiv = document.getElementById('saved-scenario-priority');
+            priorityDiv.textContent = `Ưu tiên được chọn: ${userPriority === 'scenario' ? 'Kịch Bản' : 'Lịch Học'}`;
+            priorityDiv.style.color = userPriority === 'scenario' ? '#2ecc71' : '#3498db';
         }
     }
 
-    // ==================================================================
-    // === [KẾT THÚC] JS NÂNG CẤP CHO HẸN GIỜ & CẢNH BÁO XUNG ĐỘT ===
-    // ==================================================================
+    // =======================================================
+    // === [KẾT THÚC] JS MỚI CHO HẸN GIỜ & CẢNH BÁO XUNG ĐỘT ===
+    // =======================================================
 
 
     // =======================================================
-    // PHẦN MÃ GỐC (GIỮ NGUYÊN VÀ SỬA LỖI)
+    // PHẦN MÃ GỐC (GIỮ NGUYÊN)
     // =======================================================
     if("true"!==sessionStorage.getItem("isLoggedIn"))window.location.href="login.html";
     
@@ -2388,6 +2430,7 @@
     const brokerUrl="wss://366af3ec40124749863257ecd2c62b3e.s1.eu.hivemq.cloud:8884/mqtt";
     const options={username:"ngoctuyka",password:"Tu12345678@",clientId:"WebAppClient_"+parseInt(1e3*Math.random()),reconnectPeriod:2e3,protocolVersion: 4};
     
+    // TOPICS MQTT CŨ
     const ONLINE_STATUS_TOPIC = "esp32/bell/status/online";
     const DATA_STATUS_TOPIC = "esp32/bell/data/status";
     const SET_DATA_TOPIC = "esp32/bell/data/set";
@@ -2404,23 +2447,44 @@
     const OTA_SATELLITE_COMMAND_TOPIC_PREFIX = "esp32/bell/ota/satellite/command/";
     const OTA_SATELLITE_DATA_TOPIC_PREFIX = "esp32/bell/ota/satellite/data/";
     const OTA_SATELLITE_STATUS_TOPIC = "esp32/bell/ota/satellite/status";
+    
+    // [MỚI] TOPICS MQTT CHO ĐIỀU KHIỂN NHẠC
     const MUSIC_CONTROL_TOPIC = "esp32/bell/music/control";
     const MUSIC_STATUS_TOPIC = "esp32/bell/music/status";
 
+
     function connectToMqtt(){
         console.log("Đang kết nối đến MQTT broker...");
-        document.getElementById("school-name-status").className = 'status-color-connecting';
+        const schoolNameStatus = document.getElementById("school-name-status");
+        schoolNameStatus.className = 'status-color-connecting';
+        
         client=mqtt.connect(brokerUrl,options);
+        
         client.on("connect",()=>{
             console.log("Đã kết nối thành công đến MQTT broker!");
-            const topicsToSubscribe = [ DATA_STATUS_TOPIC, ONLINE_STATUS_TOPIC, SYS_INFO_TOPIC, MANAGE_STATUS_TOPIC, COMMAND_ACK_TOPIC, OTA_STATUS_TOPIC, OTA_SATELLITE_STATUS_TOPIC, MUSIC_STATUS_TOPIC ];
+            const topicsToSubscribe = [
+                DATA_STATUS_TOPIC, 
+                ONLINE_STATUS_TOPIC, 
+                SYS_INFO_TOPIC, 
+                MANAGE_STATUS_TOPIC, 
+                COMMAND_ACK_TOPIC, 
+                OTA_STATUS_TOPIC,
+                OTA_SATELLITE_STATUS_TOPIC,
+                MUSIC_STATUS_TOPIC // [MỚI] Đăng ký nhận topic trạng thái nhạc
+            ];
             client.subscribe(topicsToSubscribe, {qos:1}, (err)=>{
-                if(err) { console.error("Lỗi khi đăng ký topic:", err); } 
-                else { console.log("Đăng ký nhận các topic thành công!"); client.publish(GET_DATA_TOPIC, '1', { qos: 1 }); }
+                if(err) {
+                    console.error("Lỗi khi đăng ký topic:", err);
+                } else {
+                    console.log("Đăng ký nhận các topic thành công!");
+                    client.publish(GET_DATA_TOPIC, '1', { qos: 1 });
+                }
             });
         });
+        
         client.on("message",(topic, payload)=>{
             const payloadString = payload.toString();
+            
             if (topic === ONLINE_STATUS_TOPIC) {
                 const schoolNameStatus = document.getElementById("school-name-status");
                 if (payloadString === 'online') {
@@ -2432,26 +2496,85 @@
                     serverTime = null;
                 }
             }
-            if (topic === DATA_STATUS_TOPIC && payloadString) { _load(payloadString); }
-            if (topic === SYS_INFO_TOPIC) { try { renderSystemInfo(JSON.parse(payloadString)); } catch(e) { console.error("Lỗi parse JSON thông tin hệ thống:", e); } }
-            if (topic === MANAGE_STATUS_TOPIC) { try { const data = JSON.parse(payloadString); renderDeviceLists(data.managed || [], data.discovered || []); } catch(e) { console.error("Lỗi parse JSON quản lý vệ tinh:", e); } }
-            if (topic === COMMAND_ACK_TOPIC) { try { const ack = JSON.parse(payloadString); showNotification(`[${ack.name}] ${ack.message}`, ack.status || 'success'); } catch (e) { console.error("Lỗi parse JSON phản hồi lệnh:", e); } }
-            if (topic === OTA_STATUS_TOPIC || topic === OTA_SATELLITE_STATUS_TOPIC) { try {
-                const status = JSON.parse(payloadString);
-                const deviceName = status.device || (status.name || 'Unknown');
-                let deviceStatusEl = document.getElementById(`ota-status-${deviceName}`);
-                const statusList = document.getElementById('ota-device-status-list');
-                if (!deviceStatusEl) { deviceStatusEl = document.createElement('div'); deviceStatusEl.id = `ota-status-${deviceName}`; statusList.appendChild(deviceStatusEl); }
-                let progressText = (status.progress !== undefined) ? `${status.progress}% - ` : '';
-                deviceStatusEl.textContent = `[${deviceName}]: ${progressText}${status.details}`;
-                if (status.status === 'error') { deviceStatusEl.style.color = '#e74c3c'; } 
-                else if (status.status === 'success') { deviceStatusEl.style.color = '#2ecc71'; } 
-                else if (status.status === 'progress' || status.status === 'start') { deviceStatusEl.style.color = '#3498db'; } 
-                else { deviceStatusEl.style.color = '#bdc3c7'; }
-            } catch (e) { console.error("Lỗi parse JSON trạng thái OTA:", e); } }
-            if (topic === MUSIC_STATUS_TOPIC) { try { updateMusicPlayerUI(JSON.parse(payloadString)); } catch (e) { console.error("Lỗi parse JSON trạng thái nhạc:", e); } }
+            
+            if (topic === DATA_STATUS_TOPIC && payloadString) {
+                _load(payloadString);
+            }
+
+            if (topic === SYS_INFO_TOPIC) {
+                try {
+                    const info = JSON.parse(payloadString);
+                    renderSystemInfo(info);
+                } catch(e) {
+                    console.error("Lỗi parse JSON thông tin hệ thống:", e);
+                }
+            }
+            
+            if (topic === MANAGE_STATUS_TOPIC) {
+                try {
+                    const data = JSON.parse(payloadString);
+                    renderDeviceLists(data.managed || [], data.discovered || []);
+                } catch(e) {
+                    console.error("Lỗi parse JSON quản lý vệ tinh:", e);
+                }
+            }
+
+            if (topic === COMMAND_ACK_TOPIC) {
+                try {
+                    const ack = JSON.parse(payloadString);
+                    const message = `[${ack.name}] ${ack.message}`;
+                    showNotification(message, ack.status || 'success');
+                } catch (e) {
+                    console.error("Lỗi parse JSON phản hồi lệnh:", e);
+                }
+            }
+            
+            if (topic === OTA_STATUS_TOPIC || topic === OTA_SATELLITE_STATUS_TOPIC) {
+                try {
+                    const status = JSON.parse(payloadString);
+                    const deviceName = status.device || (status.name || 'Unknown');
+                    
+                    let deviceStatusEl = document.getElementById(`ota-status-${deviceName}`);
+                    const statusList = document.getElementById('ota-device-status-list');
+                    if (!deviceStatusEl) {
+                        deviceStatusEl = document.createElement('div');
+                        deviceStatusEl.id = `ota-status-${deviceName}`;
+                        statusList.appendChild(deviceStatusEl);
+                    }
+                    
+                    let progressText = '';
+                    if (status.progress !== undefined) {
+                        progressText = `${status.progress}% - `;
+                    }
+                    deviceStatusEl.textContent = `[${deviceName}]: ${progressText}${status.details}`;
+
+                    if (status.status === 'error') {
+                        deviceStatusEl.style.color = '#e74c3c';
+                    } else if (status.status === 'success') {
+                        deviceStatusEl.style.color = '#2ecc71';
+                    } else if (status.status === 'progress' || status.status === 'start') {
+                        deviceStatusEl.style.color = '#3498db';
+                    } else {
+                        deviceStatusEl.style.color = '#bdc3c7';
+                    }
+                } catch (e) {
+                    console.error("Lỗi parse JSON trạng thái OTA:", e);
+                }
+            }
+            
+            // [MỚI] XỬ LÝ DỮ LIỆU TỪ TOPIC TRẠNG THÁI NHẠC
+            if (topic === MUSIC_STATUS_TOPIC) {
+                try {
+                    const musicStatus = JSON.parse(payloadString);
+                    updateMusicPlayerUI(musicStatus);
+                } catch (e) {
+                    console.error("Lỗi parse JSON trạng thái nhạc:", e);
+                }
+            }
         });
+        
         client.on("error", e => console.error("Lỗi kết nối MQTT:", e));
+        
         client.on("close",()=>{
             console.log("Mất kết nối MQTT. Đang thử kết nối lại...");
             document.getElementById("school-name-status").className = "status-color-disconnected";
@@ -2460,46 +2583,710 @@
         });
     }
 
-    function _load(e) {
-        try {
-            const t = JSON.parse(e);
-            window.allData = null;
-            if (t.data) {
-                if (t.data.epoch) setTime(t.data.epoch);
-                if (t.data.schedule) {
-                    window.allData = t.data.schedule;
-                    populateForm(t.data.schedule);
-                }
-                if (t.data.holidays) loadHolidayData(t.data.holidays);
-                renderSavedScenario(t.data.scenario || null);
-            } else {
-                if (t.epoch) setTime(t.epoch);
-                if (t.schedule) {
-                    window.allData = t.schedule;
-                    populateForm(t.schedule);
-                }
-                if (t.holidays) loadHolidayData(t.holidays);
-                renderSavedScenario(null);
-            }
-        } catch (error) {
-            console.error("Lỗi parse JSON từ MQTT:", error);
+    // [THÊM MỚI] Hàm ẩn/hiện các tùy chọn phát nhạc
+    function toggleActionOptions(bellType) {
+        const action = document.getElementById(`sohoi_${bellType}_action`).value;
+        const musicOptions = document.getElementById(`music_options_${bellType}`);
+        const isMusic = action === 'music';
+        
+        if (isMusic) {
+            musicOptions.classList.add('visible');
+        } else {
+            musicOptions.classList.remove('visible');
         }
     }
 
+    // [THÊM MỚI] Hàm cập nhật danh sách bài hát cho các dropdown trong cài đặt
+    function updateTrackSelectors(playlist) {
+        const bellTypes = ['batdau', 'vaotiet', 'rachoi', 'duvao'];
+        bellTypes.forEach(type => {
+            const select = document.getElementById(`sohoi_${type}_track`);
+            if (select) {
+                const currentVal = select.value;
+                select.innerHTML = '<option value="">-- Chọn file nhạc --</option>';
+                playlist.forEach(track => {
+                    const option = document.createElement('option');
+                    option.value = track;
+                    option.textContent = track;
+                    select.appendChild(option);
+                });
+                // Khôi phục giá trị đã chọn nếu còn tồn tại
+                if (playlist.includes(currentVal)) {
+                    select.value = currentVal;
+                }
+            }
+        });
+    }
+
+    // [CẬP NHẬT] CÁC HÀM ĐIỀU KHIỂN VÀ CẬP NHẬT GIAO DIỆN NHẠC
+    function updateMusicPlayerUI(status) {
+        // Cập nhật danh sách phát (playlist)
+        const playlistContainer = document.getElementById('music-playlist-container');
+        const trackSelect = document.getElementById('schedule-music-track-select');
+        if (status.playlist && Array.isArray(status.playlist)) {
+            playlistContainer.innerHTML = '';
+            trackSelect.innerHTML = '<option value="">-- Chọn bài hát --</option>';
+            if(status.playlist.length === 0) {
+                 playlistContainer.innerHTML = '<p class="list-placeholder">Không tìm thấy file nhạc nào trên thẻ nhớ.</p>';
+            } else {
+                status.playlist.forEach(track => {
+                    const item = document.createElement('div');
+                    item.className = 'playlist-item';
+                    item.textContent = track;
+                    item.onclick = () => handleMusicControl('play_track', track);
+                    if (track === status.current_track) {
+                        item.classList.add('playing');
+                    }
+                    playlistContainer.appendChild(item);
+
+                    const option = document.createElement('option');
+                    option.value = track;
+                    option.textContent = track;
+                    trackSelect.appendChild(option);
+                });
+            }
+
+            // [THÊM MỚI] Gọi hàm cập nhật các dropdown trong cài đặt
+            updateTrackSelectors(status.playlist);
+        }
+
+        // Cập nhật thông tin bài hát đang phát
+        document.getElementById('now-playing-title').textContent = status.current_track || 'Chưa có bài hát nào được chọn';
+
+        // Cập nhật nút Play/Pause
+        const playIcon = document.getElementById('play-icon');
+        const pauseIcon = document.getElementById('pause-icon');
+        if (status.status === 'playing') {
+            playIcon.style.display = 'none';
+            pauseIcon.style.display = 'block';
+        } else {
+            playIcon.style.display = 'block';
+            pauseIcon.style.display = 'none';
+        }
+
+        // Cập nhật thanh tiến trình và thời gian
+        document.getElementById('music-progress-bar').value = status.progress || 0;
+        document.getElementById('current-time').textContent = formatTime(status.current_time_s || 0);
+        document.getElementById('total-time').textContent = formatTime(status.total_time_s || 0);
+
+        // Cập nhật thanh âm lượng
+        document.getElementById('volume-slider').value = status.volume === undefined ? 50 : Math.round(status.volume / 30 * 100);
+
+        // Cập nhật các chế độ phát
+        document.getElementById('shuffle-btn').classList.toggle('active', status.shuffle_mode || false);
+        document.getElementById('repeat-btn').classList.toggle('active', status.repeat_mode || false);
+        
+        // Cập nhật bảng hẹn giờ
+        const scheduleTableBody = document.querySelector('#music-schedule-table tbody');
+        scheduleTableBody.innerHTML = '';
+        if (status.schedules && Array.isArray(status.schedules)) {
+            status.schedules.forEach((sch, index) => {
+                const row = scheduleTableBody.insertRow();
+                row.innerHTML = `
+                    <td>${sch.time}</td>
+                    <td>${sch.track_name}</td>
+                    <td>${sch.days.join(', ')}</td>
+                    <td><button class="delete-schedule-btn" onclick="deleteMusicSchedule(${index})">Xóa</button></td>
+                `;
+            });
+        }
+    }
+
+    function handleMusicControl(command, value = null) {
+        if (!client || !client.connected) return showNotification("Chưa kết nối máy chủ!", 'error');
+        const payload = { command: command };
+        if (value !== null) {
+             if (command === 'set_volume') {
+                payload.value = Math.round(parseInt(value) / 100 * 30);
+            } else {
+                payload.value = value;
+            }
+        }
+        client.publish(MUSIC_CONTROL_TOPIC, JSON.stringify(payload), { qos: 1 });
+    }
+    
+    function togglePlayMode(mode) {
+        handleMusicControl(`toggle_${mode}`);
+    }
+
+    function addMusicSchedule() {
+        const time = document.getElementById('schedule-music-time').value;
+        const track = document.getElementById('schedule-music-track-select').value;
+        const selectedDays = Array.from(document.querySelectorAll('input[name="music-day"]:checked')).map(cb => cb.value);
+
+        if (!time || !track || selectedDays.length === 0) {
+            return showNotification("Vui lòng điền đầy đủ thông tin hẹn giờ!", "error");
+        }
+
+        const schedule = { time: time, track_name: track, days: selectedDays };
+        handleMusicControl('schedule_add', schedule);
+    }
+
+    function deleteMusicSchedule(index) {
+        if (confirm(`Bạn có chắc muốn xóa lịch phát này không?`)) {
+            handleMusicControl('schedule_remove', index);
+        }
+    }
+
+    function formatTime(seconds) {
+        if (isNaN(seconds) || seconds < 0) return "00:00";
+        const min = Math.floor(seconds / 60);
+        const sec = Math.floor(seconds % 60);
+        return `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+    }
+    // KẾT THÚC CÁC HÀM VỀ NHẠC
+
+    function showNotification(message, type = 'success') {
+        const area = document.getElementById('notification-area');
+        const notif = document.createElement('div');
+        notif.className = `notification ${type}`;
+        notif.textContent = message;
+        area.appendChild(notif);
+        
+        setTimeout(() => { notif.classList.add('show'); }, 10);
+
+        setTimeout(() => {
+            notif.classList.remove('show');
+            setTimeout(() => {
+                if(area.contains(notif)) {
+                    area.removeChild(notif);
+                }
+            }, 300);
+        }, 4000);
+    }
+    
+    function openAdvancedSettingsModal() {
+        document.getElementById('advanced-settings-modal').classList.add('visible');
+        if (document.getElementById('adv-tab-system').classList.contains('active')) {
+            requestSystemInfo();
+        }
+    }
+    function closeAdvancedSettingsModal() {
+        document.getElementById('advanced-settings-modal').classList.remove('visible');
+    }
+    function switchAdvTab(evt, tabName) {
+        document.querySelectorAll('.adv-modal-tab').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.adv-modal-tab-content').forEach(content => content.classList.remove('active'));
+        evt.currentTarget.classList.add('active');
+        document.getElementById(tabName).classList.add('active');
+        
+        if (tabName === 'adv-tab-system') {
+            requestSystemInfo();
+        }
+    }
+    
+    function renderSystemInfo(info) {
+        const listDiv = document.getElementById('system-info-actions-list');
+        if (!listDiv) return;
+
+        listDiv.innerHTML = ''; 
+
+        const createItem = (icon, title, value, valueClass = '') => {
+            return `
+                <div class="action-item">
+                    <div class="action-icon">${icon}</div>
+                    <div class="action-text">
+                        <div class="title">${title}</div>
+                        <div class="description ${valueClass}">${value}</div>
+                    </div>
+                </div>
+            `;
+        };
+
+        const wifiIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C7.486 2 3.407 3.585 0 6l1.414 1.414C4.195 5.53 7.855 4 12 4s7.805 1.53 10.586 3.414L24 6C20.593 3.585 16.514 2 12 2zm0 4c-3.145 0-6.195 1.229-8.485 3.414L5.414 11.31C7.21 9.898 9.51 9 12 9s4.79 0.898 6.586 2.31l1.899-1.898C18.195 7.229 15.145 6 12 6zm0 5c-1.854 0-3.58.718-4.828 1.968L9.07 14.864C9.945 14.18 10.94 13.8 12 13.8s2.055 0.38 2.93 1.064l1.898-1.898C15.58 11.718 13.854 11 12 11zm0 4.2c-0.828 0-1.5 0.672-1.5 1.5s0.672 1.5 1.5 1.5 1.5-0.672 1.5-1.5-0.672-1.5-1.5-1.5z"></path></svg>';
+        const ipIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm-1.999 14.413-3.713-3.713 1.414-1.414 2.299 2.299 4.949-4.95 1.414 1.414-6.363 6.364z"></path></svg>';
+        const rtcIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586z"></path></svg>';
+        const lcdIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20 3H4c-1.103 0-2 .897-2 2v11c0 1.103.897 2 2 2h3l-1 2v1h12v-1l-1-2h3c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2zM4 14V5h16l.002 9H4z"></path></svg>';
+        const flashIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"></path></svg>';
+        const ramIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 5h16v2H4zm0 4h16v2H4zm0 4h16v2H4zm0 4h16v2H4z"></path></svg>';
+
+        listDiv.innerHTML += createItem(wifiIcon, 'Tên WiFi (SSID)', info.ssid || 'N/A');
+        listDiv.innerHTML += createItem(ipIcon, 'Địa chỉ IP', info.ip || 'N/A');
+        listDiv.innerHTML += createItem(rtcIcon, 'Module RTC', info.rtc ? 'Đã kết nối' : 'Không tìm thấy', info.rtc ? 'description connected' : 'description disconnected');
+        listDiv.innerHTML += createItem(lcdIcon, 'Màn hình LCD', info.lcd ? 'Đã kết nối' : 'Không tìm thấy', info.lcd ? 'description connected' : 'description disconnected');
+        listDiv.innerHTML += createItem(flashIcon, 'Bộ nhớ Flash', `${info.flash_usage || 'N/A'} % (${info.running_partition || ''})`);
+        
+        listDiv.innerHTML += createItem(ramIcon, 'RAM trong (SRAM)', `${info.sram_usage_percent || 'N/A'} % (Còn trống ${info.sram_free_kb || 'N/A'} KB)`);
+        listDiv.innerHTML += createItem(ramIcon, 'RAM ngoài (PSRAM)', `${info.psram_usage_percent || 'N/A'} % (Còn trống ${info.psram_free_mb || 'N/A'} MB)`);
+    }
+
+    function requestSystemInfo() {
+        if (client && client.connected) {
+            client.publish(CONTROL_TOPIC, "GET_SYS_INFO", {qos: 1});
+        } else {
+            showNotification("Chưa kết nối đến máy chủ!", 'error');
+        }
+    }
+
+    function openPasswordModal(deviceName, action) {
+        targetDevice = deviceName;
+        targetAction = action;
+        const titleEl = document.getElementById('password-modal-title');
+        const descEl = document.getElementById('password-modal-description');
+
+        if (action === 'wifi') {
+            titleEl.textContent = `Reset WiFi cho ${deviceName}`;
+            descEl.textContent = `Hành động này sẽ xóa cấu hình WiFi đã lưu trên ${deviceName}.`;
+        } else if (action === 'restart') {
+            titleEl.textContent = `Khởi động lại ${deviceName}`;
+            descEl.textContent = `Hành động này sẽ khởi động lại thiết bị ${deviceName}.`;
+        }
+
+        document.getElementById('password-modal-overlay').classList.add('visible');
+        document.getElementById('admin-password-input').focus();
+    }
+
+    function closePasswordModal() {
+        document.getElementById('password-modal-overlay').classList.remove('visible');
+        document.getElementById('admin-password-input').value = '';
+        targetDevice = null;
+        targetAction = null;
+    }
+    
+    function confirmAction() {
+        const password = document.getElementById('admin-password-input').value;
+        if (!password) {
+            showNotification('Vui lòng nhập mật khẩu!', 'error');
+            return;
+        }
+        if (!targetDevice || !targetAction) {
+            console.error("Lỗi: Không có thiết bị hoặc hành động nào được chọn.");
+            closePasswordModal();
+            return;
+        }
+
+        let payload = {
+            target: targetDevice,
+            admin_pass: password
+        };
+        let notificationText = '';
+
+        if (targetAction === 'wifi') {
+            payload.command = "RESET_WIFI";
+            notificationText = `Đã gửi lệnh Reset WiFi đến ${targetDevice}...`;
+        } else if (targetAction === 'restart') {
+            payload.command = "RESTART_ESP";
+            notificationText = `Đã gửi lệnh khởi động lại đến ${targetDevice}...`;
+        } else {
+            console.error("Hành động không xác định:", targetAction);
+            closePasswordModal();
+            return;
+        }
+
+        if (client && client.connected) {
+            client.publish(CONTROL_TOPIC, JSON.stringify(payload), { qos: 1 });
+            showNotification(notificationText);
+        } else {
+            showNotification("Chưa kết nối đến máy chủ!", 'error');
+        }
+        closePasswordModal();
+    }
+
+    function handleChangePassword() {
+        const oldPass = document.getElementById('old-admin-password').value;
+        const newPass = document.getElementById('new-admin-password').value;
+        const confirmPass = document.getElementById('confirm-admin-password').value;
+
+        if (!oldPass || !newPass || !confirmPass) {
+            showNotification('Vui lòng điền đầy đủ thông tin!', 'error');
+            return;
+        }
+        if (newPass !== confirmPass) {
+            showNotification('Mật khẩu mới không khớp!', 'error');
+            return;
+        }
+        if (newPass.length < 8) {
+            showNotification('Mật khẩu mới phải có ít nhất 8 ký tự!', 'error');
+            return;
+        }
+
+        if (client && client.connected) {
+            const payload = {
+                command: "CHANGE_PASSWORD",
+                old_pass: oldPass,
+                new_pass: newPass
+            };
+            client.publish(CONTROL_TOPIC, JSON.stringify(payload), { qos: 1 });
+            showNotification("Đã gửi yêu cầu thay đổi mật khẩu...");
+            document.getElementById('old-admin-password').value = '';
+            document.getElementById('new-admin-password').value = '';
+            document.getElementById('confirm-admin-password').value = '';
+        } else {
+            showNotification("Chưa kết nối đến máy chủ!", 'error');
+        }
+    }
+
+    function addSatellite(deviceName) {
+        if (client && client.connected) {
+            client.publish(MANAGE_ADD_TOPIC, deviceName, { qos: 1 });
+        } else {
+            showNotification("Chưa kết nối đến máy chủ!", 'error');
+        }
+    }
+    function removeSatellite(deviceName) {
+        if (confirm(`Bạn có chắc muốn ngừng quản lý thiết bị "${deviceName}" không?`)) {
+            if (client && client.connected) {
+                client.publish(MANAGE_REMOVE_TOPIC, deviceName, { qos: 1 });
+            } else {
+                showNotification("Chưa kết nối đến máy chủ!", 'error');
+            }
+        }
+    }
+    
+    function renderDeviceLists(managed, discovered) {
+        const managedListDiv = document.getElementById('managed-devices-list');
+        const discoveredListDiv = document.getElementById('discovered-devices-list');
+        const resetWifiListDiv = document.getElementById('reset-wifi-actions-list');
+        const resetEspListDiv = document.getElementById('reset-esp-actions-list');
+        const otaDeviceListDiv = document.getElementById('ota-device-selection-list');
+
+        managedListDiv.innerHTML = '';
+        discoveredListDiv.innerHTML = '';
+        resetWifiListDiv.innerHTML = '';
+        resetEspListDiv.innerHTML = '';
+        otaDeviceListDiv.innerHTML = '';
+
+        if (managed.length === 0) {
+            managedListDiv.innerHTML = '<p class="list-placeholder">Chưa có thiết bị nào được quản lý.</p>';
+        } else {
+            managed.forEach(dev => {
+                const item = document.createElement('div');
+                item.className = 'device-item';
+                const statusClass = dev.online ? 'connected' : 'disconnected';
+                const statusText = dev.online ? 'Online' : 'Offline';
+                const rssiText = dev.rssi ? `${dev.rssi} dBm` : 'N/A';
+                const uptimeText = dev.uptime || 'N/A';
+                const ipText = dev.ip || 'N/A';
+                item.innerHTML = `
+                    <div class="device-item-header">
+                        <span class="device-name">${dev.name}</span>
+                        <span class="device-status ${statusClass}">${statusText}</span>
+                    </div>
+                    <div class="device-info-grid">
+                        <span><span class="label">IP:</span> ${ipText}</span>
+                        <span><span class="label">Sóng WiFi:</span> ${rssiText}</span>
+                        <span style="grid-column: 1 / -1;"><span class="label">Uptime:</span> ${uptimeText}</span>
+                    </div>
+                    <div class="device-actions">
+                        <button class="device-action-btn cancel-btn" onclick="removeSatellite('${dev.name}')">Hủy</button>
+                    </div>
+                `;
+                managedListDiv.appendChild(item);
+            });
+        }
+
+        if (discovered.length === 0) {
+            discoveredListDiv.innerHTML = '<p class="list-placeholder">Không phát hiện thiết bị mới nào.</p>';
+        } else {
+            discovered.forEach(dev => {
+                const item = document.createElement('div');
+                item.className = 'device-item';
+                item.style.flexDirection = 'row';
+                item.style.justifyContent = 'space-between';
+                item.innerHTML = `
+                    <div class="device-info">
+                        <span class="device-name">${dev.name}</span>
+                        <div class="device-info-grid" style="grid-template-columns: 1fr; font-size: 0.8em;">
+                           <span><span class="label">IP:</span> ${dev.ip || 'N/A'}</span>
+                        </div>
+                    </div>
+                    <button class="device-action-btn add-btn" onclick="addSatellite('${dev.name}')">Thêm</button>
+                `;
+                discoveredListDiv.appendChild(item);
+            });
+        }
+        
+        const allDevices = [{ name: 'ESP32-MayChu', type: 'Máy Chủ' }, ...managed.map(d => ({...d, type: 'Vệ tinh'}))];
+
+        const createOtaDeviceCheckbox = (deviceName, deviceType) => {
+            return `
+                <label>
+                    <input type="checkbox" class="ota-target-checkbox" value="${deviceName}">
+                    <span>${deviceName} <em style="color:#bdc3c7; font-size: 0.9em;">(${deviceType})</em></span>
+                </label>
+            `;
+        };
+
+        if(allDevices.length > 0) {
+            allDevices.forEach(dev => {
+                otaDeviceListDiv.innerHTML += createOtaDeviceCheckbox(dev.name, dev.type);
+
+                resetWifiListDiv.innerHTML += `
+                    <div class="action-item">
+                        <div class="action-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 13h-2v-2h2v2zm0-4h-2V7h2v2z"></path></svg>
+                        </div>
+                        <div class="action-text">
+                            <div class="title">${dev.name}</div>
+                            <div class="description">Xóa cấu hình WiFi của thiết bị ${dev.type} này.</div>
+                        </div>
+                        <button class="action-btn reset" onclick="openPasswordModal('${dev.name}', 'wifi')">Reset WiFi</button>
+                    </div>
+                `;
+                
+                resetEspListDiv.innerHTML += `
+                    <div class="action-item">
+                         <div class="action-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 2.5a1 1 0 1 0-2 0v2.4a6.5 6.5 0 1 0 9.9 7.4 1 1 0 1 0-1.8-1a4.5 4.5 0 1 1-6.6-5.9V8a1 1 0 1 0 2 0V2.5z"></path></svg>
+                        </div>
+                        <div class="action-text">
+                            <div class="title">${dev.name}</div>
+                            <div class="description">Khởi động lại thiết bị ${dev.type} này.</div>
+                        </div>
+                        <button class="action-btn reset" style="background-color: #e67e22;" onclick="openPasswordModal('${dev.name}', 'restart')">Restart</button>
+                    </div>
+                `;
+            });
+        } else {
+            otaDeviceListDiv.innerHTML = '<p class="list-placeholder">Không có thiết bị nào.</p>';
+        }
+    }
+    
+ // File: index full.html
+
+// File: index full.html
+
+function _load(e) {
+    try {
+        const t = JSON.parse(e);
+        window.allData = null; // Reset before loading
+
+        // Phiên bản sửa lỗi: Gộp logic và đảm bảo window.allData luôn được gán
+        if (t.data) { // Nếu là cấu trúc mới
+            if (t.data.epoch) setTime(t.data.epoch);
+            if (t.data.schedule) {
+                window.allData = t.data.schedule; // Gán biến quan trọng
+                populateForm(t.data.schedule);
+            }
+            if (t.data.holidays) loadHolidayData(t.data.holidays);
+            // Sửa lỗi: Cần đảm bảo `t.data.scenario` tồn tại trước khi render
+            if (t.data.scenario) {
+                renderSavedScenario(t.data.scenario);
+            } else {
+                 renderSavedScenario(null); // Xóa bảng kịch bản nếu không có dữ liệu
+            }
+        } else { // Nếu là cấu trúc cũ
+             if (t.epoch) setTime(t.epoch);
+             if (t.schedule) {
+                window.allData = t.schedule;
+                populateForm(t.schedule);
+             }
+             if (t.holidays) loadHolidayData(t.holidays);
+             renderSavedScenario(null); // Cấu trúc cũ không có kịch bản
+        }
+
+    } catch (error) {
+        console.error("Lỗi parse JSON từ MQTT:", error);
+    }
+}
+    // =======================================================
+// === [THÊM MỚI] HÀM XỬ LÝ LỊCH NGHỈ LỄ KHI TẢI TRANG ===
+// =======================================================
+function loadHolidayData(holidays) {
+    if (holidays) {
+        console.log("Nhan du lieu lich nghi le tu ESP32:", holidays);
+        // Lưu dữ liệu vào biến toàn cục để các hàm khác sử dụng
+        holidayData = holidays;
+
+        // Vẽ lại giao diện lịch với dữ liệu mới
+        // Hàm này sẽ tự động đọc biến holidayData và tô màu đúng các ngày nghỉ
+        generateCalendar(currentDisplayDate.getFullYear(), currentDisplayDate.getMonth());
+    }
+}
+    function publishUpdate() {
+    if (!client || !client.connected) return showNotification("Chưa kết nối máy chủ!", 'error');
+    try {
+        const scheduleData = gatherDataFromForm();
+        const payload = {
+            schedule: scheduleData,
+            holidays: holidayData
+        };
+        const payloadString = JSON.stringify(payload);
+        client.publish(SET_DATA_TOPIC, payloadString, { qos: 1, retain: true });
+        showNotification("Đã gửi lệnh cập nhật Lịch học & Lịch nghỉ...", 'success');
+    } catch (e) {
+        showNotification("Lỗi: " + e.message, 'error');
+        console.error(e)
+    }
+}
+    
+    function publishTestBell(){
+        if(client&&client.connected) {
+            const payload = { command: "TEST_BELL" };
+            client.publish(CONTROL_TOPIC, JSON.stringify(payload), {qos:1});
+            showNotification("Đã gửi lệnh thử chuông chung...");
+        } else {
+            showNotification("Chưa kết nối máy chủ!", 'error');
+        }
+    }
+
+    function logout(){sessionStorage.removeItem("isLoggedIn"),window.location.href="login.html"}
+    function setTime(e){isNaN(e)||e<1e5?(console.log("Invalid epoch received, clock not set:",e),serverTime=null):(serverTime=new Date(1e3*e),document.getElementById("date").innerHTML=serverTime.toLocaleDateString("vi-VN",{weekday:"long",year:"numeric",month:"long",day:"numeric",timeZone:"Asia/Ho_Chi_Minh"}),updateLocalClock())}
+    function updateLocalClock(){serverTime&&(serverTime.setSeconds(serverTime.getSeconds()+1),document.getElementById("clock").innerHTML=serverTime.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit",timeZone:"Asia/Ho_Chi_Minh",hour12:!1}))}
+    
+    function toggleSettings(headerElement) {
+        const content = headerElement.nextElementSibling;
+        if (content && content.classList.contains('collapsible-settings')) {
+            headerElement.classList.toggle('expanded');
+            content.classList.toggle('expanded');
+        }
+    }
+
+    function toggleScheduleActivation(dayId) {
+        const isEnabled = document.getElementById(`enable_${dayId}`).checked;
+        const enableItem = document.getElementById(`toggle_item_enable_${dayId}`);
+        const specialItem = document.getElementById(`toggle_item_special_${dayId}`);
+        const duvaoItem = document.getElementById(`toggle_item_duvao_${dayId}`);
+        const settingsContainer = document.getElementById(`settings_container_${dayId}`);
+        const isChieu = dayId.includes('_chieu');
+
+        if (isEnabled) {
+            if (enableItem) {
+                enableItem.classList.add('active');
+                if (isChieu) enableItem.classList.add('chieu-style');
+            }
+            if (specialItem) specialItem.classList.remove('disabled');
+            if (duvaoItem) duvaoItem.classList.remove('disabled');
+            if (settingsContainer) settingsContainer.classList.remove('hidden');
+        } else {
+            if (enableItem) {
+                enableItem.classList.remove('active', 'chieu-style');
+            }
+            if (specialItem) specialItem.classList.add('disabled');
+            if (duvaoItem) duvaoItem.classList.add('disabled');
+            if (settingsContainer) settingsContainer.classList.add('hidden');
+        }
+    }
+
+    function toggleSpecialEvent(dayId) {
+        const checkbox = document.getElementById(`has_special_${dayId}`);
+        const container = document.getElementById(`special_event_container_${dayId}`);
+        if (container) {
+            container.style.display = checkbox.checked ? 'grid' : 'none'; // Use grid for consistency
+        }
+    }
+
+    function toggleDuVao(dayId) {
+        const checkbox = document.getElementById(`has_duvao_${dayId}`);
+        const inputWrapper = document.getElementById(`duvao_wrapper_${dayId}`);
+        if (inputWrapper) {
+            inputWrapper.style.display = checkbox.checked ? 'flex' : 'none';
+        }
+    }
+
+    // =======================================================
+    // === [NÂNG CẤP] CÁC HÀM TẠO GIAO DIỆN VÀ TÍNH TOÁN LỊCH HỌC ===
+    // =======================================================
+
+    const createDayContent = (e, t, o) => {
+        const isMondayMorning = (e === 't2_sang');
+        
+        // Icons
+        const d = `<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586z"></path></svg></div>`;
+        const r = `<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm-1 15H6V7h12v12z"></path></svg></div>`;
+        const l = `<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 2H6c-1.206 0-3 .799-3 3v14c0 2.201 1.794 3 3 3h15v-2H6.012C5.55 19.988 5 19.806 5 19s.55-.988 1.012-1H21V4c0-1.103-.897-2-2-2zm0 13H6V5h13v10z"></path></svg></div>`;
+        const c = `<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M18 5h-2V2H8v3H6c-1.654 0-3 1.346-3 3v6c0 1.654 1.346 3 3 3h1v1c0 .552.447 1 1 1h6c.553 0 1-.448 1-1v-1h1c1.654 0 3-1.346 3-3V8c0-1.654-1.346-3-3-3zm1 9c0 .552-.447 1-1 1H6c-.553 0-1-.448-1-1V8c0-.552.447-1 1-1h12c.553 0 1 .448 1 1v6z"></path></svg></div>`;
+        const m = `<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M14 12V8h-4v4H8l4 4 4-4h-2z"></path></svg></div>`;
+        const p = `<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h2v2H4zm0 5h2v2H4zm0 5h2v2H4zm16-8V6H8v2h12zm0 5H8v2h12zm0 5H8v2h12z"></path></svg></div>`;
+        
+        // [NÂNG CẤP] Tạo HTML cho khu vực sự kiện đặc biệt, bao gồm cả ô nhập thời gian chuẩn bị
+        const specialEventInput = isMondayMorning 
+            ? `<div class="setting-item full-width">${r}<div class="input-wrapper"><label for="chaoco_${e}">TG Chào cờ</label><div class="unit-input"><input id="chaoco_${e}" type="number" value="40"><span>phút</span></div></div></div>`
+            : `<div class="setting-item full-width">${r}<div class="input-wrapper"><label for="chunhiem_${e}">TG Sinh hoạt</label><div class="unit-input"><input id="chunhiem_${e}" type="number" value="15"><span>phút</span></div></div></div>`;
+        const prepareAfterSpecialInput = `<div class="setting-item full-width">${m}<div class="input-wrapper"><label for="prepare_after_special_${e}">TG chuẩn bị sau SH/CC</label><div class="unit-input"><input id="prepare_after_special_${e}" type="number" value="2"><span>phút</span></div></div></div>`;
+        const u = specialEventInput + prepareAfterSpecialInput;
+
+        let g = ""; // Copy button HTML
+        if (!isMondayMorning) {
+            if (o === 'sang') {
+                g = `<div class="copy-button-container"><button class="copy-button sang" onclick="copyMorningSchedule('${e}')">Sao chép đến T3-CN (Sáng)</button></div>`;
+            } else { // 'chieu'
+                g = `<div class="copy-button-container"><button class="copy-button chieu" onclick="copyAfternoonSchedule('${e}')">Sao chép đến các ngày Chiều</button></div>`;
+            }
+        }
+        
+        return `
+        <div id="${e}" class="tabcontent">
+            <h3 onclick="toggleSettings(this)">Cài đặt Lịch ${t}<br><span class="session-subtitle">(Buổi ${"sang"===o?"Sáng":"Chiều"})</span></h3>
+            
+            <div class="collapsible-settings">
+                <div class="toggle-actions-group">
+                    <div id="toggle_item_enable_${e}" class="toggle-action-item">
+                        <div class="toggle-action-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42A6.92 6.92 0 0 1 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-1.93.78-3.68 2-4.95L5.59 5.64A8.96 8.96 0 0 0 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.49-1-4.73-2.67-6.41z"/></svg></div>
+                        <div class="toggle-action-text">Kích hoạt Lịch</div>
+                        <label class="switch ${"chieu"===o?"chieu-toggle":""}">
+                            <input type="checkbox" id="enable_${e}" onchange="toggleScheduleActivation('${e}')" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div id="toggle_item_special_${e}" class="toggle-action-item">
+                        <div class="toggle-action-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></div>
+                        <div class="toggle-action-text">${isMondayMorning ? 'Có Giờ Chào cờ' : 'Có Giờ Sinh hoạt'}</div>
+                        <label class="switch ${"chieu"===o?"chieu-toggle":""}">
+                            <input type="checkbox" id="has_special_${e}" onchange="toggleSpecialEvent('${e}')">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div id="toggle_item_duvao_${e}" class="toggle-action-item">
+                        <div class="toggle-action-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M10 20h4c0 1.1-.9 2-2 2s-2-.9-2-2zm10-2.64V11c0-3.35-2.36-6.15-5.5-6.83V3.5c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5V4.17C8.36 4.85 6 7.65 6 11v6.36L4 19.72V20h16v-.28l-2-2.36zM15 11h2v2h-2v-2zm-4 0h2v2h-2v-2zm-4 0h2v2H7v-2z"/></svg></div>
+                        <div class="toggle-action-text">Có Chuông Dự vào lớp</div>
+                        <label class="switch ${"chieu"===o?"chieu-toggle":""}">
+                            <input type="checkbox" id="has_duvao_${e}" onchange="toggleDuVao('${e}')" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div id="settings_container_${e}" class="settings-grid-container">
+                    ${g}
+                    <hr style="margin: 15px; background: #414345; height: 1px; opacity: 0.5;">
+
+                    <div class="settings-grid">
+                        <div class="setting-item full-width">${d}<div class="input-wrapper"><label for="gio_${e}">Giờ vào học</label><input id="gio_${e}" type="time"></div></div>
+                        
+                        <div id="special_event_container_${e}" class="settings-grid full-width" style="display: none; grid-template-columns: 1fr; gap: 8px; padding: 0;">${u}</div>
+                        
+                        <div class="setting-item">${l}<div class="input-wrapper"><label for="tiethoc_${e}">TG Tiết học</label><div class="unit-input"><input id="tiethoc_${e}" type="number" value="45"><span>phút</span></div></div></div>
+                        <div class="setting-item">${c}<div class="input-wrapper"><label for="rachoi_${e}">TG Ra chơi</label><div class="unit-input"><input id="rachoi_${e}" type="text" value="5"><span>phút</span></div><div class="input-helper-text">VD: 5,15,5,5</div></div></div>
+                        <div class="setting-item" id="duvao_wrapper_${e}">${m}<div class="input-wrapper"><label for="duvaotiet_${e}">TG Dự vào</label><div class="unit-input"><input id="duvaotiet_${e}" type="number" value="3"><span>phút</span></div></div></div>
+                        <div class="setting-item">${p}<div class="input-wrapper"><label for="sotiet_${e}">Số tiết học</label><div class="unit-input"><input id="sotiet_${e}" type="number" value="5"><span>tiết</span></div></div></div>
+                    </div>
+                    
+                    <button class="modern-btn preview-button" onclick="updatePreviewTable('${e}')" style="height: 40px; font-size: 0.85em; background: #34495e; color: #f1c40f; border: 1px solid #f1c40f; margin-top: 15px;">Cập nhật bảng chi tiết</button>
+
+                </div>
+            </div>
+
+            <details style="margin-top: 15px;">
+                <summary>Xem chi tiết lịch</summary>
+                <div class="details-container" id="details-${e}"></div>
+            </details>
+        </div>`
+    }
+    
+    const contentWrapper = document.getElementById("tab-content-wrapper");
+    const days=[{id:"t2",name:"Thứ 2"},{id:"t3",name:"Thứ 3"},{id:"t4",name:"Thứ 4"},{id:"t5",name:"Thứ 5"},{id:"t6",name:"Thứ 6"},{id:"t7",name:"Thứ 7"},{id:"cn",name:"Chủ Nhật"}];
+    
     function populateForm(e){
         const t = e;
         if(t&&t.sohoi&&t.lich){
             document.querySelectorAll('#tab-content-wrapper .tabcontent').forEach(el => el.remove());
+            console.log("Bat dau cap nhat form voi du lieu:",t);
+
             const bellTypes = ["batdau","vaotiet","rachoi","duvao"];
             bellTypes.forEach(type => {
                 const numInput = document.getElementById(`sohoi_${type}`);
                 if(numInput) numInput.value = t.sohoi[type]?.num || "";
+
                 const actionSelect = document.getElementById(`sohoi_${type}_action`);
                 if(actionSelect) actionSelect.value = t.sohoi[type]?.action || "bell";
+
                 const trackSelect = document.getElementById(`sohoi_${type}_track`);
                 if(trackSelect) trackSelect.value = t.sohoi[type]?.track || "";
+
                 const volumeSlider = document.getElementById(`sohoi_${type}_volume`);
                 if(volumeSlider) volumeSlider.value = t.sohoi[type]?.volume || 25;
+                
                 if (type === 'rachoi') {
                     const randomCheckbox = document.getElementById('sohoi_rachoi_random');
                     if(randomCheckbox) randomCheckbox.checked = t.sohoi[type]?.random || false;
@@ -2510,10 +3297,12 @@
                 const o=document.getElementById(`sohoi_${e}`);
                 o&&(o.value=t.sohoi[e]||"")
             });
+            
             days.forEach(day => {
                 contentWrapper.innerHTML += createDayContent(`${day.id}_sang`, day.name, "sang");
                 contentWrapper.innerHTML += createDayContent(`${day.id}_chieu`, day.name, "chieu");
             });
+
             ["sang","chieu"].forEach(e=>{
                 days.forEach(o=>{
                     const n=t.lich?.[e]?.[o.id];
@@ -2522,133 +3311,178 @@
                         document.getElementById(`enable_${dayId}`).checked=n.enabled;
                         document.getElementById(`gio_${dayId}`).value=n.gio||"";
                         document.getElementById(`tiethoc_${dayId}`).value=n.tiethoc||"";
-                        document.getElementById(`rachoi_${dayId}`).value=n.rachoi||"5";
+                        document.getElementById(`rachoi_${dayId}`).value=n.rachoi||"5"; // [NÂNG CẤP]
                         document.getElementById(`duvaotiet_${dayId}`).value=n.duvaotiet||"";
                         document.getElementById(`sotiet_${dayId}`).value=n.sotiet||"";
+                        
                         const chaocoInput = document.getElementById(`chaoco_${dayId}`);
                         if(chaocoInput) chaocoInput.value=n.chaoco||0;
+                        
                         const chunhiemInput = document.getElementById(`chunhiem_${dayId}`);
                         if(chunhiemInput) chunhiemInput.value=n.chunhiem||0;
+                        
+                        // [NÂNG CẤP] Tải dữ liệu cho trường mới
                         const prepareSpecialInput = document.getElementById(`prepare_after_special_${dayId}`);
-                        if(prepareSpecialInput) prepareSpecialInput.value = typeof n.prepare_after_special === 'number' ? n.prepare_after_special : 2;
+                        if(prepareSpecialInput) prepareSpecialInput.value = n.prepare_after_special || 2;
+                        
                         const hasSpecialCheckbox = document.getElementById(`has_special_${dayId}`);
                         if (hasSpecialCheckbox) {
                             hasSpecialCheckbox.checked = n.has_special_event || false;
                             toggleSpecialEvent(dayId);
                         }
+                        
                         const hasDuVaoCheckbox = document.getElementById(`has_duvao_${dayId}`);
                         if (hasDuVaoCheckbox) {
                             hasDuVaoCheckbox.checked = n.has_duvao_bell === undefined ? true : n.has_duvao_bell;
                             toggleDuVao(dayId);
                         }
+                        
                         toggleScheduleActivation(dayId);
                         updatePreviewTable(dayId);
                     }
                 })
             });
              showActiveTab();
+        } else {
+            console.error("Dữ liệu lịch học nhận được không hợp lệ hoặc không đầy đủ:",e)
         }
     }
-    
-    /**
-     * [SỬA LỖI] Hàm này đã được sửa lại để xử lý đúng giá trị 0.
-     */
-    function calculateScheduleFromData(scheduleObject) {
-        if (!scheduleObject || !scheduleObject.enabled) return [];
-        const hasSpecial = scheduleObject.has_special_event || false;
-        const hasDuVao = scheduleObject.has_duvao_bell === undefined ? true : scheduleObject.has_duvao_bell;
-        const startTime = timeToMinute(scheduleObject.gio);
-        const lessonTime = scheduleObject.tiethoc || 45;
-        const lessonCount = scheduleObject.sotiet || 0;
-        const prepareTime = hasDuVao ? (scheduleObject.duvaotiet || 3) : 0;
-        const breakTimeStr = scheduleObject.rachoi || '5';
-        const breakTimes = breakTimeStr.split(',').map(s => parseInt(s.trim()) || 0);
-        const specialEventTime = hasSpecial ? (scheduleObject.chaoco || scheduleObject.chunhiem || 0) : 0;
+
+    function gatherDataFromForm(){
+        const e={sohoi:{},lich:{sang:{},chieu:{}}};
         
-        // SỬA LỖI TẠI ĐÂY: Kiểm tra nếu giá trị là số trước khi áp dụng mặc định
-        const specialPrepareTimeValue = scheduleObject.prepare_after_special;
-        const specialPrepareTime = hasSpecial ? (typeof specialPrepareTimeValue === 'number' ? specialPrepareTimeValue : 2) : 0;
+        const bellTypes = ["batdau","vaotiet","rachoi","duvao"];
+        bellTypes.forEach(type => {
+            e.sohoi[type] = {
+                num: parseInt(document.getElementById(`sohoi_${type}`).value) || 0,
+                action: document.getElementById(`sohoi_${type}_action`).value,
+                track: document.getElementById(`sohoi_${type}_track`).value,
+                volume: parseInt(document.getElementById(`sohoi_${type}_volume`).value) || 0
+            };
+            if (type === 'rachoi') {
+                e.sohoi[type].random = document.getElementById('sohoi_rachoi_random').checked;
+            }
+        });
+        ["tg_reo", "tg_nghi"].forEach(t=>{
+            e.sohoi[t]=parseInt(document.getElementById(`sohoi_${t}`).value)||0
+        });
 
-        if (startTime === 0 || lessonTime === 0 || lessonCount === 0) return [];
-        let schedule = [];
-        let currentTime = startTime;
-        if (hasSpecial && specialEventTime > 0) {
-            schedule.push({ time: currentTime, description: "Sự kiện đặc biệt" });
-            currentTime += specialEventTime;
-            
-            // SỬA LỖI TẠI ĐÂY: Luôn cộng thời gian, dù là 0. Chỉ hiển thị dòng nếu > 0.
-            if (specialPrepareTime > 0) {
-                schedule.push({ time: currentTime, description: "Nghỉ sau sự kiện" });
-            }
-            currentTime += specialPrepareTime;
-        }
-        for (let i = 1; i <= lessonCount; i++) {
-            schedule.push({ time: currentTime, description: `Vào tiết ${i}` });
-            currentTime += lessonTime;
-            if (i < lessonCount) {
-                const currentBreakTime = breakTimes[i - 1] ?? breakTimes[breakTimes.length - 1];
-                if (currentBreakTime > 0) {
-                    schedule.push({ time: currentTime, description: `Ra chơi tiết ${i}` });
-                    currentTime += currentBreakTime;
-                    if (prepareTime > 0) {
-                        schedule.push({ time: currentTime, description: `Dự vào tiết ${i + 1}` });
-                        currentTime += prepareTime;
-                    }
-                }
-            }
-        }
-        schedule.push({ time: currentTime, description: "Ra về" });
-        const uniqueSchedule = Array.from(new Map(schedule.map(item => [item.time, item])).values());
-        return uniqueSchedule.map(item => ({ ...item, timeInMinutes: item.time }));
+        ["sang","chieu"].forEach(t=>{
+            days.forEach(o=>{
+                const dayId = `${o.id}_${t}`;
+                const n=e.lich[t][o.id]={};
+                n.enabled=document.getElementById(`enable_${dayId}`).checked;
+                n.gio=document.getElementById(`gio_${dayId}`).value;
+                n.tiethoc=parseInt(document.getElementById(`tiethoc_${dayId}`).value)||0;
+                n.rachoi=document.getElementById(`rachoi_${dayId}`).value || "5"; // [NÂNG CẤP]
+                n.duvaotiet=parseInt(document.getElementById(`duvaotiet_${dayId}`).value)||0;
+                n.sotiet=parseInt(document.getElementById(`sotiet_${dayId}`).value)||0;
+                
+                const chaocoInput = document.getElementById(`chaoco_${dayId}`);
+                if(chaocoInput) n.chaoco=parseInt(chaocoInput.value)||0;
+                
+                const chunhiemInput = document.getElementById(`chunhiem_${dayId}`);
+                if(chunhiemInput) n.chunhiem=parseInt(chunhiemInput.value)||0;
+                
+                // [NÂNG CẤP] Thu thập dữ liệu từ trường mới
+                const prepareSpecialInput = document.getElementById(`prepare_after_special_${dayId}`);
+                if(prepareSpecialInput) n.prepare_after_special = parseInt(prepareSpecialInput.value) || 0;
+
+                const hasSpecialCheckbox = document.getElementById(`has_special_${dayId}`);
+                if (hasSpecialCheckbox) n.has_special_event = hasSpecialCheckbox.checked;
+
+                const hasDuVaoCheckbox = document.getElementById(`has_duvao_${dayId}`);
+                if (hasDuVaoCheckbox) n.has_duvao_bell = hasDuVaoCheckbox.checked;
+            })
+        });
+        return e;
     }
 
-    /**
-     * [SỬA LỖI] Hàm này đã được sửa lại để xử lý đúng giá trị 0.
-     */
+    function selectDay(evt, day) {
+        selectedDay = day;
+        document.querySelectorAll('.tablinks-day').forEach(btn => btn.classList.remove('active'));
+        evt.currentTarget.classList.add('active');
+        showActiveTab();
+    }
+
+    function selectSession(evt, session) {
+        selectedSession = session;
+        document.querySelectorAll('.tablinks-session').forEach(btn => btn.classList.remove('active'));
+        evt.currentTarget.classList.add('active');
+        showActiveTab();
+    }
+
+    function showActiveTab() {
+        document.querySelectorAll('.tabcontent').forEach(content => {
+            content.classList.remove('active');
+        });
+        const activeTabId = `${selectedDay}_${selectedSession}`;
+        const activeContent = document.getElementById(activeTabId);
+        if (activeContent) {
+            activeContent.classList.add('active');
+        }
+    }
+
+    function timeToMinute(e){if(!e)return 0;const[t,o]=e.split(":").map(Number);return 60*t+o}function minuteToTime(e){const t=Math.floor(e/60).toString().padStart(2,"0"),o=(e%60).toString().padStart(2,"0");return`${t}:${o}`}
+    
+    // [NÂNG CẤP TOÀN BỘ] Hàm tính toán lịch học được viết lại để linh hoạt hơn
     function calculateSchedule(dayId) {
         const getVal = (id, defaultValue = 0) => {
             const el = document.getElementById(id);
-            if (!el || el.value.trim() === '') return defaultValue;
-            const parsedValue = parseInt(el.value);
-            return !isNaN(parsedValue) ? parsedValue : defaultValue;
+            return el ? (parseInt(el.value) || defaultValue) : defaultValue;
         };
         
         const isEnabled = document.getElementById(`enable_${dayId}`)?.checked;
-        if (!isEnabled) return [];
+        if (!isEnabled) return []; // [MỚI] Trả về mảng rỗng nếu lịch bị tắt
+
         const hasSpecial = document.getElementById(`has_special_${dayId}`)?.checked;
         const hasDuVao = document.getElementById(`has_duvao_${dayId}`)?.checked;
+        
         const startTime = timeToMinute(document.getElementById(`gio_${dayId}`).value);
         const lessonTime = getVal(`tiethoc_${dayId}`, 45);
         const lessonCount = getVal(`sotiet_${dayId}`, 5);
         const prepareTime = hasDuVao ? getVal(`duvaotiet_${dayId}`, 3) : 0;
+        
+        // [GIẢI PHÁP 1] Đọc chuỗi thời gian ra chơi linh hoạt
         const breakTimeStr = document.getElementById(`rachoi_${dayId}`).value || '5';
         const breakTimes = breakTimeStr.split(',').map(s => parseInt(s.trim()) || 0);
+
+        // [GIẢI PHÁP 2] Đọc thời gian chuẩn bị riêng sau sự kiện đặc biệt
         const isMondayMorning = dayId.includes('t2_sang');
         const specialEventTime = hasSpecial ? getVal(isMondayMorning ? `chaoco_${dayId}` : `chunhiem_${dayId}`) : 0;
         const specialPrepareTime = hasSpecial ? getVal(`prepare_after_special_${dayId}`, 2) : 0;
         
         if (startTime === 0 || lessonTime === 0 || lessonCount === 0) return [];
+
         let schedule = [];
         let currentTime = startTime;
 
+        // 1. Xử lý sự kiện đặc biệt (Chào cờ/Sinh hoạt) nếu có
         if (hasSpecial && specialEventTime > 0) {
             schedule.push({ time: currentTime, description: isMondayMorning ? "Chào cờ" : "Sinh hoạt" });
             currentTime += specialEventTime;
             
             if (specialPrepareTime > 0) {
                 schedule.push({ time: currentTime, description: "Nghỉ sau SH/CC" });
+                currentTime += specialPrepareTime;
             }
-            currentTime += specialPrepareTime;
         }
 
+        // 2. Vòng lặp qua các tiết học và giờ ra chơi
         for (let i = 1; i <= lessonCount; i++) {
             schedule.push({ time: currentTime, description: `Vào tiết ${i}` });
             currentTime += lessonTime;
+
+            // Thêm giờ ra chơi sau mỗi tiết, trừ tiết cuối cùng
             if (i < lessonCount) {
+                // Lấy thời gian ra chơi tương ứng, nếu không có thì dùng giá trị cuối cùng trong mảng
                 const currentBreakTime = breakTimes[i - 1] ?? breakTimes[breakTimes.length - 1]; 
+                
                 if (currentBreakTime > 0) {
                     schedule.push({ time: currentTime, description: `Ra chơi tiết ${i}` });
                     currentTime += currentBreakTime;
+
+                    // Thêm thời gian dự vào chung
                     if (prepareTime > 0) {
                         schedule.push({ time: currentTime, description: `Dự vào tiết ${i + 1}` });
                         currentTime += prepareTime;
@@ -2657,33 +3491,617 @@
             }
         }
 
+        // 3. Thêm sự kiện "Ra về"
         schedule.push({ time: currentTime, description: "Ra về" });
+        
+        // 4. Lọc các sự kiện trùng giờ, sắp xếp và định dạng lại thời gian
         const uniqueSchedule = Array.from(new Map(schedule.map(item => [item.time, item])).values());
         return uniqueSchedule
             .map(item => ({ ...item, timeInMinutes: item.time, time: minuteToTime(item.time) }))
             .sort((a, b) => a.timeInMinutes - b.timeInMinutes);
     }
-    
-    // Các hàm còn lại được giữ nguyên để đảm bảo tính toàn vẹn
-    const days=[{id:"t2",name:"Thứ 2"},{id:"t3",name:"Thứ 3"},{id:"t4",name:"Thứ 4"},{id:"t5",name:"Thứ 5"},{id:"t6",name:"Thứ 6"},{id:"t7",name:"Thứ 7"},{id:"cn",name:"Chủ Nhật"}];
-    const createDayContent = (e, t, o) => { const isMondayMorning = (e === 't2_sang'); const d = `<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586z"></path></svg></div>`; const r = `<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm-1 15H6V7h12v12z"></path></svg></div>`; const l = `<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 2H6c-1.206 0-3 .799-3 3v14c0 2.201 1.794 3 3 3h15v-2H6.012C5.55 19.988 5 19.806 5 19s.55-.988 1.012-1H21V4c0-1.103-.897-2-2-2zm0 13H6V5h13v10z"></path></svg></div>`; const c = `<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M18 5h-2V2H8v3H6c-1.654 0-3 1.346-3 3v6c0 1.654 1.346 3 3 3h1v1c0 .552.447 1 1 1h6c.553 0 1-.448 1-1v-1h1c1.654 0 3-1.346 3-3V8c0-1.654-1.346-3-3-3zm1 9c0 .552-.447 1-1 1H6c-.553 0-1-.448-1-1V8c0-.552.447-1 1-1h12c.553 0 1 .448 1 1v6z"></path></svg></div>`; const m = `<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M14 12V8h-4v4H8l4 4 4-4h-2z"></path></svg></div>`; const p = `<div class="setting-item-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h2v2H4zm0 5h2v2H4zm0 5h2v2H4zm16-8V6H8v2h12zm0 5H8v2h12zm0 5H8v2h12z"></path></svg></div>`; const specialEventInput = isMondayMorning ? `<div class="setting-item full-width">${r}<div class="input-wrapper"><label for="chaoco_${e}">TG Chào cờ</label><div class="unit-input"><input id="chaoco_${e}" type="number" value="40"><span>phút</span></div></div></div>` : `<div class="setting-item full-width">${r}<div class="input-wrapper"><label for="chunhiem_${e}">TG Sinh hoạt</label><div class="unit-input"><input id="chunhiem_${e}" type="number" value="15"><span>phút</span></div></div></div>`; const prepareAfterSpecialInput = `<div class="setting-item full-width">${m}<div class="input-wrapper"><label for="prepare_after_special_${e}">TG chuẩn bị sau SH/CC</label><div class="unit-input"><input id="prepare_after_special_${e}" type="number" value="2"><span>phút</span></div></div></div>`; const u = specialEventInput + prepareAfterSpecialInput; let g = ""; if (!isMondayMorning) { if (o === 'sang') { g = `<div class="copy-button-container"><button class="copy-button sang" onclick="copyMorningSchedule('${e}')">Sao chép đến T3-CN (Sáng)</button></div>`; } else { g = `<div class="copy-button-container"><button class="copy-button chieu" onclick="copyAfternoonSchedule('${e}')">Sao chép đến các ngày Chiều</button></div>`; } } return ` <div id="${e}" class="tabcontent"> <h3 onclick="toggleSettings(this)">Cài đặt Lịch ${t}<br><span class="session-subtitle">(Buổi ${"sang"===o?"Sáng":"Chiều"})</span></h3> <div class="collapsible-settings"> <div class="toggle-actions-group"> <div id="toggle_item_enable_${e}" class="toggle-action-item"> <div class="toggle-action-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42A6.92 6.92 0 0 1 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-1.93.78-3.68 2-4.95L5.59 5.64A8.96 8.96 0 0 0 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.49-1-4.73-2.67-6.41z"/></svg></div> <div class="toggle-action-text">Kích hoạt Lịch</div> <label class="switch ${"chieu"===o?"chieu-toggle":""}"> <input type="checkbox" id="enable_${e}" onchange="toggleScheduleActivation('${e}')" checked> <span class="slider"></span> </label> </div> <div id="toggle_item_special_${e}" class="toggle-action-item"> <div class="toggle-action-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></div> <div class="toggle-action-text">${isMondayMorning ? 'Có Giờ Chào cờ' : 'Có Giờ Sinh hoạt'}</div> <label class="switch ${"chieu"===o?"chieu-toggle":""}"> <input type="checkbox" id="has_special_${e}" onchange="toggleSpecialEvent('${e}')"> <span class="slider"></span> </label> </div> <div id="toggle_item_duvao_${e}" class="toggle-action-item"> <div class="toggle-action-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M10 20h4c0 1.1-.9 2-2 2s-2-.9-2-2zm10-2.64V11c0-3.35-2.36-6.15-5.5-6.83V3.5c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5V4.17C8.36 4.85 6 7.65 6 11v6.36L4 19.72V20h16v-.28l-2-2.36zM15 11h2v2h-2v-2zm-4 0h2v2h-2v-2zm-4 0h2v2H7v-2z"/></svg></div> <div class="toggle-action-text">Có Chuông Dự vào lớp</div> <label class="switch ${"chieu"===o?"chieu-toggle":""}"> <input type="checkbox" id="has_duvao_${e}" onchange="toggleDuVao('${e}')" checked> <span class="slider"></span> </label> </div> </div> <div id="settings_container_${e}" class="settings-grid-container"> ${g} <hr style="margin: 15px; background: #414345; height: 1px; opacity: 0.5;"> <div class="settings-grid"> <div class="setting-item full-width">${d}<div class="input-wrapper"><label for="gio_${e}">Giờ vào học</label><input id="gio_${e}" type="time"></div></div> <div id="special_event_container_${e}" class="settings-grid full-width" style="display: none; grid-template-columns: 1fr; gap: 8px; padding: 0;">${u}</div> <div class="setting-item">${l}<div class="input-wrapper"><label for="tiethoc_${e}">TG Tiết học</label><div class="unit-input"><input id="tiethoc_${e}" type="number" value="45"><span>phút</span></div></div></div> <div class="setting-item">${c}<div class="input-wrapper"><label for="rachoi_${e}">TG Ra chơi</label><div class="unit-input"><input id="rachoi_${e}" type="text" value="5"><span>phút</span></div><div class="input-helper-text">VD: 5,15,5,5</div></div></div> <div class="setting-item" id="duvao_wrapper_${e}">${m}<div class="input-wrapper"><label for="duvaotiet_${e}">TG Dự vào</label><div class="unit-input"><input id="duvaotiet_${e}" type="number" value="3"><span>phút</span></div></div></div> <div class="setting-item">${p}<div class="input-wrapper"><label for="sotiet_${e}">Số tiết học</label><div class="unit-input"><input id="sotiet_${e}" type="number" value="5"><span>tiết</span></div></div></div> </div> <button class="modern-btn preview-button" onclick="updatePreviewTable('${e}')" style="height: 40px; font-size: 0.85em; background: #34495e; color: #f1c40f; border: 1px solid #f1c40f; margin-top: 15px;">Cập nhật bảng chi tiết</button> </div> </div> <details style="margin-top: 15px;"> <summary>Xem chi tiết lịch</summary> <div class="details-container" id="details-${e}"></div> </details> </div>` }
-    const contentWrapper = document.getElementById("tab-content-wrapper");
+
     function updatePreviewTable(e){const t=document.getElementById(`enable_${e}`).checked,o=document.getElementById("details-"+e);if(!o)return;if(!t)return void(o.innerHTML="<p style='text-align:center; padding: 10px;'>Lịch này đang tắt.</p>");const n=calculateSchedule(e);let a="<table><thead><tr><th>STT</th><th>Thời gian</th><th>Nội dung</th></tr></thead><tbody>";n.forEach((e,t)=>{a+=`<tr><td>${t+1}</td><td>${e.time}</td><td>${e.description}</td></tr>`}),a+="</tbody></table>",o.innerHTML=a}
-    function copyAfternoonSchedule(e){const t=e.split("_")[0].toUpperCase();if(!confirm(`Bạn có chắc muốn sao chép lịch của ${t} (chiều) đến TẤT CẢ các ngày còn lại của buổi chiều không?`))return;const o={enabled:document.getElementById(`enable_${e}`).checked,gio:document.getElementById(`gio_${e}`).value,has_special_event:document.getElementById(`has_special_${e}`).checked,chunhiem:document.getElementById(`chunhiem_${e}`).value,prepare_after_special:document.getElementById(`prepare_after_special_${e}`).value,has_duvao_bell:document.getElementById(`has_duvao_${e}`).checked,tiethoc:document.getElementById(`tiethoc_${e}`).value,rachoi:document.getElementById(`rachoi_${e}`).value,duvaotiet:document.getElementById(`duvaotiet_${e}`).value,sotiet:document.getElementById(`sotiet_${e}`).value},n=e.replace("_chieu","");days.filter(e=>e.id!==n).forEach(e=>{const t=`${e.id}_chieu`;document.getElementById(`enable_${t}`).checked=o.enabled,document.getElementById(`gio_${t}`).value=o.gio,document.getElementById(`has_special_${t}`).checked=o.has_special_event,document.getElementById(`chunhiem_${t}`).value=o.chunhiem,document.getElementById(`prepare_after_special_${t}`).value=o.prepare_after_special,document.getElementById(`has_duvao_${t}`).checked=o.has_duvao_bell,document.getElementById(`tiethoc_${t}`).value=o.tiethoc,document.getElementById(`rachoi_${t}`).value=o.rachoi,document.getElementById(`duvaotiet_${t}`).value=o.duvaotiet,document.getElementById(`sotiet_${t}`).value=o.sotiet,toggleSpecialEvent(t),toggleDuVao(t),toggleScheduleActivation(t),updatePreviewTable(t)}),showNotification('Sao chép thành công! Hãy nhấn "Lưu và gửi cập nhật" để áp dụng.',"success")}
-    function copyMorningSchedule(e){const t=e.split("_")[0].toUpperCase();if(!confirm(`Bạn có chắc muốn sao chép lịch của ${t} (sáng) đến các ngày còn lại (T3-CN) không?`))return;const o={enabled:document.getElementById(`enable_${e}`).checked,gio:document.getElementById(`gio_${e}`).value,has_special_event:document.getElementById(`has_special_${e}`).checked,chunhiem:document.getElementById(`chunhiem_${e}`).value,prepare_after_special:document.getElementById(`prepare_after_special_${e}`).value,has_duvao_bell:document.getElementById(`has_duvao_${e}`).checked,tiethoc:document.getElementById(`tiethoc_${e}`).value,rachoi:document.getElementById(`rachoi_${e}`).value,duvaotiet:document.getElementById(`duvaotiet_${e}`).value,sotiet:document.getElementById(`sotiet_${e}`).value},n=e.replace("_sang",""),a=["t3","t4","t5","t6","t7","cn"].filter(e=>e!==n);a.forEach(e=>{const t=`${e}_sang`;document.getElementById(`enable_${t}`).checked=o.enabled,document.getElementById(`gio_${t}`).value=o.gio,document.getElementById(`has_special_${t}`).checked=o.has_special_event,document.getElementById(`chunhiem_${t}`).value=o.chunhiem,document.getElementById(`prepare_after_special_${t}`).value=o.prepare_after_special,document.getElementById(`has_duvao_${t}`).checked=o.has_duvao_bell,document.getElementById(`tiethoc_${t}`).value=o.tiethoc,document.getElementById(`rachoi_${t}`).value=o.rachoi,document.getElementById(`duvaotiet_${t}`).value=o.duvaotiet,document.getElementById(`sotiet_${t}`).value=o.sotiet,toggleSpecialEvent(t),toggleDuVao(t),toggleScheduleActivation(t),updatePreviewTable(t)}),showNotification('Sao chép thành công! Hãy nhấn "Lưu và gửi cập nhật" để áp dụng.',"success")}
-    function initializeTabs(){const e=["cn","t2","t3","t4","t5","t6","t7"],t=(new Date).getDay();selectedDay=e[t];const o=document.querySelector(`.tablinks-day[onclick*="'${selectedDay}'"]`);o?(document.querySelectorAll(".tablinks-day").forEach(e=>e.classList.remove("active")),o.classList.add("active")):document.querySelector(".tablinks-day").classList.add("active"),document.querySelector(`.tablinks-session[onclick*="'${selectedSession}'"]`).classList.add("active"),days.forEach(e=>{contentWrapper.innerHTML+=createDayContent(`${e.id}_sang`,e.name,"sang"),contentWrapper.innerHTML+=createDayContent(`${e.id}_chieu`,e.name,"chieu")}),showActiveTab()}
-    const customizableTexts=[{id:"index-main-title",defaultText:"CHUÔNG BÁO TỰ ĐỘNG",description:"Tiêu đề chính"},{id:"school-name-status",defaultText:"THPT YÊN KHÁNH A",description:"Tên trường"},{id:"index-schedule-title",defaultText:"CÀI ĐẶT LỊCH HỌC",description:"Tiêu đề cài đặt Lịch"},{id:"sohoi-title",defaultText:"CÀI ĐẶT SỐ HỒI CHUÔNG",description:"Tiêu đề Số hồi"},{id:"sohoi-subtitle",defaultText:"(SÁNG - CHIỀU)",description:"Phụ đề Số hồi"},{id:"label-sohoi-batdau",defaultText:"Bắt đầu buổi học",description:"Label: Bắt đầu buổi học"},{id:"label-sohoi-vaotiet",defaultText:"Vào tiết",description:"Label: Vào tiết"},{id:"label-sohoi-rachoi",defaultText:"Ra chơi",description:"Label: Ra chơi"},{id:"label-sohoi-duvao",defaultText:"Dự vào lớp",description:"Label: Dự vào lớp"},{id:"label-sohoi-tgreo",defaultText:"Thời gian reo (ms)",description:"Label: TG Reo"},{id:"label-sohoi-tgnghi",defaultText:"Thời gian nghỉ (ms)",description:"Label: TG Nghỉ"},{id:"btn-save-schedule",defaultText:"Lưu và gửi cập nhật",description:"Nút Lưu chính"},{id:"btn-test-bell",defaultText:"Thử Chuông Chung",description:"Nút Thử Chuông"},{id:"btn-interface-settings",defaultText:"Cài đặt giao diện",description:"Nút Cài đặt giao diện"},{id:"btn-advanced-settings",defaultText:"Cài đặt nâng cao",description:"Nút Cài đặt nâng cao"},{id:"btn-logout",defaultText:"Đăng xuất",description:"Nút Đăng xuất"}];let selectedElementId=null;function openInterfaceSettingsModal(){document.getElementById("interface-settings-modal").classList.add("visible"),populateInterfaceTable()}function closeInterfaceSettingsModal(){document.getElementById("interface-settings-modal").classList.remove("visible"),selectedElementId=null}function populateInterfaceTable(){const e=document.getElementById("text-elements-table-body");e.innerHTML="";const t=localStorage.getItem("interfaceSettings"),o=t?JSON.parse(t):{};customizableTexts.forEach(t=>{const n=document.getElementById(t.id),a=o[t.id]?.text||(n?n.innerText:t.defaultText),l=document.createElement("tr");l.setAttribute("data-element-id",t.id),l.onclick=()=>selectTextElement(l,t.id),l.innerHTML=`<td>${t.description}</td><td id="table-cell-${t.id}">${a}</td>`,e.appendChild(l)})}function selectTextElement(e,t){selectedElementId=t,document.querySelectorAll("#text-elements-table-body tr").forEach(e=>e.classList.remove("selected-row")),e.classList.add("selected-row");const o=localStorage.getItem("interfaceSettings"),n=o?JSON.parse(o):{},a=n[t],l=customizableTexts.find(e=>e.id===t),c=a?.text??l?.defaultText??"";document.getElementById("text-editor-input").value=c;const d=document.getElementById(t),s=d?window.getComputedStyle(d):{},i=a?.color||s.color||"#f5f6fa";document.getElementById("color-picker-input").value=rgbToHex(i);const r=a?.fontSize?parseFloat(a.fontSize):s.fontSize?parseFloat(s.fontSize):15;document.getElementById("font-size-input").value=r;const u=a?.fontFamily||s.fontFamily||"'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif";document.getElementById("font-family-select").value=u}function applyInterfaceChanges(e,t){if(!selectedElementId)return void showNotification("Vui lòng chọn một mục từ bảng để chỉnh sửa!","error");const o=localStorage.getItem("interfaceSettings");let n=o?JSON.parse(o):{};n[selectedElementId]||(n[selectedElementId]={});switch(e){case"text":n[selectedElementId].text=t;break;case"color":n[selectedElementId].color=t;break;case"fontSize":n[selectedElementId].fontSize=t?t+"px":"";break;case"fontFamily":n[selectedElementId].fontFamily=t}localStorage.setItem("interfaceSettings",JSON.stringify(n));const a=document.getElementById(selectedElementId);if(a&&("text"===e&&(a.innerText=t),"color"===e&&(a.style.color=t),"fontSize"===e&&(a.style.fontSize=n[selectedElementId].fontSize),"fontFamily"===e&&(a.style.fontFamily=t)),"text"===e){const e=document.getElementById(`table-cell-${selectedElementId}`);e&&(e.innerText=t)}}function loadInterfaceSettings(){const e=localStorage.getItem("interfaceSettings");if(e){const t=JSON.parse(e);for(const o in t){const e=document.getElementById(o),n=t[o];e&&n&&(n.text&&(e.innerText=n.text),n.color&&(e.style.color=n.color),n.fontSize&&(e.style.fontSize=n.fontSize),n.fontFamily&&(e.style.fontFamily=n.fontFamily))}}}function resetInterfaceSettings(){confirm("Bạn có chắc muốn reset tất cả cài đặt giao diện về mặc định không?")&&(localStorage.removeItem("interfaceSettings"),window.location.reload())}function rgbToHex(e){if(!e||"string"!=typeof e)return"#ffffff";if(e.startsWith("#"))return e;let t=e.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);return t?"#"+(e=>{let t=Number(e).toString(16);return 1==t.length?"0"+t:t})(t[1])+(e=>{let t=Number(e).toString(16);return 1==t.length?"0"+t:t})(t[2])+(e=>{let t=Number(e).toString(16);return 1==t.length?"0"+t:t})(t[3]):"#ffffff"}
-    let holidayData={};let currentDisplayDate=new Date;function generateCalendar(e,t){const o=document.getElementById("calendar-grid"),n=document.getElementById("month-year-display");o.innerHTML="";const a=new Date,l=new Date(e,t,1),c=new Date(e,t+1,0).getDate();n.textContent=`Tháng ${t+1} ${e}`,currentDisplayDate=new Date(e,t,1),["CN","T2","T3","T4","T5","T6","T7"].forEach(e=>{const t=document.createElement("div");t.className="calendar-day-header",t.textContent=e,o.appendChild(t)});for(let e=0;e<l.getDay();e++){const e=document.createElement("div");e.className="calendar-day empty",o.appendChild(e)}for(let n=1;n<=c;n++){const l=document.createElement("div");l.className="calendar-day",l.textContent=n;const c=`${e}-${String(t+1).padStart(2,"0")}-${String(n).padStart(2,"0")}`;l.setAttribute("data-date",c),holidayData[c]&&l.classList.add("holiday"),n===a.getDate()&&t===a.getMonth()&&e===a.getFullYear()&&l.classList.add("today"),l.onclick=()=>toggleHoliday(c),o.appendChild(l)}}function changeMonth(e){currentDisplayDate.setMonth(currentDisplayDate.getMonth()+e),generateCalendar(currentDisplayDate.getFullYear(),currentDisplayDate.getMonth())}
-    function toggleHoliday(e){const t=document.querySelector(`.calendar-day[data-date="${e}"]`);holidayData[e]?(delete holidayData[e],t&&t.classList.remove("holiday")):(holidayData[e]=!0,t&&t.classList.add("holiday"));if(!client||!client.connected)return void showNotification("Chưa kết nối máy chủ! Thay đổi chưa được lưu.","error");const o={holidays:holidayData};client.publish(SET_DATA_TOPIC,JSON.stringify(o),{qos:1,retain:!0}),showNotification(`Đã cập nhật ngày nghỉ ${e}`,"success")}
-    window.onload=function(){loadInterfaceSettings(),connectToMqtt(),setInterval(updateLocalClock,1e3),document.getElementById("admin-password-input").addEventListener("keyup",function(e){"Enter"===e.key&&(e.preventDefault(),document.querySelector("#password-modal-overlay .modal-confirm-btn").click())}),document.getElementById("ota-file-input").addEventListener("change",function(e){const t=e.target.files[0],o=document.getElementById("ota-upload-btn"),n=document.getElementById("ota-file-name");t?(n.textContent=t.name,o.style.display="block"):(n.textContent="Chưa chọn tệp nào",o.style.display="none")}),document.getElementById("text-editor-input").addEventListener("input",e=>applyInterfaceChanges("text",e.target.value)),document.getElementById("color-picker-input").addEventListener("input",e=>applyInterfaceChanges("color",e.target.value)),document.getElementById("font-size-input").addEventListener("input",e=>applyInterfaceChanges("fontSize",e.target.value)),document.getElementById("font-family-select").addEventListener("change",e=>applyInterfaceChanges("fontFamily",e.target.value)),document.getElementById("volume-slider").addEventListener("change",e=>handleMusicControl("set_volume",e.target.value)),document.getElementById("music-progress-bar").addEventListener("change",e=>handleMusicControl("seek",e.target.value)),initializeTabs(),generateCalendar(currentDisplayDate.getFullYear(),currentDisplayDate.getMonth()),document.querySelector(".sticky-action-bar").style.display="flex"};
-    function renderSavedScenario(savedData){const wrapper=document.getElementById("saved-scenario-table-wrapper"),priorityDiv=document.getElementById("saved-scenario-priority"),placeholder=document.getElementById("saved-scenario-placeholder");if(!savedData||!savedData.scenario||0===savedData.scenario.length)return placeholder.style.display="block",wrapper.innerHTML="",wrapper.appendChild(placeholder),void(priorityDiv.innerHTML="");placeholder.style.display="none";const scenario=savedData.scenario;let tableHTML='<table class="scenario-table"><thead><tr><th>STT</th><th>Thời gian</th><th>Số hồi</th></tr></thead><tbody>';scenario.forEach((e,t)=>{tableHTML+=`<tr><td>${t+1}</td><td>${e.time}</td><td>${e.bell} hồi</td></tr>`}),tableHTML+="</tbody></table>",wrapper.innerHTML=tableHTML,"scenario"===savedData.priority?(priorityDiv.textContent="Ưu tiên hiện tại: Kịch Bản",priorityDiv.style.color="#2ecc71"):"schedule"===savedData.priority?(priorityDiv.textContent="Ưu tiên hiện tại: Lịch Học",priorityDiv.style.color="#3498db"):(priorityDiv.textContent="Không có ưu tiên nào được đặt.",priorityDiv.style.color="#bdc3c7")}
+    
+    // [NÂNG CẤP] Các hàm sao chép để bao gồm cả trường dữ liệu mới
+    function copyAfternoonSchedule(sourceDayId) {
+        const sourceDayName = sourceDayId.split('_')[0].toUpperCase();
+        if (!confirm(`Bạn có chắc muốn sao chép lịch của ${sourceDayName} (chiều) đến TẤT CẢ các ngày còn lại của buổi chiều không?`)) return;
+
+        const sourceData = {
+            enabled: document.getElementById(`enable_${sourceDayId}`).checked,
+            gio: document.getElementById(`gio_${sourceDayId}`).value,
+            has_special_event: document.getElementById(`has_special_${sourceDayId}`).checked,
+            chunhiem: document.getElementById(`chunhiem_${sourceDayId}`).value,
+            prepare_after_special: document.getElementById(`prepare_after_special_${sourceDayId}`).value,
+            has_duvao_bell: document.getElementById(`has_duvao_${sourceDayId}`).checked,
+            tiethoc: document.getElementById(`tiethoc_${sourceDayId}`).value,
+            rachoi: document.getElementById(`rachoi_${sourceDayId}`).value,
+            duvaotiet: document.getElementById(`duvaotiet_${sourceDayId}`).value,
+            sotiet: document.getElementById(`sotiet_${sourceDayId}`).value
+        };
+
+        const sourceId = sourceDayId.replace('_chieu', '');
+        days.filter(d => d.id !== sourceId).forEach(day => {
+            const targetDayId = `${day.id}_chieu`;
+            document.getElementById(`enable_${targetDayId}`).checked = sourceData.enabled;
+            document.getElementById(`gio_${targetDayId}`).value = sourceData.gio;
+            document.getElementById(`has_special_${targetDayId}`).checked = sourceData.has_special_event;
+            document.getElementById(`chunhiem_${targetDayId}`).value = sourceData.chunhiem;
+            document.getElementById(`prepare_after_special_${targetDayId}`).value = sourceData.prepare_after_special;
+            document.getElementById(`has_duvao_${targetDayId}`).checked = sourceData.has_duvao_bell;
+            document.getElementById(`tiethoc_${targetDayId}`).value = sourceData.tiethoc;
+            document.getElementById(`rachoi_${targetDayId}`).value = sourceData.rachoi;
+            document.getElementById(`duvaotiet_${targetDayId}`).value = sourceData.duvaotiet;
+            document.getElementById(`sotiet_${targetDayId}`).value = sourceData.sotiet;
+            
+            toggleSpecialEvent(targetDayId);
+            toggleDuVao(targetDayId);
+            toggleScheduleActivation(targetDayId);
+            updatePreviewTable(targetDayId);
+        });
+        showNotification('Sao chép thành công! Hãy nhấn "Lưu và gửi cập nhật" để áp dụng.', "success");
+    }
+
+    function copyMorningSchedule(sourceDayId) {
+        const sourceDayName = sourceDayId.split('_')[0].toUpperCase();
+        if (!confirm(`Bạn có chắc muốn sao chép lịch của ${sourceDayName} (sáng) đến các ngày còn lại (T3-CN) không?`)) return;
+
+        const sourceData = {
+            enabled: document.getElementById(`enable_${sourceDayId}`).checked,
+            gio: document.getElementById(`gio_${sourceDayId}`).value,
+            has_special_event: document.getElementById(`has_special_${sourceDayId}`).checked,
+            chunhiem: document.getElementById(`chunhiem_${sourceDayId}`).value,
+            prepare_after_special: document.getElementById(`prepare_after_special_${sourceDayId}`).value,
+            has_duvao_bell: document.getElementById(`has_duvao_${sourceDayId}`).checked,
+            tiethoc: document.getElementById(`tiethoc_${sourceDayId}`).value,
+            rachoi: document.getElementById(`rachoi_${sourceDayId}`).value,
+            duvaotiet: document.getElementById(`duvaotiet_${sourceDayId}`).value,
+            sotiet: document.getElementById(`sotiet_${sourceDayId}`).value
+        };
+        
+        const sourceId = sourceDayId.replace('_sang', '');
+        const targetDays = ["t3", "t4", "t5", "t6", "t7", "cn"].filter(id => id !== sourceId);
+        
+        targetDays.forEach(dayId => {
+            const targetDayId = `${dayId}_sang`;
+            document.getElementById(`enable_${targetDayId}`).checked = sourceData.enabled;
+            document.getElementById(`gio_${targetDayId}`).value = sourceData.gio;
+            document.getElementById(`has_special_${targetDayId}`).checked = sourceData.has_special_event;
+            document.getElementById(`chunhiem_${targetDayId}`).value = sourceData.chunhiem;
+            document.getElementById(`prepare_after_special_${targetDayId}`).value = sourceData.prepare_after_special;
+            document.getElementById(`has_duvao_${targetDayId}`).checked = sourceData.has_duvao_bell;
+            document.getElementById(`tiethoc_${targetDayId}`).value = sourceData.tiethoc;
+            document.getElementById(`rachoi_${targetDayId}`).value = sourceData.rachoi;
+            document.getElementById(`duvaotiet_${targetDayId}`).value = sourceData.duvaotiet;
+            document.getElementById(`sotiet_${targetDayId}`).value = sourceData.sotiet;
+
+            toggleSpecialEvent(targetDayId);
+            toggleDuVao(targetDayId);
+            toggleScheduleActivation(targetDayId);
+            updatePreviewTable(targetDayId);
+        });
+        showNotification('Sao chép thành công! Hãy nhấn "Lưu và gửi cập nhật" để áp dụng.',"success");
+    }
+    // =======================================================
+    // === KẾT THÚC PHẦN NÂNG CẤP ===
+    // =======================================================
+
+    function resetOtaUi(hideProgress = false) {
+        otaInProgress = false;
+        const uploadBtn = document.getElementById('ota-upload-btn');
+        document.getElementById('ota-select-file-btn').disabled = false;
+        uploadBtn.disabled = false;
+        uploadBtn.textContent = 'Bắt đầu Cập nhật';
+        uploadBtn.style.backgroundColor = '#27ae60';
+
+        if (hideProgress) {
+            document.getElementById('ota-progress-container').style.display = 'none';
+        }
+    }
+
+    function handleOtaUpload() {
+        if (otaInProgress) {
+            showNotification("Quá trình cập nhật đang diễn ra!", 'info');
+            return;
+        }
+        if (!client || !client.connected) return showNotification("Chưa kết nối máy chủ!", 'error');
+        
+        const fileInput = document.getElementById('ota-file-input');
+        const file = fileInput.files[0];
+        const selectedDevices = Array.from(document.querySelectorAll('.ota-target-checkbox:checked')).map(cb => cb.value);
+
+        if (!file) {
+            return showNotification("Vui lòng chọn một file firmware (.bin)!", 'error');
+        }
+        if (selectedDevices.length === 0) {
+            return showNotification("Vui lòng chọn ít nhất một thiết bị để cập nhật!", 'error');
+        }
+
+        otaInProgress = true;
+        const selectBtn = document.getElementById('ota-select-file-btn');
+        const uploadBtn = document.getElementById('ota-upload-btn');
+        const progressContainer = document.getElementById('ota-progress-container');
+        const progressBar = document.getElementById('ota-progress-bar');
+        const statusText = document.getElementById('ota-status-text');
+        const progressDetails = document.getElementById('ota-progress-details');
+        const deviceStatusList = document.getElementById('ota-device-status-list');
+
+        selectBtn.disabled = true;
+        uploadBtn.disabled = true;
+        uploadBtn.textContent = 'Đang cập nhật...';
+        uploadBtn.style.backgroundColor = '#7f8c8d';
+        progressContainer.style.display = 'block';
+        progressBar.style.width = '0%';
+        progressBar.textContent = '0%';
+        statusText.textContent = 'Đang đọc file...';
+        progressDetails.textContent = '';
+        deviceStatusList.innerHTML = '';
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const fileData = e.target.result;
+            const fileSize = fileData.byteLength;
+            const CHUNK_SIZE = 256;
+            let offset = 0;
+            
+            showNotification(`Bắt đầu OTA cho ${selectedDevices.length} thiết bị...`, 'info');
+            
+            statusText.textContent = 'Gửi lệnh bắt đầu...';
+            for (const deviceName of selectedDevices) {
+                const isMaster = (deviceName === 'ESP32-MayChu');
+                const commandTopic = isMaster ? OTA_COMMAND_TOPIC : OTA_SATELLITE_COMMAND_TOPIC_PREFIX + deviceName;
+                client.publish(commandTopic, JSON.stringify({ action: "START", size: fileSize }), { qos: 1 });
+            }
+
+            function sendChunk() {
+                if (!otaInProgress || offset >= fileSize) {
+                    if(otaInProgress) {
+                        statusText.textContent = 'Hoàn tất gửi file, đang chờ xác nhận...';
+                        for (const deviceName of selectedDevices) {
+                            const isMaster = (deviceName === 'ESP32-MayChu');
+                            const commandTopic = isMaster ? OTA_COMMAND_TOPIC : OTA_SATELLITE_COMMAND_TOPIC_PREFIX + deviceName;
+                            client.publish(commandTopic, JSON.stringify({ action: "END" }), { qos: 1 });
+                        }
+                        progressBar.style.width = '100%';
+                    }
+                    return;
+                }
+
+                const chunk = fileData.slice(offset, offset + CHUNK_SIZE);
+                
+                for (const deviceName of selectedDevices) {
+                    const isMaster = (deviceName === 'ESP32-MayChu');
+                    const dataTopic = isMaster ? OTA_DATA_TOPIC : OTA_SATELLITE_DATA_TOPIC_PREFIX + deviceName;
+                    client.publish(dataTopic, new Uint8Array(chunk), { qos: 1 });
+                }
+                
+                offset += chunk.byteLength;
+                const progress = Math.min(100, Math.round((offset / fileSize) * 100));
+                progressBar.style.width = `${progress}%`;
+                progressBar.textContent = `${progress}%`;
+                statusText.textContent = `Đang gửi... ${Math.round(offset/1024)}/${Math.round(fileSize/1024)} KB`;
+                
+                setTimeout(sendChunk, 5);
+            }
+            
+            setTimeout(sendChunk, 1000);
+        };
+
+        reader.onerror = function() {
+            showNotification("Lỗi khi đọc file!", 'error');
+            resetOtaUi(true);
+        };
+
+        reader.readAsArrayBuffer(file);
+    }
+
+    function initializeTabs() {
+        const dayMap = ['cn', 't2', 't3', 't4', 't5', 't6', 't7'];
+        const today = new Date();
+        const currentDayId = dayMap[today.getDay()];
+
+        selectedDay = currentDayId;
+
+        const todayButton = document.querySelector(`.tablinks-day[onclick*="'${currentDayId}'"]`);
+        if (todayButton) {
+            document.querySelectorAll('.tablinks-day').forEach(btn => btn.classList.remove('active'));
+            todayButton.classList.add('active');
+        } else {
+            document.querySelector('.tablinks-day').classList.add('active');
+        }
+
+        document.querySelector(`.tablinks-session[onclick*="'${selectedSession}'"]`).classList.add('active');
+        
+        days.forEach(day => {
+            contentWrapper.innerHTML += createDayContent(`${day.id}_sang`, day.name, "sang");
+            contentWrapper.innerHTML += createDayContent(`${day.id}_chieu`, day.name, "chieu");
+        });
+
+        showActiveTab();
+    }
+    
+    // =======================================================
+    // [MỚI] SCRIPT CHO CÀI ĐẶT GIAO DIỆN
+    // =======================================================
+    const customizableTexts = [
+        { id: 'index-main-title', defaultText: 'CHUÔNG BÁO TỰ ĐỘNG', description: 'Tiêu đề chính' },
+        { id: 'school-name-status', defaultText: 'THPT YÊN KHÁNH A', description: 'Tên trường' },
+        { id: 'index-schedule-title', defaultText: 'CÀI ĐẶT LỊCH HỌC', description: 'Tiêu đề cài đặt Lịch' },
+        { id: 'sohoi-title', defaultText: 'CÀI ĐẶT SỐ HỒI CHUÔNG', description: 'Tiêu đề Số hồi' },
+        { id: 'sohoi-subtitle', defaultText: '(SÁNG - CHIỀU)', description: 'Phụ đề Số hồi' },
+        { id: 'label-sohoi-batdau', defaultText: 'Bắt đầu buổi học', description: 'Label: Bắt đầu buổi học' },
+        { id: 'label-sohoi-vaotiet', defaultText: 'Vào tiết', description: 'Label: Vào tiết' },
+        { id: 'label-sohoi-rachoi', defaultText: 'Ra chơi', description: 'Label: Ra chơi' },
+        { id: 'label-sohoi-duvao', defaultText: 'Dự vào lớp', description: 'Label: Dự vào lớp' },
+        { id: 'label-sohoi-tgreo', defaultText: 'Thời gian reo (ms)', description: 'Label: TG Reo' },
+        { id: 'label-sohoi-tgnghi', defaultText: 'Thời gian nghỉ (ms)', description: 'Label: TG Nghỉ' },
+        { id: 'btn-save-schedule', defaultText: 'Lưu và gửi cập nhật', description: 'Nút Lưu chính' },
+        { id: 'btn-test-bell', defaultText: 'Thử Chuông Chung', description: 'Nút Thử Chuông' },
+        { id: 'btn-interface-settings', defaultText: 'Cài đặt giao diện', description: 'Nút Cài đặt giao diện' },
+        { id: 'btn-advanced-settings', defaultText: 'Cài đặt nâng cao', description: 'Nút Cài đặt nâng cao' },
+        { id: 'btn-logout', defaultText: 'Đăng xuất', description: 'Nút Đăng xuất' },
+    ];
+    let selectedElementId = null;
+
+    function openInterfaceSettingsModal() {
+        document.getElementById('interface-settings-modal').classList.add('visible');
+        populateInterfaceTable();
+    }
+
+    function closeInterfaceSettingsModal() {
+        document.getElementById('interface-settings-modal').classList.remove('visible');
+        selectedElementId = null;
+    }
+
+    function populateInterfaceTable() {
+        const tableBody = document.getElementById('text-elements-table-body');
+        tableBody.innerHTML = '';
+        const savedSettings = localStorage.getItem('interfaceSettings');
+        const settings = savedSettings ? JSON.parse(savedSettings) : {};
+        customizableTexts.forEach(item => {
+            const element = document.getElementById(item.id);
+            const currentText = settings[item.id]?.text || (element ? element.innerText : item.defaultText);
+            const row = document.createElement('tr');
+            row.setAttribute('data-element-id', item.id);
+            row.onclick = () => selectTextElement(row, item.id);
+            row.innerHTML = `<td>${item.description}</td><td id="table-cell-${item.id}">${currentText}</td>`;
+            tableBody.appendChild(row);
+        });
+    }
+
+    function selectTextElement(row, elementId) {
+        selectedElementId = elementId;
+        document.querySelectorAll('#text-elements-table-body tr').forEach(r => r.classList.remove('selected-row'));
+        row.classList.add('selected-row');
+
+        const savedSettings = localStorage.getItem('interfaceSettings');
+        const settings = savedSettings ? JSON.parse(savedSettings) : {};
+        const specificSettings = settings[elementId];
+        const defaultConfig = customizableTexts.find(item => item.id === elementId);
+
+        const textValue = specificSettings?.text ?? defaultConfig?.defaultText ?? '';
+        document.getElementById('text-editor-input').value = textValue;
+        
+        const element = document.getElementById(elementId);
+        const computedStyle = element ? window.getComputedStyle(element) : {};
+
+        const colorValue = specificSettings?.color || computedStyle.color || '#f5f6fa';
+        document.getElementById('color-picker-input').value = rgbToHex(colorValue);
+
+        const fontSizeValue = specificSettings?.fontSize ? parseFloat(specificSettings.fontSize) : (computedStyle.fontSize ? parseFloat(computedStyle.fontSize) : 15);
+        document.getElementById('font-size-input').value = fontSizeValue;
+
+        const fontFamilyValue = specificSettings?.fontFamily || computedStyle.fontFamily || "'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif";
+        document.getElementById('font-family-select').value = fontFamilyValue;
+    }
+
+    function applyInterfaceChanges(property, value) {
+        if (!selectedElementId) {
+            showNotification("Vui lòng chọn một mục từ bảng để chỉnh sửa!", "error");
+            return;
+        }
+
+        const savedSettings = localStorage.getItem('interfaceSettings');
+        let settings = savedSettings ? JSON.parse(savedSettings) : {};
+
+        if (!settings[selectedElementId]) {
+            settings[selectedElementId] = {};
+        }
+
+        switch (property) {
+            case 'text': settings[selectedElementId].text = value; break;
+            case 'color': settings[selectedElementId].color = value; break;
+            case 'fontSize': settings[selectedElementId].fontSize = value ? value + 'px' : ''; break;
+            case 'fontFamily': settings[selectedElementId].fontFamily = value; break;
+        }
+
+        localStorage.setItem('interfaceSettings', JSON.stringify(settings));
+
+        const element = document.getElementById(selectedElementId);
+        if (element) {
+            if (property === 'text') element.innerText = value;
+            if (property === 'color') element.style.color = value;
+            if (property === 'fontSize') element.style.fontSize = settings[selectedElementId].fontSize;
+            if (property === 'fontFamily') element.style.fontFamily = value;
+        }
+        
+        if (property === 'text') {
+            const tableCell = document.getElementById(`table-cell-${selectedElementId}`);
+            if (tableCell) tableCell.innerText = value;
+        }
+    }
+
+    function loadInterfaceSettings() {
+        const savedSettings = localStorage.getItem('interfaceSettings');
+        if (savedSettings) {
+            const settings = JSON.parse(savedSettings);
+            for (const id in settings) {
+                const element = document.getElementById(id);
+                const itemSettings = settings[id];
+                if (element && itemSettings) {
+                    if (itemSettings.text) element.innerText = itemSettings.text;
+                    if (itemSettings.color) element.style.color = itemSettings.color;
+                    if (itemSettings.fontSize) element.style.fontSize = itemSettings.fontSize;
+                    if (itemSettings.fontFamily) element.style.fontFamily = itemSettings.fontFamily;
+                }
+            }
+        }
+    }
+
+    function resetInterfaceSettings() {
+        if (confirm("Bạn có chắc muốn reset tất cả cài đặt giao diện về mặc định không?")) {
+            localStorage.removeItem('interfaceSettings');
+            window.location.reload();
+        }
+    }
+
+    function rgbToHex(rgb) {
+      if (!rgb || typeof rgb !== 'string') return '#ffffff';
+      if (rgb.startsWith('#')) return rgb;
+      let match = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+      if (!match) return '#ffffff';
+      function toHex(c) {
+        let hex = Number(c).toString(16);
+        return hex.length == 1 ? "0" + hex : hex;
+      }
+      return "#" + toHex(match[1]) + toHex(match[2]) + toHex(match[3]);
+    }
+    // =======================================================
+    // [MỚI] SCRIPT CHO LỊCH NGHỈ LỄ
+    // =======================================================
+    let holidayData = {}; 
+    let currentDisplayDate = new Date();
+
+    function generateCalendar(year, month) {
+        const grid = document.getElementById('calendar-grid');
+        const display = document.getElementById('month-year-display');
+        grid.innerHTML = '';
+
+        const today = new Date();
+        const firstDayOfMonth = new Date(year, month, 1);
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        
+        display.textContent = `Tháng ${month + 1} ${year}`;
+        currentDisplayDate = new Date(year, month, 1);
+
+        ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'].forEach(day => {
+            const dayHeader = document.createElement('div');
+            dayHeader.className = 'calendar-day-header';
+            dayHeader.textContent = day;
+            grid.appendChild(dayHeader);
+        });
+
+        for (let i = 0; i < firstDayOfMonth.getDay(); i++) {
+            const emptyCell = document.createElement('div');
+            emptyCell.className = 'calendar-day empty';
+            grid.appendChild(emptyCell);
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayCell = document.createElement('div');
+            dayCell.className = 'calendar-day';
+            dayCell.textContent = day;
+            
+            const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            dayCell.setAttribute('data-date', dateString);
+
+            if (holidayData[dateString]) {
+                dayCell.classList.add('holiday');
+            }
+            if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                dayCell.classList.add('today');
+            }
+
+            dayCell.onclick = () => toggleHoliday(dateString);
+            grid.appendChild(dayCell);
+        }
+    }
+
+    function changeMonth(offset) {
+        currentDisplayDate.setMonth(currentDisplayDate.getMonth() + offset);
+        generateCalendar(currentDisplayDate.getFullYear(), currentDisplayDate.getMonth());
+    }
+
+    // File: index full.html
+
+function toggleHoliday(dateString) {
+    function loadHolidayData(data) {
+    if (data) {
+        holidayData = data; // Cập nhật biến toàn cục với dữ liệu từ thiết bị
+        // Vẽ lại giao diện lịch với dữ liệu mới
+        generateCalendar(currentDisplayDate.getFullYear(), currentDisplayDate.getMonth());
+    }
+}
+    const cell = document.querySelector(`.calendar-day[data-date="${dateString}"]`);
+    if (holidayData[dateString]) {
+        delete holidayData[dateString];
+        if(cell) cell.classList.remove('holiday');
+    } else {
+        holidayData[dateString] = true; // Giá trị có thể là true hoặc một object rỗng
+        if(cell) cell.classList.add('holiday');
+    }
+
+    // [THÊM MỚI] Gửi cập nhật lịch nghỉ lễ ngay lập tức
+    if (!client || !client.connected) {
+        return showNotification("Chưa kết nối máy chủ! Thay đổi chưa được lưu.", 'error');
+    }
+
+    // Tạo một payload chỉ chứa thông tin ngày nghỉ
+    const payload = {
+        holidays: holidayData 
+    };
+
+    // Gửi lên topic SET_DATA_TOPIC, ESP32 sẽ tự biết cách xử lý
+    client.publish(SET_DATA_TOPIC, JSON.stringify(payload), { qos: 1, retain: true });
+    showNotification(`Đã cập nhật ngày nghỉ ${dateString}`, 'success');
+}
+    // =======================================================
+
+    window.onload = function() { 
+        loadInterfaceSettings();
+        connectToMqtt();
+        setInterval(updateLocalClock, 1000);
+        
+        document.getElementById('admin-password-input').addEventListener('keyup', function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                document.querySelector('#password-modal-overlay .modal-confirm-btn').click();
+            }
+        });
+
+        document.getElementById('ota-file-input').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            const uploadBtn = document.getElementById('ota-upload-btn');
+            const fileNameDiv = document.getElementById('ota-file-name');
+            if (file) {
+                fileNameDiv.textContent = file.name;
+                uploadBtn.style.display = 'block';
+            } else {
+                fileNameDiv.textContent = 'Chưa chọn tệp nào';
+                uploadBtn.style.display = 'none';
+            }
+        });
+        
+        document.getElementById('text-editor-input').addEventListener('input', (e) => applyInterfaceChanges('text', e.target.value));
+        document.getElementById('color-picker-input').addEventListener('input', (e) => applyInterfaceChanges('color', e.target.value));
+        document.getElementById('font-size-input').addEventListener('input', (e) => applyInterfaceChanges('fontSize', e.target.value));
+        document.getElementById('font-family-select').addEventListener('change', (e) => applyInterfaceChanges('fontFamily', e.target.value));
+
+        document.getElementById('volume-slider').addEventListener('change', (e) => handleMusicControl('set_volume', e.target.value));
+        document.getElementById('music-progress-bar').addEventListener('change', (e) => handleMusicControl('seek', e.target.value));
+
+        initializeTabs();
+        generateCalendar(currentDisplayDate.getFullYear(), currentDisplayDate.getMonth());
+        // Hiển thị thanh hành động mặc định vì tab đầu tiên (Lịch học) cần nó
+        document.querySelector('.sticky-action-bar').style.display = 'flex';
+    };
+    // =======================================================
+// [THÊM MỚI] HÀM HIỂN THỊ KỊCH BẢN ĐÃ LƯU TỪ ESP32
+// =======================================================
+
+function renderSavedScenario(savedData) {
+    const wrapper = document.getElementById('saved-scenario-table-wrapper');
+    const priorityDiv = document.getElementById('saved-scenario-priority');
+    const placeholder = document.getElementById('saved-scenario-placeholder');
+
+    if (!savedData || !savedData.scenario || savedData.scenario.length === 0) {
+        placeholder.style.display = 'block';
+        wrapper.innerHTML = ''; 
+        wrapper.appendChild(placeholder);
+        priorityDiv.innerHTML = '';
+        return;
+    }
+
+    placeholder.style.display = 'none';
+    const scenario = savedData.scenario;
+
+    let tableHTML = `<table class="scenario-table">
+            <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Thời gian</th>
+                    <th>Số hồi</th>
+                </tr>
+            </thead>
+            <tbody>`;
+    scenario.forEach((event, index) => {
+        tableHTML += `<tr>
+                    <td>${index + 1}</td>
+                    <td>${event.time}</td>
+                    <td>${event.bell} hồi</td>
+                </tr>`;
+    });
+    tableHTML += `</tbody></table>`;
+    wrapper.innerHTML = tableHTML;
+
+    if (savedData.priority === 'scenario') {
+        priorityDiv.textContent = 'Ưu tiên hiện tại: Kịch Bản';
+        priorityDiv.style.color = '#2ecc71';
+    } else if (savedData.priority === 'schedule') {
+        priorityDiv.textContent = 'Ưu tiên hiện tại: Lịch Học';
+        priorityDiv.style.color = '#3498db';
+    } else {
+        priorityDiv.textContent = 'Không có ưu tiên nào được đặt.';
+        priorityDiv.style.color = '#bdc3c7';
+    }
+}
   </script>
   
 <script>
-// This is a remnant script block. It is overridden by the main script block above.
-function addScenario() {}
-function showNotification(msg, type="info") {}
+// This is a remnant script block from the original file. It is being kept for 100% file integrity,
+// but the main logic is handled by the larger script block above. The functions here are overridden.
+function addScenario() {
+  const startTime = document.getElementById("scenario-start-time").value;
+  const intervals = document.getElementById("scenario-intervals").value;
+  const bells = document.getElementById("scenario-bells").value;
+
+  if (!startTime || !bells) {
+    showNotification("Vui lòng nhập đủ thông tin!", "error");
+    return;
+  }
+
+  const scenario = { startTime, intervals, bells };
+
+  if (typeof client !== 'undefined' && client && client.connected) {
+    client.publish("device/command/saveScenario", JSON.stringify(scenario));
+    showNotification("Đã gửi kịch bản lên thiết bị", "success");
+  } else {
+    showNotification("Mất kết nối MQTT", "error");
+  }
+
+  const tableHtml = `
+    <table class="scenario-table">
+      <thead>
+        <tr><th>STT</th><th>Thời gian</th><th>Số hồi</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>${startTime}${intervals ? " +" + intervals : ""}</td>
+          <td>${bells} hồi</td>
+        </tr>
+      </tbody>
+    </table>
+  `;
+  document.getElementById("saved-scenario-table-wrapper").innerHTML = tableHtml;
+}
+
+function showNotification(msg, type="info") {
+  const area = document.getElementById("notification-area");
+  if (!area) return;
+  const div = document.createElement("div");
+  div.className = `notification ${type}`;
+  div.textContent = msg;
+  area.appendChild(div);
+  setTimeout(() => div.classList.add("show"), 50);
+  setTimeout(() => {
+    div.classList.remove("show");
+    if (div.parentNode) div.parentNode.removeChild(div);
+  }, 3000);
+}
 </script>
 
 </body>
 </html>
+
