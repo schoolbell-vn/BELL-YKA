@@ -1280,15 +1280,11 @@
         gap: 10px;
         margin-top: 15px;
     }
-    .interface-action-buttons button {
-        flex-grow: 1;
-    }
-    .reset-btn {
-        background: #c0392b; color: #fff;
-    }
-    .save-btn {
-        background: #27ae60; color: #fff;
-    }
+    /* === [PHẦN ĐÃ XÓA THEO YÊU CẦU] === */
+    /* .interface-action-buttons button { ... } ĐÃ XÓA */
+    /* .reset-btn { ... } ĐÃ XÓA */
+    /* .save-btn { ... } ĐÃ XÓA */
+    
     /* === [MỚI] GIAO DIỆN LỊCH NGHỈ LỄ === */
     .holiday-calendar-container {
         padding: 0 15px;
@@ -2246,7 +2242,7 @@
 
   <div class="modal-overlay" id="interface-settings-modal">
     <div class="modal-content">
-        <h4>Cài đặt Giao diện</h4>
+        <h4 id="interface-modal-title">Cài đặt Giao diện</h4>
         <div class="interface-table-container">
             <table>
                 <thead>
@@ -2262,19 +2258,19 @@
         <div class="interface-controls">
             <div class="control-grid">
                 <div class="control-group full-width">
-                    <label for="text-editor-input">Nội dung</label>
+                    <label for="text-editor-input" id="interface-label-content">Nội dung</label>
                     <input type="text" id="text-editor-input" placeholder="Chọn một dòng trong bảng để sửa...">
                 </div>
                 <div class="control-group">
-                    <label for="color-picker-input">Màu chữ</label>
+                    <label for="color-picker-input" id="interface-label-color">Màu chữ</label>
                     <input type="color" id="color-picker-input">
                 </div>
                 <div class="control-group">
-                    <label for="font-size-input">Cỡ chữ (px)</label>
+                    <label for="font-size-input" id="interface-label-fontsize">Cỡ chữ (px)</label>
                     <input type="number" id="font-size-input" min="8" max="40">
                 </div>
                 <div class="control-group full-width">
-                    <label for="font-family-select">Font chữ</label>
+                    <label for="font-family-select" id="interface-label-fontfamily">Font chữ</label>
                     <select id="font-family-select">
                         <option value="'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif">Mặc định (Segoe UI)</option>
                         <option value="Arial, sans-serif">Arial</option>
@@ -2286,11 +2282,14 @@
                 </div>
             </div>
             <div class="interface-action-buttons">
-                <button class="modal-buttons-button reset-btn" onclick="resetInterfaceSettings()">Reset về Mặc định</button>
+                <button class="modern-btn logout-button" onclick="resetInterfaceSettings()" style="width: 100%;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 10px;"><path d="M13.5 2.5a1 1 0 1 0-2 0v2.4a6.5 6.5 0 1 0 9.9 7.4 1 1 0 1 0-1.8-1a4.5 4.5 0 1 1-6.6-5.9V8a1 1 0 1 0 2 0V2.5z"></path></svg>
+                    <span id="interface-btn-reset">Reset về Mặc định</span>
+                 </button>
             </div>
         </div>
         <div class="modal-buttons">
-            <button class="modal-cancel-btn" onclick="closeInterfaceSettingsModal()">Đóng</button>
+            <button class="modal-cancel-btn" onclick="closeInterfaceSettingsModal()"><span id="interface-btn-close">Đóng</span></button>
         </div>
     </div>
   </div>
@@ -3944,8 +3943,8 @@ function loadHolidayData(holidays) {
         { id: 'index-main-title', defaultText: 'CHUÔNG BÁO TỰ ĐỘNG', description: 'Tiêu đề chính' },
         { id: 'school-name-status', defaultText: 'THPT YÊN KHÁNH A', description: 'Tên trường' },
         { id: 'index-schedule-title', defaultText: 'CÀI ĐẶT LỊCH HỌC', description: 'Tiêu đề cài đặt Lịch' },
-        { id: 'sohoi-title', defaultText: 'CÀI ĐẶT SỐ HỒI CHUÔNG', description: 'Tiêu đề Số hồi' },
-        { id: 'sohoi-subtitle', defaultText: '(SÁNG - CHIỀU)', description: 'Phụ đề Số hồi' },
+        { id: 'sohoi-title', defaultText: 'CÀI ĐẶT CHUÔNG BÁO & ÂM THANH', description: 'Tiêu đề Chuông & Âm thanh' }, // ĐÃ SỬA LẠI TEXT TRONG HÀM GATHER/POPULATE
+        { id: 'sohoi-subtitle', defaultText: '(CHUNG CHO TẤT CẢ CÁC NGÀY)', description: 'Phụ đề Chuông & Âm thanh' }, // ĐÃ SỬA LẠI TEXT
         { id: 'label-sohoi-batdau', defaultText: 'Bắt đầu buổi học', description: 'Label: Bắt đầu buổi học' },
         { id: 'label-sohoi-vaotiet', defaultText: 'Vào tiết', description: 'Label: Vào tiết' },
         { id: 'label-sohoi-rachoi', defaultText: 'Ra chơi', description: 'Label: Ra chơi' },
@@ -3953,10 +3952,18 @@ function loadHolidayData(holidays) {
         { id: 'label-sohoi-tgreo', defaultText: 'Thời gian reo (ms)', description: 'Label: TG Reo' },
         { id: 'label-sohoi-tgnghi', defaultText: 'Thời gian nghỉ (ms)', description: 'Label: TG Nghỉ' },
         { id: 'btn-save-schedule', defaultText: 'Lưu và gửi cập nhật', description: 'Nút Lưu chính' },
-        { id: 'btn-test-bell', defaultText: 'Thử Chuông Chung', description: 'Nút Thử Chuông' },
+        { id: 'btn-test-bell', defaultText: 'Thử Chuông Báo Chung', description: 'Nút Thử Chuông' }, // ĐÃ SỬA LẠI TEXT
         { id: 'btn-interface-settings', defaultText: 'Cài đặt giao diện', description: 'Nút Cài đặt giao diện' },
         { id: 'btn-advanced-settings', defaultText: 'Cài đặt nâng cao', description: 'Nút Cài đặt nâng cao' },
         { id: 'btn-logout', defaultText: 'Đăng xuất', description: 'Nút Đăng xuất' },
+        // [PHẦN MỚI THÊM THEO YÊU CẦU CỦA ÔNG TÚ]
+        { id: 'interface-modal-title', defaultText: 'Cài đặt Giao diện', description: 'Giao diện: Tiêu đề Modal' },
+        { id: 'interface-label-content', defaultText: 'Nội dung', description: 'Giao diện: Label Nội dung' },
+        { id: 'interface-label-color', defaultText: 'Màu chữ', description: 'Giao diện: Label Màu chữ' },
+        { id: 'interface-label-fontsize', defaultText: 'Cỡ chữ (px)', description: 'Giao diện: Label Cỡ chữ' },
+        { id: 'interface-label-fontfamily', defaultText: 'Font chữ', description: 'Giao diện: Label Font chữ' },
+        { id: 'interface-btn-reset', defaultText: 'Reset về Mặc định', description: 'Giao diện: Nút Reset' },
+        { id: 'interface-btn-close', defaultText: 'Đóng', description: 'Giao diện: Nút Đóng Modal' }
     ];
     let selectedElementId = null;
 
