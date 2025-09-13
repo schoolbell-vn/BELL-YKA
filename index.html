@@ -504,6 +504,30 @@
     .scenario-table th:nth-child(1), .scenario-table td:nth-child(1) { width: 15%; } /* Cột STT */
     .scenario-table th:nth-child(2), .scenario-table td:nth-child(2) { width: 42.5%; } /* Cột Thời gian */
     .scenario-table th:nth-child(3), .scenario-table td:nth-child(3) { width: 42.5%; } /* Cột Số hồi */
+    
+    /* [THÊM MỚI] CSS cho Bảng Kịch Bản Đã Lưu (Yêu cầu nền đen chữ vàng) */
+    #saved-scenario-table-wrapper .scenario-table {
+        background: #232526; /* Nền đen */
+        border-radius: 8px; /* Bo góc cho đồng bộ */
+        overflow: hidden; /* Ẩn tràn viền khi bo góc */
+    }
+    #saved-scenario-table-wrapper .scenario-table th {
+        background: #f1c40f; /* Nền vàng (như bảng chi tiết) */
+        color: #232526; /* Chữ đen (như bảng chi tiết) */
+    }
+    #saved-scenario-table-wrapper .scenario-table tbody tr:nth-child(odd) {
+        background: #232526; /* Nền đen */
+        color: #ecf0f1;
+    }
+    #saved-scenario-table-wrapper .scenario-table tbody tr:nth-child(even) {
+        background: #414345; /* Nền xám tối (như bảng chi tiết) */
+        color: #ecf0f1;
+    }
+    /* [THÊM MỚI] CSS cho Nút Xóa Kịch Bản */
+    .delete-scenario-button-container {
+        padding: 15px 0 5px 0; /* Căn lề cho nút xóa */
+    }
+            
     /* === CÀI ĐẶT NÚT GẠT (TOGGLE SWITCH) DẠNG BOX === */
     .toggle-actions-group {
         display: flex;
@@ -1810,8 +1834,6 @@
             </div>
         </div>
     </details>
-    <div id="scenario-preview-table-container" style="margin-top: 20px;">
-    </div>
 
     <div id="saved-scenario-container" style="padding: 0; margin-top: 20px;">
         <h5 style="text-align: center; color: #3498db; text-transform: uppercase; margin: 10px 0 15px 0;">
@@ -1826,8 +1848,17 @@
         </div>
         <div id="saved-scenario-days-display" class="saved-days-container">
         </div>
+        <div class="delete-scenario-button-container">
+            <button class="modern-btn logout-button" onclick="deleteSavedScenario()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg>
+                Xóa Kịch Bản Đã Lưu
+            </button>
+        </div>
     </div>
-   </div>
+    
+    <div id="scenario-preview-table-container" style="margin-top: 20px;">
+    </div>
+    </div>
   </div>
         <div id="tab-cai-dat" class="main-tab-content">
             <div class="sohoi-container" style="margin-top: 5px;">
@@ -2572,6 +2603,39 @@
     document.getElementById('scenario-preview-table-container').innerHTML = '';
     previewedScenarioData = null;
 }
+
+    // [THÊM MỚI] Hàm xóa kịch bản đã lưu
+    function deleteSavedScenario() {
+        if (!client || !client.connected) {
+            return showNotification("Chưa kết nối máy chủ!", 'error');
+        }
+        
+        if (!confirm("Ông có chắc chắn muốn XÓA TOÀN BỘ kịch bản đã lưu trên thiết bị không? Hành động này không thể hoàn tác.")) {
+            return;
+        }
+
+        const payload = {
+            scenario: [], // Gửi một mảng kịch bản rỗng
+            priority: 'none',
+            days: []
+        };
+        
+        const SCENARIO_SET_TOPIC = "esp32/bell/scenario/set"; // Topic đã được định nghĩa trong hàm sendScenario
+        client.publish(SCENARIO_SET_TOPIC, JSON.stringify(payload), { qos: 1 });
+
+        // Cập nhật giao diện ngay lập tức
+        renderSavedScenario(payload); 
+        
+        // Xóa khỏi bộ nhớ trình duyệt
+        try {
+            localStorage.removeItem('savedScenario');
+        } catch (e) {
+            console.error("Lỗi khi xóa kịch bản khỏi localStorage:", e);
+        }
+
+        showNotification("Đã gửi lệnh xóa kịch bản đến thiết bị!", "success");
+    }
+            
     // =======================================================
     // PHẦN MÃ GỐC (GIỮ NGUYÊN)
     // =======================================================
