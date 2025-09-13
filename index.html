@@ -29,6 +29,32 @@
     box-shadow: none;
     margin: 0 15px 15px 15px; /* Căn lề cho đồng bộ */
 }
+/* === [CSS MỚI] CHO BỐ CỤC THẺ (CARD) === */
+.content-card {
+    background: #2c3e50; /* [NỀN THẺ] - Nền xanh xám đậm */
+    border: 1px solid #414345;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Ghi đè lại nền của khối input bên trong Card 1 để thống nhất */
+.scenario-setup-details .details-content {
+    background: #2c3e50; /* Đảm bảo nền này khớp với nền Card */
+    padding: 15px; /* Thống nhất padding */
+    border: none;
+    margin-top: 0;
+}
+
+/* Định dạng cho Card 2 */
+#saved-scenario-container {
+    background: #2c3e50;
+    border: 1px solid #414345;
+    border-radius: 10px;
+    padding: 15px !important; /* Ghi đè inline style="padding: 0..." */
+    margin-top: 15px !important; /* Đảm bảo khoảng cách đều 15px */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
 .scenario-setup-details > summary {
     display: flex;
     align-items: center;
@@ -1756,12 +1782,8 @@
 
            <div class="scenario-timer-container">
     
-    <details class="scenario-setup-details">
-        <summary>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586z"></path></svg>
-            THIẾT LẬP KỊCH BẢN MỚI
-        </summary>
-        
+        <div class="scenario-setup-details content-card">
+                
         <div class="details-content" style="padding-top: 20px; display: flex; flex-direction: column; gap: 15px;">
             <div class="scenario-input-group">
                 <label for="scenario-start-time">
@@ -1808,12 +1830,12 @@
                 <button class="modern-btn test-button" onclick="previewScenario()">Xem Trước Kịch Bản</button>
                 <button class="modern-btn save-button" onclick="sendScenario()" style="background: linear-gradient(90deg, #27ae60, #2ecc71); border-color: #2ecc71; color: white;">Gửi Lệnh Lên Thiết Bị</button>
             </div>
+            <div id="scenario-preview-table-container" style="margin-top: 20px;">
+            </div>      
         </div>
-    </details>
-    <div id="scenario-preview-table-container" style="margin-top: 20px;">
-    </div>
-
-    <div id="saved-scenario-container" style="padding: 0; margin-top: 20px;">
+   </div>
+    
+   <div id="saved-scenario-container">
         <h5 style="text-align: center; color: #3498db; text-transform: uppercase; margin: 10px 0 15px 0;">
             KỊCH BẢN HIỆN TẠI ĐANG LƯU TRÊN THIẾT BỊ
         </h5>
@@ -1825,6 +1847,12 @@
         <div id="saved-scenario-priority" style="text-align: center; font-size: 0.9em; color: #bdc3c7; margin-top: 10px; font-style: italic;">
         </div>
         <div id="saved-scenario-days-display" class="saved-days-container">
+        </div>
+        <div style="padding: 15px 0 5px 0; border-top: 1px solid #414345; margin-top: 15px;">
+            <button class="modern-btn logout-button" onclick="confirmDeleteScenario()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="width: 1.1em; height: 1.1em; margin-right: 10px;"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg>
+                XÓA TOÀN BỘ KỊCH BẢN
+            </button>    
         </div>
     </div>
    </div>
@@ -2572,9 +2600,38 @@
     document.getElementById('scenario-preview-table-container').innerHTML = '';
     previewedScenarioData = null;
 }
-    // =======================================================
-    // PHẦN MÃ GỐC (GIỮ NGUYÊN)
-    // =======================================================
+// [LOGIC MỚI] HÀM XÁC NHẬN VÀ XÓA KỊCH BẢN
+function confirmDeleteScenario() {
+    if (!confirm("Ông có chắc chắn muốn XÓA TOÀN BỘ kịch bản hẹn giờ đã lưu trên thiết bị không? Hành động này không thể hoàn tác.")) {
+        return;
+    }
+
+    if (!client || !client.connected) {
+        return showNotification("Chưa kết nối máy chủ!", 'error');
+    }
+
+    // Tạo một payload rỗng để gửi lên thiết bị
+    const clearPayload = {
+        scenario: [], // Gửi một mảng kịch bản rỗng
+        priority: 'none',
+        days: []
+    };
+
+    const SCENARIO_SET_TOPIC = "esp32/bell/scenario/set"; // Dùng chung topic với lệnh SET
+    client.publish(SCENARIO_SET_TOPIC, JSON.stringify(clearPayload), { qos: 1 });
+
+    showNotification("Đã gửi lệnh xóa kịch bản!", "success");
+
+    // Cập nhật giao diện ngay lập tức về trạng thái rỗng
+    renderSavedScenario(clearPayload);
+
+    // Xóa khỏi bộ nhớ trình duyệt
+    try {
+        localStorage.removeItem('savedScenario');
+    } catch (e) {
+        console.error("Lỗi xóa kịch bản khỏi localStorage:", e);
+    }
+}
     if("true"!==sessionStorage.getItem("isLoggedIn"))window.location.href="login.html";
     
     let client, serverTime = null, targetDevice = null, targetAction = null, otaInProgress = false;
