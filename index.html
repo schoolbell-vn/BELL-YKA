@@ -619,7 +619,7 @@
     }
     summary#header-sohoi {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         align-items: center;
         justify-content: center;
         height: 50px;
@@ -1292,7 +1292,7 @@
     }
     .holiday-calendar-container details summary {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         align-items: center;
         justify-content: center;
         height: 50px;
@@ -1364,14 +1364,14 @@
         cursor: default;
         opacity: 0.3;
     }
-    /* === [MỚI] GIAO DIỆN ĐIỀU KHIỂN NHẠC (MP3 PLAYER) === */
+
     .music-player-container {
         padding: 0 15px;
         margin-top: 25px;
     }
     .music-player-container > details > summary {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         align-items: center;
         justify-content: center;
         height: 50px;
@@ -2004,7 +2004,10 @@
             <div class="holiday-calendar-container">
                 <details>
                     <summary>
-                      <div id="title-holiday-calendar">LỊCH NGHỈ LỄ</div>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24px" height="24px" style="margin-right: 10px; flex-shrink: 0;">
+                            <path d="M19 4h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm-1 15H6V7h12v12z"></path>
+                        </svg>
+                        <div id="title-holiday-calendar">LỊCH NGHỈ LỄ</div>
                     </summary>
                     <div class="details-content">
                         <div class="calendar-header">
@@ -2023,8 +2026,11 @@
             <div class="music-player-container" style="margin-top: 5px;">
               <details open>
                   <summary>
-                     <div id="title-music-player">ĐIỀU KHIỂN PHÁT NHẠC</div>
-                  </summary>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24px" height="24px" style="margin-right: 10px; flex-shrink: 0;">
+                            <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"></path>
+                        </svg>
+                    <div id="title-music-player">ĐIỀU KHIỂN PHÁT NHẠC</div>
+                    </summary>
                   <div class="details-content music-player-content">
                       <h5 id="title-music-playlist">DANH SÁCH PHÁT</h5>
                       <div id="music-playlist-container">
@@ -2066,7 +2072,12 @@
                       </div>
                       <hr style="margin: 20px 0; background: #414345; height: 1px; opacity: 0.5;">
                       <details style="border-color: #ab47bc;">
-                           <summary style="background: #2c3e50; color: #ab47bc; text-align: center;" id="summary-music-schedule">HẸN GIỜ PHÁT NHẠC</summary>
+                           <summary style="background: #2c3e50; color: #ab47bc; text-align: center; display: flex; align-items: center; justify-content: center;" id="summary-music-schedule">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20px" height="20px">
+                                    <path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586z"></path>
+                                </svg>
+                                <span style="margin-left: 8px;">HẸN GIỜ PHÁT NHẠC</span>
+                            </summary>
                           <div class="details-content">
                               <div class="music-schedule-form">
                                   <div class="control-group">
