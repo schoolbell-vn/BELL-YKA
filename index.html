@@ -1769,8 +1769,8 @@
           <div id="tab-content-wrapper"></div>
         </div>
 
-        <div id="tab-hen-gio" class="main-tab-content">
-            <h3 style="text-align: center; font-size: 1.15em; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: #ecf0f1; background: none; border: none; box-shadow: none; margin-bottom: 15px; margin-top: 5px;">
+        <div id="tab-hen-gio" class="main-tab-content" >
+            <h3 id="title-scenario-tab" style="text-align: center ; font-size: 1.15em; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: #ecf0f1; background: none; border: none; box-shadow: none; margin-bottom: 15px; margin-top: 5px;">
                 HẸN GIỜ THEO KỊCH BẢN
             </h3>
 
@@ -1779,7 +1779,7 @@
     <details class="scenario-setup-details">
         <summary>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"></path><path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586z"></path></svg>
-            THIẾT LẬP KỊCH BẢN MỚI
+            <span id="summary-new-scenario-text">THIẾT LẬP KỊCH BẢN MỚI</span>
         </summary>
         
         <div class="details-content" style="padding-top: 20px; display: flex; flex-direction: column; gap: 15px;">
@@ -1832,7 +1832,7 @@
     </details>
 
     <div id="saved-scenario-container" style="padding: 0; margin-top: 20px;">
-        <h5 style="text-align: center; color: #3498db; text-transform: uppercase; margin: 10px 0 15px 0;">
+        <h5 id="title-saved-scenario" style="text-align: center; color: #3498db; text-transform: uppercase; margin: 10px 0 15px 0;">
             KỊCH BẢN HIỆN TẠI ĐANG LƯU TRÊN THIẾT BỊ
         </h5>
         <div id="saved-scenario-table-wrapper" style="max-height: 250px; overflow-y: auto; display: none;">
@@ -1847,7 +1847,7 @@
         <div class="delete-scenario-button-container">
             <button class="modern-btn logout-button" onclick="deleteSavedScenario()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg>
-                Xóa Kịch Bản Đã Lưu
+                 <span id="btn-delete-scenario">Xóa Kịch Bản Đã Lưu</span>
             </button>
         </div>
     </div>
@@ -2004,7 +2004,7 @@
             <div class="holiday-calendar-container">
                 <details>
                     <summary>
-                        <div>LỊCH NGHỈ LỄ</div>
+                      <div id="title-holiday-calendar">LỊCH NGHỈ LỄ</div>
                     </summary>
                     <div class="details-content">
                         <div class="calendar-header">
@@ -2023,10 +2023,10 @@
             <div class="music-player-container" style="margin-top: 5px;">
               <details open>
                   <summary>
-                      <div>ĐIỀU KHIỂN PHÁT NHẠC</div>
+                     <div id="title-music-player">ĐIỀU KHIỂN PHÁT NHẠC</div>
                   </summary>
                   <div class="details-content music-player-content">
-                      <h5>DANH SÁCH PHÁT</h5>
+                      <h5 id="title-music-playlist">DANH SÁCH PHÁT</h5>
                       <div id="music-playlist-container">
                           <p class="list-placeholder">Đang chờ danh sách nhạc từ thiết bị...</p>
                       </div>
@@ -2066,7 +2066,7 @@
                       </div>
                       <hr style="margin: 20px 0; background: #414345; height: 1px; opacity: 0.5;">
                       <details style="border-color: #ab47bc;">
-                          <summary style="background: #2c3e50; color: #ab47bc; text-align: center;">HẸN GIỜ PHÁT NHẠC</summary>
+                           <summary style="background: #2c3e50; color: #ab47bc; text-align: center;" id="summary-music-schedule">HẸN GIỜ PHÁT NHẠC</summary>
                           <div class="details-content">
                               <div class="music-schedule-form">
                                   <div class="control-group">
@@ -2078,7 +2078,7 @@
                                       <select id="schedule-music-track-select" class="modal-input" style="padding: 8px; margin: 0;"></select>
                                   </div>
                                   <div class="control-group full-width">
-                                      <label>Lặp lại vào các ngày</label>
+                                      <label id="label-music-repeat-days">Lặp lại vào các ngày</label>
                                       <div class="day-selector">
                                           <label><input type="checkbox" name="music-day" value="t2"><span>T2</span></label>
                                           <label><input type="checkbox" name="music-day" value="t3"><span>T3</span></label>
@@ -3952,11 +3952,10 @@ function loadHolidayData(holidays) {
         { id: 'label-sohoi-tgreo', defaultText: 'Thời gian reo (ms)', description: 'Label: TG Reo' },
         { id: 'label-sohoi-tgnghi', defaultText: 'Thời gian nghỉ (ms)', description: 'Label: TG Nghỉ' },
         { id: 'btn-save-schedule', defaultText: 'Lưu và gửi cập nhật', description: 'Nút Lưu chính' },
-        { id: 'btn-test-bell', defaultText: 'Thử Chuông Báo Chung', description: 'Nút Thử Chuông' }, // ĐÃ SỬA LẠI TEXT
+        { id: 'btn-test-bell', defaultText: 'Thử Chuông Báo Chung', description: 'Nút Thử Chuông' },
         { id: 'btn-interface-settings', defaultText: 'Cài đặt giao diện', description: 'Nút Cài đặt giao diện' },
         { id: 'btn-advanced-settings', defaultText: 'Cài đặt nâng cao', description: 'Nút Cài đặt nâng cao' },
         { id: 'btn-logout', defaultText: 'Đăng xuất', description: 'Nút Đăng xuất' },
-        // [PHẦN MỚI THÊM THEO YÊU CẦU CỦA ÔNG TÚ]
         { id: 'interface-modal-title', defaultText: 'Cài đặt Giao diện', description: 'Giao diện: Tiêu đề Modal' },
         { id: 'interface-label-content', defaultText: 'Nội dung', description: 'Giao diện: Label Nội dung' },
         { id: 'interface-label-color', defaultText: 'Màu chữ', description: 'Giao diện: Label Màu chữ' },
@@ -3964,6 +3963,15 @@ function loadHolidayData(holidays) {
         { id: 'interface-label-fontfamily', defaultText: 'Font chữ', description: 'Giao diện: Label Font chữ' },
         { id: 'interface-btn-reset', defaultText: 'Reset về Mặc định', description: 'Giao diện: Nút Reset' },
         { id: 'interface-btn-close', defaultText: 'Đóng', description: 'Giao diện: Nút Đóng Modal' }
+        { id: 'title-scenario-tab', defaultText: 'HẸN GIỜ THEO KỊCH BẢN', description: 'Tab: Hẹn giờ kịch bản' },
+        { id: 'summary-new-scenario-text', defaultText: 'THIẾT LẬP KỊCH BẢN MỚI', description: 'Hẹn giờ: Tiêu đề thiết lập' },
+        { id: 'title-saved-scenario', defaultText: 'KỊCH BẢN HIỆN TẠI ĐANG LƯU TRÊN THIẾT BỊ', description: 'Hẹn giờ: Tiêu đề Kịch bản đã lưu' },
+        { id: 'btn-delete-scenario', defaultText: 'Xóa Kịch Bản Đã Lưu', description: 'Hẹn giờ: Nút Xóa Kịch bản' },
+        { id: 'title-holiday-calendar', defaultText: 'LỊCH NGHỈ LỄ', description: 'Cài đặt: Tiêu đề Lịch nghỉ lễ' },
+        { id: 'title-music-player', defaultText: 'ĐIỀU KHIỂN PHÁT NHẠC', description: 'Phát nhạc: Tiêu đề chính' },
+        { id: 'title-music-playlist', defaultText: 'DANH SÁCH PHÁT', description: 'Phát nhạc: Tiêu đề Playlist' },
+        { id: 'summary-music-schedule', defaultText: 'HẸN GIỜ PHÁT NHẠC', description: 'Phát nhạc: Tiêu đề Hẹn giờ nhạc' }
+        { id: 'label-music-repeat-days', defaultText: 'Lặp lại vào các ngày', description: 'Phát nhạc: Label Lặp lại ngày' }
     ];
     let selectedElementId = null;
 
