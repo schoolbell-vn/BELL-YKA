@@ -3022,11 +3022,13 @@
         const lcdIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20 3H4c-1.103 0-2 .897-2 2v11c0 1.103.897 2 2 2h3l-1 2v1h12v-1l-1-2h3c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2zM4 14V5h16l.002 9H4z"></path></svg>';
         const flashIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"></path></svg>';
         const ramIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 5h16v2H4zm0 4h16v2H4zm0 4h16v2H4zm0 4h16v2H4z"></path></svg>';
-
+        const mp3Icon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"></path></svg>'; // <<< THÊM DÒNG NÀY
+        
         listDiv.innerHTML += createItem(wifiIcon, 'Tên WiFi (SSID)', info.ssid || 'N/A');
         listDiv.innerHTML += createItem(ipIcon, 'Địa chỉ IP', info.ip || 'N/A');
         listDiv.innerHTML += createItem(rtcIcon, 'Module RTC', info.rtc ? 'Đã kết nối' : 'Không tìm thấy', info.rtc ? 'description connected' : 'description disconnected');
         listDiv.innerHTML += createItem(lcdIcon, 'Màn hình LCD', info.lcd ? 'Đã kết nối' : 'Không tìm thấy', info.lcd ? 'description connected' : 'description disconnected');
+        listDiv.innerHTML += createItem(mp3Icon, 'Module MP3', info.mp3 ? 'Đã kết nối' : 'Không tìm thấy', info.mp3 ? 'description connected' : 'description disconnected'); // <<< THÊM DÒNG NÀY
         listDiv.innerHTML += createItem(flashIcon, 'Bộ nhớ Flash', `${info.flash_usage || 'N/A'} % (${info.running_partition || ''})`);
         
         listDiv.innerHTML += createItem(ramIcon, 'RAM trong (SRAM)', `${info.sram_usage_percent || 'N/A'} % (Còn trống ${info.sram_free_kb || 'N/A'} KB)`);
@@ -4248,6 +4250,8 @@ function toggleHoliday(dateString) {
 // File: index 4.html (bên trong thẻ <script>)
 
 // === [GIẢI PHÁP DỨT ĐIỂM] THAY THẾ TOÀN BỘ HÀM NÀY ===
+// === [THAY THẾ TOÀN BỘ HÀM NÀY] ===
+// === [DÁN CODE NÀY VÀO VỊ TRÍ HÀM CŨ] ===
 function renderSavedScenario(savedData) {
     const wrapper = document.getElementById('saved-scenario-table-wrapper');
     const priorityDiv = document.getElementById('saved-scenario-priority');
@@ -4256,26 +4260,34 @@ function renderSavedScenario(savedData) {
 
     // Xóa nội dung cũ
     wrapper.innerHTML = '';
-    priorityDiv.innerHTML = ''; // Xóa hiển thị ưu tiên chung
-    daysDisplayContainer.innerHTML = ''; // Xóa hiển thị ngày chung
+    priorityDiv.innerHTML = '';
+    daysDisplayContainer.innerHTML = '';
 
-    // Kiểm tra xem savedData có phải là một mảng hợp lệ không
-    if (!savedData || !Array.isArray(savedData) || savedData.length === 0) {
-        // Nếu không có kịch bản nào, ẩn bảng và hiện placeholder.
+    // === [LOGIC SỬA LỖI] ===
+    // 1. Kiểm tra xem dữ liệu có phải là một mảng HỢP LỆ không
+    if (!savedData || !Array.isArray(savedData)) {
+        // Nếu dữ liệu KHÔNG HỢP LỆ (lỗi, không phải mảng), giữ placeholder
         wrapper.style.display = 'none';
         placeholder.style.display = 'block';
         return; // Dừng hàm
     }
-
-    // Nếu có dữ liệu, hiện wrapper và ẩn placeholder.
+    
+    // 2. Nếu là mảng HỢP LỆ (kể cả rỗng), chúng ta PHẢI ẩn placeholder
     wrapper.style.display = 'block';
     placeholder.style.display = 'none';
+
+    // 3. Bây giờ mới kiểm tra xem mảng có rỗng không
+    if (savedData.length === 0) {
+        // Nếu rỗng, hiển thị một thông báo "Không có kịch bản"
+        wrapper.innerHTML = '<p class="list-placeholder" style="display: block; padding: 10px;">Không có kịch bản nào được lưu.</p>';
+        return;
+    }
+    // === [KẾT THÚC LOGIC SỬA LỖI] ===
     
-    // Tạo HTML cho danh sách các kịch bản
+    // 4. Nếu mảng không rỗng, lặp và hiển thị
     let listHTML = '';
     const dayNameMap = {t2: 'T2', t3: 'T3', t4: 'T4', t5: 'T5', t6: 'T6', t7: 'T7', cn: 'CN'};
 
-    // Lặp qua từng kịch bản trong mảng savedData
     savedData.forEach((scenarioDoc, index) => {
         const events = scenarioDoc.scenario || [];
         const days = scenarioDoc.days || [];
@@ -4285,7 +4297,6 @@ function renderSavedScenario(savedData) {
         if (priority === 'scenario') priorityText = '<span style="color: #2ecc71;">Ưu tiên Kịch Bản</span>';
         if (priority === 'schedule') priorityText = '<span style="color: #3498db;">Ưu tiên Lịch Học</span>';
 
-        // CSS nội tuyến để tạo giao diện nhanh mà không cần sửa thẻ <style>
         listHTML += `
             <div class="scenario-item" style="border: 1px solid #414345; border-radius: 8px; margin-bottom: 10px; background: #232526;">
                 <div class="scenario-item-header" style="background: #34495e; padding: 8px 12px; border-radius: 8px 8px 0 0; font-weight: bold; color: #f1c40f;">
@@ -4299,9 +4310,9 @@ function renderSavedScenario(savedData) {
         `;
     });
     
-    // Đưa danh sách đã tạo vào wrapper
     wrapper.innerHTML = listHTML;
 }
+
   </script>
   
 <script>
