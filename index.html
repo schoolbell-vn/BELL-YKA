@@ -2638,8 +2638,11 @@
         // ==============================
         
         showNotification("Đã gửi lệnh XÓA TẤT CẢ kịch bản!", "success");
+        // Không cần xóa localStorage, ESP32 sẽ gửi lại danh sách rỗng và hàm _load() sẽ cập nhật
+    } // <--- [ĐÃ SỬA] DẤU NGOẶC NHỌN KẾT THÚC HÀM deleteSavedScenario ĐƯỢC DI CHUYỂN LÊN ĐÂY
+    
         // === [THÊM HÀM MỚI NÀY] ===
-    function deleteSingleScenario(index) {
+    function deleteSingleScenario(index) { // <-- [ĐÃ SỬA] HÀM NÀY BÂY GIỜ NẰM NGOÀI, Ở PHẠM VI TOÀN CỤC
         if (!confirm(`Ông có chắc chắn muốn XÓA KỊCH BẢN #${index + 1} không?`)) {
             return;
         }
@@ -2655,10 +2658,6 @@
         
         showNotification(`Đã gửi lệnh xóa kịch bản #${index + 1}...`, 'info');
     }
-    // ===========================
-        // Không cần xóa localStorage, ESP32 sẽ gửi lại danh sách rỗng và hàm _load() sẽ cập nhật
-    }
-            
     // =======================================================
     // PHẦN MÃ GỐC (GIỮ NGUYÊN)
     // =======================================================
