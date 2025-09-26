@@ -282,6 +282,7 @@
         padding: 8px 10px;
         box-shadow: 0 2px 12px rgba(241, 196, 15, 0.10), 0 2px 5px rgba(0,0,0,0.08);
         width: 90%;
+        cursor: pointer; /* << THÊM DÒNG NÀY */
     }
     .clock {
         font-size: 2.5em;
@@ -1733,11 +1734,12 @@
         <h2 id="index-main-title" style="margin: 0; padding: 0;">CHUÔNG BÁO TỰ ĐỘNG</h2>
         <p id="school-name-status" style="margin: 5px 0 0 0; padding: 0; font-size: 1.1em; font-weight: bold; text-shadow: 0 2px 8px #000; letter-spacing: 1.2px;">THPT YÊN KHÁNH A</p>
       </div>
-      <div class="clock-container" id="clock-wrapper" style="display: none;">
+     <div class="clock-container" id="clock-wrapper" style="display: none;">
         <div id="clock" class="clock">--:--:--</div>
         <div id="date" class="date-display">Đang chờ đồng bộ...</div>
       </div>
-      
+      <div id="countdown-status" style="text-align: center; color: #00e6ff; font-weight: bold; font-size: 1.1em; margin-top: -5px; margin-bottom: 10px; height: 25px; text-shadow: 0 0 8px #00e6ff88;">
+    </div>
       <div class="main-tabs">
         <button class="main-tab-button active" onclick="openMainTab(event, 'tab-lich-hoc')">🗓️ Lịch Học</button>
         <button class="main-tab-button" onclick="openMainTab(event, 'tab-hen-gio')">⏱️ Hẹn Giờ</button>
@@ -2120,22 +2122,23 @@
         </div>
         
         <div id="tab-he-thong" class="main-tab-content">
-          <div class="button-section">
-            <button class="modern-btn interface-button" onclick="openInterfaceSettingsModal()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path><path d="M12 22.31V12h10.31"></path><path d="M12 12H1.69"></path><path d="m12 12 5.66-5.66"></path></svg>
-                <span id="btn-interface-settings">Cài đặt giao diện</span>
-            </button>
-            <button class="modern-btn advanced-button" onclick="openAdvancedSettingsModal()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 0 2l-.15.08a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l-.22-.38a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1 0-2l.15-.08a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                <span id="btn-advanced-settings">Cài đặt nâng cao</span>
-            </button>
-            <div class="divider-yellow" style="margin: 10px auto;"></div>
-            <button class="modern-btn logout-button" onclick="logout()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-                <span id="btn-logout">Đăng xuất</span>
-            </button>
-          </div>
-        </div>
+  <div class="button-section">
+    
+    <button class="modern-btn interface-button" onclick="openInterfaceSettingsModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path><path d="M12 22.31V12h10.31"></path><path d="M12 12H1.69"></path><path d="m12 12 5.66-5.66"></path></svg>
+        <span id="btn-interface-settings">Cài đặt giao diện</span>
+    </button>
+    <button class="modern-btn advanced-button" onclick="openAdvancedSettingsModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 0 2l-.15.08a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l-.22-.38a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1 0-2l.15-.08a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        <span id="btn-advanced-settings">Cài đặt nâng cao</span>
+    </button>
+    <div class="divider-yellow" style="margin: 10px auto;"></div>
+    <button class="modern-btn logout-button" onclick="logout()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        <span id="btn-logout">Đăng xuất</span>
+    </button>
+  </div>
+</div>
 
       </div>
       </div>
@@ -2665,7 +2668,7 @@
     
     let client, serverTime = null, targetDevice = null, targetAction = null, otaInProgress = false;
     let selectedDay = 't2', selectedSession = 'sang';
-    
+    let todaySchedule = []; 
     const brokerUrl="wss://366af3ec40124749863257ecd2c62b3e.s1.eu.hivemq.cloud:8884/mqtt";
     const options={username:"ngoctuyka",password:"Tu12345678@",clientId:"WebAppClient_"+parseInt(1e3*Math.random()),reconnectPeriod:2e3,protocolVersion: 4};
     
@@ -2834,7 +2837,83 @@
             musicOptions.classList.remove('visible');
         }
     }
+    function updateClockAndCountdown() {
+    updateLocalClock(); // Gọi hàm cập nhật đồng hồ cũ
+    updateCountdown();  // Gọi hàm cập nhật đếm ngược mới
+}
+    function calculateAndStoreTodaySchedule() {
+        if (!window.allData || !window.allData.lich) {
+            todaySchedule = [];
+            return;
+        }
 
+        const dayMap = ['cn', 't2', 't3', 't4', 't5', 't6', 't7'];
+        const currentDayKey = dayMap[new Date().getDay()];
+
+        // Tính toán lịch cho cả buổi sáng và chiều
+        const morningSchedule = calculateSchedule(`${currentDayKey}_sang`);
+        const afternoonSchedule = calculateSchedule(`${currentDayKey}_chieu`);
+
+        // Gộp lịch 2 buổi và sắp xếp lại theo thời gian
+        todaySchedule = [...morningSchedule, ...afternoonSchedule].sort((a, b) => a.timeInMinutes - b.timeInMinutes);
+        console.log("Đã tính toán lịch cho hôm nay:", todaySchedule);
+    }
+    function updateCountdown() {
+    const countdownEl = document.getElementById('countdown-status');
+    if (!serverTime || !countdownEl || todaySchedule.length === 0) {
+        countdownEl.innerHTML = ''; // Xóa nội dung nếu không có dữ liệu
+        return;
+    }
+
+    // Lấy thời gian hiện tại (tính bằng phút từ đầu ngày)
+    const nowInMinutes = serverTime.getHours() * 60 + serverTime.getMinutes();
+
+    // Tìm sự kiện tiếp theo trong lịch trình của ngày hôm nay
+    const nextEvent = todaySchedule.find(event => event.timeInMinutes > nowInMinutes);
+
+    if (!nextEvent) {
+        countdownEl.innerHTML = "Đã hết lịch học hôm nay.";
+        return;
+    }
+
+    // Tính toán thời gian còn lại (tính bằng giây)
+    const nowInSeconds = serverTime.getHours() * 3600 + serverTime.getMinutes() * 60 + serverTime.getSeconds();
+    const nextEventInSeconds = nextEvent.timeInMinutes * 60;
+    const secondsRemaining = nextEventInSeconds - nowInSeconds;
+
+    if (secondsRemaining < 0) return; // Bỏ qua nếu có lỗi tính toán
+
+    // Định dạng thời gian còn lại thành MM:SS
+    const minutes = Math.floor(secondsRemaining / 60);
+    const seconds = secondsRemaining % 60;
+    const countdownText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+    // Tạo thông báo mô tả sự kiện
+    let message = "";
+    const description = nextEvent.description;
+
+    if (description.includes("Vào tiết")) {
+        message = `Còn ${countdownText} phút ${description.toLowerCase()}`;
+    } else if (description.includes("Ra chơi")) {
+        // "Ra chơi tiết 1" nghĩa là "Hết tiết 1"
+        const tiet = description.match(/\d+/); // Lấy số từ chuỗi
+        if (tiet) {
+            message = `Còn ${countdownText} phút hết tiết ${tiet[0]}`;
+        }
+    } else if (description.includes("Ra về")) {
+        message = `Còn ${countdownText} phút là tan học`;
+    } else if (description.includes("Dự vào")) {
+        message = `Còn ${countdownText} phút chuẩn bị vào lớp`;
+    } else if (description.includes("Chào cờ") || description.includes("Sinh hoạt")) {
+        message = `Còn ${countdownText} phút bắt đầu ${description.toLowerCase()}`;
+    } else {
+        // Trường hợp dự phòng
+        message = `Sự kiện tiếp theo: ${description} sau ${countdownText}`;
+    }
+
+    // Cập nhật nội dung lên giao diện
+    countdownEl.innerHTML = message;
+}
     // [THÊM MỚI] Hàm cập nhật danh sách bài hát cho các dropdown trong cài đặt
     function updateTrackSelectors(playlist) {
         const bellTypes = ['batdau', 'vaotiet', 'rachoi', 'duvao'];
@@ -2973,7 +3052,8 @@
         const sec = Math.floor(seconds % 60);
         return `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
     }
-    // KẾT THÚC CÁC HÀM VỀ NHẠC
+
+    // =======================================================
 
     function showNotification(message, type = 'success') {
         const area = document.getElementById('notification-area');
@@ -3293,6 +3373,8 @@ function _load(e) {
             if (t.data.schedule) {
                 window.allData = t.data.schedule;
                 populateForm(t.data.schedule);
+                calculateAndStoreTodaySchedule();
+                
             }
             if (t.data.holidays) loadHolidayData(t.data.holidays);
             if (t.data.scenario) {
@@ -3308,6 +3390,8 @@ function _load(e) {
              if (t.schedule) {
                 window.allData = t.schedule;
                 populateForm(t.schedule);
+                calculateAndStoreTodaySchedule();
+                
              }
              if (t.holidays) loadHolidayData(t.holidays);
              // Cấu trúc cũ không có kịch bản nên không cần làm gì thêm.
@@ -3484,7 +3568,7 @@ function loadHolidayData(holidays) {
                         
                         <div id="special_event_container_${e}" class="settings-grid full-width" style="display: none; grid-template-columns: 1fr; gap: 8px; padding: 0;">${u}</div>
                         
-                        <div class="setting-item">${l}<div class="input-wrapper"><label for="tiethoc_${e}">TG Tiết học</label><div class="unit-input"><input id="tiethoc_${e}" type="number" value="45"><span>phút</span></div></div></div>
+                        <div class="setting-item">${l}<div class="input-wrapper"><label for="tiethoc_${e}">TG Tiết học</label><div class="unit-input"><input id="tiethoc_${e}" type="text" value="45"><span>phút</span></div><div class="input-helper-text">VD: 45,45,45,30</div></div></div>
                         <div class="setting-item">${c}<div class="input-wrapper"><label for="rachoi_${e}">TG Ra chơi</label><div class="unit-input"><input id="rachoi_${e}" type="text" value="5"><span>phút</span></div><div class="input-helper-text">VD: 5,15,5,5</div></div></div>
                         <div class="setting-item" id="duvao_wrapper_${e}">${m}<div class="input-wrapper"><label for="duvaotiet_${e}">TG Dự vào</label><div class="unit-input"><input id="duvaotiet_${e}" type="number" value="3"><span>phút</span></div></div></div>
                         <div class="setting-item">${p}<div class="input-wrapper"><label for="sotiet_${e}">Số tiết học</label><div class="unit-input"><input id="sotiet_${e}" type="number" value="5"><span>tiết</span></div></div></div>
@@ -3611,7 +3695,7 @@ function loadHolidayData(holidays) {
                 const n=e.lich[t][o.id]={};
                 n.enabled=document.getElementById(`enable_${dayId}`).checked;
                 n.gio=document.getElementById(`gio_${dayId}`).value;
-                n.tiethoc=parseInt(document.getElementById(`tiethoc_${dayId}`).value)||0;
+                n.tiethoc=document.getElementById(`tiethoc_${dayId}`).value || "45";
                 n.rachoi=document.getElementById(`rachoi_${dayId}`).value || "5"; // [NÂNG CẤP]
                 n.duvaotiet=parseInt(document.getElementById(`duvaotiet_${dayId}`).value)||0;
                 n.sotiet=parseInt(document.getElementById(`sotiet_${dayId}`).value)||0;
@@ -3676,70 +3760,80 @@ function loadHolidayData(holidays) {
 
     // [NÂNG CẤP TOÀN BỘ] Hàm tính toán lịch học được viết lại để linh hoạt hơn
     function calculateSchedule(dayId) {
-        const isEnabled = document.getElementById(`enable_${dayId}`)?.checked;
-        if (!isEnabled) return []; // [MỚI] Trả về mảng rỗng nếu lịch bị tắt
+    const getVal = (id, defaultValue = 0) => {
+        const el = document.getElementById(id);
+        if (!el) return defaultValue;
+        const parsedValue = parseInt(el.value);
+        return isNaN(parsedValue) ? defaultValue : parsedValue;
+    };
 
-        const hasSpecial = document.getElementById(`has_special_${dayId}`)?.checked;
-        const hasDuVao = document.getElementById(`has_duvao_${dayId}`)?.checked;
-        
-        const startTime = timeToMinute(document.getElementById(`gio_${dayId}`).value);
-        const lessonTime = getVal(`tiethoc_${dayId}`, 45);
-        const lessonCount = getVal(`sotiet_${dayId}`, 5);
-        const prepareTime = hasDuVao ? getVal(`duvaotiet_${dayId}`, 3) : 0;
-        
-        const breakTimeStr = document.getElementById(`rachoi_${dayId}`).value || '5';
-        const breakTimes = breakTimeStr.split(',').map(s => parseInt(s.trim()) || 0);
+    const isEnabled = document.getElementById(`enable_${dayId}`)?.checked;
+    if (!isEnabled) return [];
 
-        const isMondayMorning = dayId.includes('t2_sang');
-        const specialEventTime = hasSpecial ? getVal(isMondayMorning ? `chaoco_${dayId}` : `chunhiem_${dayId}`) : 0;
-        
-        // [SỬA LỖI] Mặc định thời gian chuẩn bị là 0 nếu để trống, theo yêu cầu
-        const specialPrepareTime = hasSpecial ? getVal(`prepare_after_special_${dayId}`, 0) : 0;
-        
-        if (startTime === 0 || lessonTime === 0 || lessonCount === 0) return [];
+    const hasSpecial = document.getElementById(`has_special_${dayId}`)?.checked;
+    const hasDuVao = document.getElementById(`has_duvao_${dayId}`)?.checked;
 
-        let schedule = [];
-        let currentTime = startTime;
+    const startTime = timeToMinute(document.getElementById(`gio_${dayId}`).value);
 
-        // 1. Xử lý sự kiện đặc biệt (Chào cờ/Sinh hoạt) nếu có
-        if (hasSpecial && specialEventTime > 0) {
-            schedule.push({ time: currentTime, description: isMondayMorning ? "Chào cờ" : "Sinh hoạt" });
-            currentTime += specialEventTime;
-            
-            if (specialPrepareTime > 0) {
-                schedule.push({ time: currentTime, description: "Nghỉ sau SH/CC" });
-                currentTime += specialPrepareTime;
-            }
+    // --- [THAY ĐỔI LỚN BẮT ĐẦU TỪ ĐÂY] ---
+    const lessonTimeStr = document.getElementById(`tiethoc_${dayId}`).value || '45';
+    const lessonTimes = lessonTimeStr.split(',').map(s => parseInt(s.trim()) || 45);
+    // --- [KẾT THÚC THAY ĐỔI] ---
+
+    const lessonCount = getVal(`sotiet_${dayId}`, 5);
+    const prepareTime = hasDuVao ? getVal(`duvaotiet_${dayId}`, 3) : 0;
+
+    const breakTimeStr = document.getElementById(`rachoi_${dayId}`).value || '5';
+    const breakTimes = breakTimeStr.split(',').map(s => parseInt(s.trim()) || 0);
+
+    const isMondayMorning = dayId.includes('t2_sang');
+    const specialEventTime = hasSpecial ? getVal(isMondayMorning ? `chaoco_${dayId}` : `chunhiem_${dayId}`) : 0;
+    const specialPrepareTime = hasSpecial ? getVal(`prepare_after_special_${dayId}`, 0) : 0;
+
+    if (startTime === 0 || lessonCount === 0) return [];
+
+    let schedule = [];
+    let currentTime = startTime;
+
+    if (hasSpecial && specialEventTime > 0) {
+        schedule.push({ time: currentTime, description: isMondayMorning ? "Chào cờ" : "Sinh hoạt" });
+        currentTime += specialEventTime;
+
+        if (specialPrepareTime > 0) {
+            schedule.push({ time: currentTime, description: "Nghỉ sau SH/CC" });
+            currentTime += specialPrepareTime;
         }
+    }
 
-        // 2. Vòng lặp qua các tiết học và giờ ra chơi
-        for (let i = 1; i <= lessonCount; i++) {
-            schedule.push({ time: currentTime, description: `Vào tiết ${i}` });
-            currentTime += lessonTime;
+    for (let i = 1; i <= lessonCount; i++) {
+        // Lấy thời gian cho tiết học hiện tại, nếu thiếu thì dùng giá trị cuối cùng
+        const currentLessonTime = lessonTimes[i - 1] ?? lessonTimes[lessonTimes.length - 1];
 
-            if (i < lessonCount) {
-                const currentBreakTime = breakTimes[i - 1] ?? breakTimes[breakTimes.length - 1]; 
-                
-                if (currentBreakTime > 0) {
-                    schedule.push({ time: currentTime, description: `Ra chơi tiết ${i}` });
-                    currentTime += currentBreakTime;
+        schedule.push({ time: currentTime, description: `Vào tiết ${i}` });
+        currentTime += currentLessonTime; // Sử dụng thời gian tiết học tương ứng
 
-                    if (prepareTime > 0) {
-                        schedule.push({ time: currentTime, description: `Dự vào tiết ${i + 1}` });
-                        currentTime += prepareTime;
-                    }
+        if (i < lessonCount) {
+            const currentBreakTime = breakTimes[i - 1] ?? breakTimes[breakTimes.length - 1]; 
+
+            if (currentBreakTime > 0) {
+                schedule.push({ time: currentTime, description: `Ra chơi tiết ${i}` });
+                currentTime += currentBreakTime;
+
+                if (prepareTime > 0) {
+                    schedule.push({ time: currentTime, description: `Dự vào tiết ${i + 1}` });
+                    currentTime += prepareTime;
                 }
             }
         }
-
-        // 3. Thêm sự kiện "Ra về"
-        schedule.push({ time: currentTime, description: "Ra về" });
-        
-        const uniqueSchedule = Array.from(new Map(schedule.map(item => [item.time, item])).values());
-        return uniqueSchedule
-            .map(item => ({ ...item, timeInMinutes: item.time, time: minuteToTime(item.time) }))
-            .sort((a, b) => a.timeInMinutes - b.timeInMinutes);
     }
+
+    schedule.push({ time: currentTime, description: "Ra về" });
+
+    const uniqueSchedule = Array.from(new Map(schedule.map(item => [item.time, item])).values());
+    return uniqueSchedule
+        .map(item => ({ ...item, timeInMinutes: item.time, time: minuteToTime(item.time) }))
+        .sort((a, b) => a.timeInMinutes - b.timeInMinutes);
+}
 
     function updatePreviewTable(e){const t=document.getElementById(`enable_${e}`).checked,o=document.getElementById("details-"+e);if(!o)return;if(!t)return void(o.innerHTML="<p style='text-align:center; padding: 10px;'>Lịch này đang tắt.</p>");const n=calculateSchedule(e);let a="<table><thead><tr><th>STT</th><th>Thời gian</th><th>Nội dung</th></tr></thead><tbody>";n.forEach((e,t)=>{a+=`<tr><td>${t+1}</td><td>${e.time}</td><td>${e.description}</td></tr>`}),a+="</tbody></table>",o.innerHTML=a}
     
@@ -4217,7 +4311,7 @@ function toggleHoliday(dateString) {
     window.onload = function() { 
         loadInterfaceSettings();
         connectToMqtt();
-        setInterval(updateLocalClock, 1000);
+        setInterval(updateClockAndCountdown, 1000);
 
         // [SỬA LỖI] Tải kịch bản đã lưu từ bộ nhớ trình duyệt ngay khi vào trang
         try {
@@ -4383,6 +4477,7 @@ function showNotification(msg, type="info") {
     if (div.parentNode) div.parentNode.removeChild(div);
   }, 3000);
 }
+
 </script>
 
 </body>
